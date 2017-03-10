@@ -17,7 +17,8 @@ class Item(models.Model):
     An item has a name.
     Quantity: how many versions of this item exist.
     An item has different visibility levels, which determine who can view them.
-    An item has a specific location within a depot.
+    An item is in a depot.
+    An item has a specific location within its depot.
 
     :author: Leo Tappe
     """
@@ -30,4 +31,5 @@ class Item(models.Model):
     name = models.CharField(max_length=256)
     quantity = models.IntegerField()
     visibility = models.CharField(max_length=1, choices=VISIBILITY_LEVELS)
+    depot = models.ForeignKey(Depot, on_delete=models.CASCADE)
     location = models.CharField(max_length=256)
