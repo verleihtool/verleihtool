@@ -38,13 +38,28 @@ python -V
 pip -V
 
 echo "Installing Django"
-pip install Django
+pip install django
 
 python -m django --version
 
-# Create simple start script
+echo "Installing Pylint"
+pip install pylint
+pip install pylint-django
+
+pylint --version
+
+# Create helper scripts
+
 cat > /home/vagrant/startServer.sh <<- EOF
 python /vagrant/manage.py runserver [::]:8000
 EOF
 
+cat > /home/vagrant/lint.sh <<- EOF
+pylint --load-plugins pylint_django \
+/vagrant/verleihtool \
+/vagrant/depot \
+/vagrant/rental
+EOF
+
 chmod u+x /home/vagrant/startServer.sh
+chmod u+x /home/vagrant/lint.sh
