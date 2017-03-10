@@ -38,4 +38,5 @@ class Item(models.Model):
     location = models.CharField(max_length=256)
 
     def __str__(self):
-        return '%s unit(s) of %s (visib.: %s) in %s' % (self.quantity, self.name, self.visibility, self.location)
+        return ('%s unit(s) of %s (visib.: %s) in %s'
+                % (self.quantity, self.name, self.visibility, self.location))
