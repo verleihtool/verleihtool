@@ -1,3 +1,9 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Depot, Item
+
+# make depots modifiable by admin
+admin.site.register(Depot)
+
+# make items modifiable by admin
+admin.site.register(Item)
