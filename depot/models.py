@@ -11,6 +11,9 @@ class Depot(models.Model):
     name = models.CharField(max_length=256)
     managers = models.ManyToManyField(User)
 
+    def __str__(self):
+        return "Depot %s" % self.name
+
 class Item(models.Model):
     """
     Model an item.
@@ -33,3 +36,6 @@ class Item(models.Model):
     visibility = models.CharField(max_length=1, choices=VISIBILITY_LEVELS)
     depot = models.ForeignKey(Depot, on_delete=models.CASCADE)
     location = models.CharField(max_length=256)
+
+    def __str__(self):
+        return '%s unit(s) of %s (visib.: %s) in %s' % (self.quantity, self.name, self.visibility, self.location)
