@@ -1,9 +1,9 @@
 <h1>Awesome Homepage</h1>
 
 {% if logged_in %}
-	<p align="right"><a href="{% url 'login:logout' %}">Logout</a></p>
+	<a href="{% url 'login:logout' %}">Logout</a>
 {% else %}
-	<p align="right"><a href="{% url 'login:login' %}">Login</a> | <a href="{% url 'login:register' %}">Sign up</a></p>
+	<a href="{% url 'login:login' %}">Login</a>
 {% endif %}
 <br>
 <p>Blah blah...</p>
