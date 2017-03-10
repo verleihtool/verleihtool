@@ -6,7 +6,7 @@
 - Port: __*1337*__
 
 ## How to create Superuser
-- `$: python manage.py createsuperuser`
+- `$ python manage.py createsuperuser`
 - You will than be guided through the creation process, e.g. entering a name, email address ...
   
 
