@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib import admin
 from django.contrib.auth.models import Group, User
 
 class Depot(models.Model):
@@ -12,7 +13,7 @@ class Depot(models.Model):
     managers = models.ManyToManyField(User)
 
     def __str__(self):
-        return "Depot %s" % self.name
+        return 'Depot %s' % self.name
 
 class Item(models.Model):
     """
