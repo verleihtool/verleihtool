@@ -6,4 +6,4 @@ from django.contrib.auth import authenticate
 
 
 def home(request):
-	return render(request, 'login/home.html', {'logged_in': request.user.is_authenticated})
+    return render(request, 'login/home.html', {'logged_in': request.user.is_authenticated})
