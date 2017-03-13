@@ -1,11 +1,8 @@
 [MASTER]
-
 load-plugins=pylint_django
 
 [MESSAGE CONTROL]
-
 disable=missing-docstring,unused-import
 
 [BASIC]
-
-const-rgx=(([A-Z_][A-Z0-9_]*)|(__.*__)|application|urlpatterns)$
+const-rgx=(([A-Z_][A-Z0-9_]*)|(__.*__)|application|urlpatterns|app_name)$
