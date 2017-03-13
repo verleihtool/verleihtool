@@ -1,5 +1,6 @@
 import uuid
 from django.db import models
+from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from depot.models import Item
 
@@ -31,6 +32,10 @@ class Rental(models.Model):
     start_date = models.DateTimeField()
     return_date = models.DateTimeField()
     state = models.CharField(max_length=1, choices=STATES, default=STATE_PENDING)
+
+    def clean(self):
+        if self.start_date > self.return_date:
+            raise ValidationError({'start_date': 'The start date must be before the return date.'})
 
     def __str__(self):
         return 'Rental by %s' % self.name
