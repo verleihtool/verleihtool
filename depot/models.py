@@ -13,7 +13,7 @@ class Depot(models.Model):
     active = models.BooleanField(default=True)
 
     def __str__(self):
-        return "Depot %s" % self.name
+        return 'Depot %s' % self.name
 
 class Item(models.Model):
     """
