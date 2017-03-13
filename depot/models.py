@@ -11,6 +11,7 @@ class Depot(models.Model):
     """
     name = models.CharField(max_length=256)
     managers = models.ManyToManyField(User)
+    active = models.BooleanField(default=True)
 
     def __str__(self):
         return 'Depot %s' % self.name
