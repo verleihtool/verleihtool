@@ -9,7 +9,7 @@ before_script:
 
 lint:
   script:
-    - pylint --load-plugins pylint_django --errors-only verleihtool/ depot/ rental/
+    - pylint --rcfile pylint.rc --reports n */
 
 test:
   script:
