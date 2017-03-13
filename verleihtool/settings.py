@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'login.apps.LoginConfig',
     'depot.apps.DepotConfig',
+    'rental.apps.RentalConfig',
 ]
 
 MIDDLEWARE = [

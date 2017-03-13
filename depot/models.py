@@ -33,7 +33,7 @@ class Item(models.Model):
         (VISIBILITY_PRIVATE, 'private'),
     )
     name = models.CharField(max_length=256)
-    quantity = models.IntegerField()
+    quantity = models.PositiveSmallIntegerField()
     visibility = models.CharField(max_length=1, choices=VISIBILITY_LEVELS)
     depot = models.ForeignKey(Depot, on_delete=models.CASCADE)
     location = models.CharField(max_length=256)
