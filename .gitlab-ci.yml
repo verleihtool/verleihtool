@@ -9,7 +9,7 @@ before_script:
 
 lint:
   script:
-    - pylint --rcfile pylint.rc --reports n */
+    - flake8 --exclude node_modules --max-line-length=120
 
 test:
   script:
