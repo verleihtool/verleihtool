@@ -1,10 +1,14 @@
-<h1>Awesome Homepage</h1>
+{% extends 'layout.html' %}
 
-{% if logged_in %}
-    <a href="{% url 'login:logout' %}">Logout</a>
-{% else %}
-    <a href="{% url 'login:login' %}">Login</a>
-{% endif %}
- | <a href="{% url 'admin:index' %}">To Admin Login</a>
-<br>
-<p>Blah blah...</p>
+{% block content %}
+    <h1>Awesome Homepage</h1>
+
+    {% if logged_in %}
+        <a href="{% url 'login:logout' %}">Logout</a>
+    {% else %}
+        <a href="{% url 'login:login' %}">Login</a>
+    {% endif %}
+     | <a href="{% url 'admin:index' %}">To Admin Login</a>
+    <br>
+    <p>Blah blah...</p>
+{% endblock %}
