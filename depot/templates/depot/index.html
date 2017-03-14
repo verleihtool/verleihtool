@@ -1,0 +1,15 @@
+{% extends 'layout.html' %}
+
+{% block title %}Depots{% endblock %}
+
+{% block content %}
+    <h1>Depots</h1>
+    <p>WIP: Dropdown menu or somthin'</p>
+    {% if depot_list %}
+        <ul>
+        {% for depot in depot_list %}
+            <li><a href="{% url 'depot:detail' depot.id %}">{{ depot.name }}</a></li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}
