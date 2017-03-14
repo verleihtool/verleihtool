@@ -8,7 +8,9 @@
     {% else %}
         <a href="{% url 'login:login' %}">Login</a>
     {% endif %}
-     | <a href="{% url 'admin:index' %}">To Admin Login</a>
+    {% if superuser %}
+         | <a href="{% url 'admin:index' %}">To Admin Login</a>
+    {% endif %}
     <br>
     <p>Blah blah...</p>
 {% endblock %}
