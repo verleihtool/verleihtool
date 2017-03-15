@@ -43,5 +43,6 @@ class RentalAdmin(admin.ModelAdmin):
         self.message_user(request, RentalAdmin.format_message(rentals_revoked, "revoked"))
     make_revoked.short_description = "Revoke selected rentals"
 
+
 # Register your models here.
 admin.site.register(Rental, RentalAdmin)
