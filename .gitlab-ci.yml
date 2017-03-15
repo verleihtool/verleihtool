@@ -9,7 +9,7 @@ before_script:
 
 lint:
   script:
-    - flake8 --exclude node_modules --max-line-length=120
+    - flake8
 
 test:
   script:

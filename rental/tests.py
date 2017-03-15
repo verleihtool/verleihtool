@@ -1,6 +1,7 @@
 from django.test import TestCase
 from .models import Rental
 
+
 class RentalTestCase(TestCase):
 
     def test_str(self):

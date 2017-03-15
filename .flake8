@@ -1,4 +1,8 @@
 [flake8]
+ignore =
+    # Imported but unused
+    F401
+
 exclude =
     .git,
     __pycache__,
