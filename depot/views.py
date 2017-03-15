@@ -1,7 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Depot, Item
 
-# Create your views here.
 
 def index(request):
     depot_list = Depot.objects.all()
@@ -9,6 +8,7 @@ def index(request):
         'depot_list': depot_list,
     }
     return render(request, 'depot/index.html', context)
+
 
 def detail(request, depot_id):
     depot = get_object_or_404(Depot, pk=depot_id)
