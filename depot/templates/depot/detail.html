@@ -6,20 +6,29 @@
     {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
     <h1>{{ depot_name }}</h1>
     <p>WIP: Item list:</p>
-    <ul>
+    <form>
+        {% csrf_token %}
     <table style="width:100%">
         <tr>
             <th>Name</th>
             <th>Quantity</th>
             <th>Location</th>
+            <th>Selected</th>
         </tr>
         {% for item in item_list %}
             <tr>
                 <td>{{ item.name }}</td>
                 <td>{{ item.quantity }}</td>
                 <td>{{ item.location }}</td>
+                <td>
+                     <form>
+                          <input type="number" name="{{ item.id }}-quantity" min="0"
+                                 max="{{ item.quantity }}" value="0" >
+                     </form>
+                </td>
             </tr>
         {% endfor %}
     </table>
-    </ul>
+        <button type="button">Checkout</button>
+    </form>
 {% endblock %}
