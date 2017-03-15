@@ -3,12 +3,11 @@ from .models import Depot, Item
 
 
 def index(request):
-    if request.user.is_superuser:
+    superuser = request.user.is_superuser
+    if superuser:
         depot_list = Depot.objects.all()
-        superuser = True
     else:
         depot_list = Depot.objects.filter(active=True)
-        superuser = False
     context = {
         'depot_list': depot_list,
         'superuser': superuser,
