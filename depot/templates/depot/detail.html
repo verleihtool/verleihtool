@@ -1,0 +1,25 @@
+{% extends 'layout.html' %}
+
+{% block title %}{{ depot_name }}{% endblock %}
+
+{% block content %}
+    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+    <h1>{{ depot_name }}</h1>
+    <p>WIP: Item list:</p>
+    <ul>
+    <table style="width:100%">
+        <tr>
+            <th>Name</th>
+            <th>Quantity</th>
+            <th>Location</th>
+        </tr>
+        {% for item in item_list %}
+            <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.location }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    </ul>
+{% endblock %}
