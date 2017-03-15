@@ -1,4 +1,5 @@
 {% load static %}
+{% load layout %}
 
 <!DOCTYPE html>
 <html>
@@ -8,14 +9,54 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <title>
-            {% block title %}
-            {% endblock %}
+            {% block title %}{% endblock %} - Verleihtool
         </title>
         <link href="{% static 'app.css' %}" rel="stylesheet">
     </head>
     <body>
-        {% block content %}
-        {% endblock %}
+        <div id="app">
+            <nav class="navbar navbar-inverse navbar-fixed-top">
+                <div class="container">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle collapsed"
+                                data-toggle="collapse" data-target="#navbar"
+                                aria-expanded="false" aria-controls="navbar">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="#">Verleihtool</a>
+                    </div>
+                    <div id="navbar" class="collapse navbar-collapse">
+                        <!-- Left Side Of Navbar -->
+                        <ul class="nav navbar-nav">
+                            <li {% current_page 'login:home' 'class="active"' %}>
+                                <a href="{% url 'login:home' %}">Home</a>
+                            </li>
+                            <li {% current_page 'depot:index' 'class="active"' %}>
+                                <a href="{% url 'depot:index' %}">Depots</a>
+                            </li>
+                        </ul>
+
+                        <!-- Right Side Of Navbar -->
+                        <ul class="nav navbar-nav navbar-right">
+                            {% if user.is_authenticated %}
+                                {% if user.is_superuser %}
+                                    <li><a href="{% url 'admin:index' %}">Administration</a></li>
+                                {% endif %}
+                                <li><a href="{% url 'login:logout' %}">Logout</a></li>
+                            {% else %}
+                                <li><a href="{% url 'login:login' %}">Login</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+            {% block content %}
+            {% endblock %}
+        </div>
 
         <script src="{% static 'app.js' %}"></script>
     </body>
