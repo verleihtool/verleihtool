@@ -6,7 +6,7 @@
     {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
     <h1>{{ depot_name }}</h1>
     <p>WIP: Item list:</p>
-    <form>
+    <form method="post" action="{% url 'login:home' %}">
         {% csrf_token %}
     <table style="width:100%">
         <tr>
@@ -29,6 +29,6 @@
             </tr>
         {% endfor %}
     </table>
-        <button type="button">Checkout</button>
+    {% include 'depot/checkout-form.html' %}
     </form>
 {% endblock %}
