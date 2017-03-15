@@ -1,17 +1,19 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-    <h1>Awesome Homepage</h1>
+    <div class="container">
+        <h1>Awesome Homepage</h1>
 
-    {% if logged_in %}
-        <a href="{% url 'login:logout' %}">Logout</a>
-    {% else %}
-        <a href="{% url 'login:login' %}">Login</a>
-    {% endif %}
-    {% if superuser %}
-         | <a href="{% url 'admin:index' %}">To Admin Login</a>
-    {% endif %}
-    <br>
-    <p><h3>Welcome!</h3></p>
-    <p>Why not visit the list of Depots? &raquo; <a href="{% url 'depot:index' %}">Browse all Depots</a></p>
+        {% if logged_in %}
+            <a href="{% url 'login:logout' %}">Logout</a>
+        {% else %}
+            <a href="{% url 'login:login' %}">Login</a>
+        {% endif %}
+        {% if superuser %}
+             | <a href="{% url 'admin:index' %}">To Admin Login</a>
+        {% endif %}
+        <br>
+        <p><h3>Welcome!</h3></p>
+        <p>Why not visit the list of Depots? &raquo; <a href="{% url 'depot:index' %}">Browse all Depots</a></p>
+    </div>
 {% endblock %}
