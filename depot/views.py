@@ -3,9 +3,15 @@ from .models import Depot, Item
 
 
 def index(request):
-    depot_list = Depot.objects.all()
+    if request.user.is_superuser:
+        depot_list = Depot.objects.all()
+        superuser = True
+    else:
+        depot_list = Depot.objects.filter(active=True)
+        superuser = False
     context = {
         'depot_list': depot_list,
+        'superuser': superuser,
     }
     return render(request, 'depot/index.html', context)
 
