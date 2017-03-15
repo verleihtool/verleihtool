@@ -5,6 +5,12 @@ sudo apt-get update
 sudo apt-get install -y vim git make build-essential libssl-dev zlib1g-dev libbz2-dev \
 libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils
 
+# Install NodeJS
+
+echo "Installing NodeJS 6.x"
+curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
 # Install pyenv
 
 echo "Installing pyenv"
