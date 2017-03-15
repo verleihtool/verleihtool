@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import Group, User
 
+
 class Depot(models.Model):
     """
     Model a depot.
@@ -14,6 +15,7 @@ class Depot(models.Model):
 
     def __str__(self):
         return 'Depot %s' % self.name
+
 
 class Item(models.Model):
     """

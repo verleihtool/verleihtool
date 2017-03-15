@@ -1,11 +1,12 @@
 from django.contrib import admin
-
 from .models import Depot, Item
+
 
 # show items in depot
 class ItemsInline(admin.TabularInline):
     model = Item
     extra = 0
+
 
 class DepotAdmin(admin.ModelAdmin):
     inlines = [ItemsInline]
@@ -31,6 +32,7 @@ class DepotAdmin(admin.ModelAdmin):
         depots_restored = queryset.update(active=True)
         self.message_user(request, DepotAdmin.format_message(depots_restored, "restored"))
     make_restored.short_description = "Restore selected depots"
+
 
 # make items modifiable by admin
 admin.site.register(Item)

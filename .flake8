@@ -1,0 +1,15 @@
+[flake8]
+ignore =
+    # Imported but unused
+    F401
+
+exclude =
+    .git,
+    __pycache__,
+    migrations,
+    node_modules,
+    static,
+    resources
+
+max-line-length = 120
+max-complexity = 10

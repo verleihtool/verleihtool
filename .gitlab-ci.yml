@@ -9,7 +9,7 @@ before_script:
 
 lint:
   script:
-    - pylint --rcfile pylint.rc --reports n */
+    - flake8
 
 test:
   script:

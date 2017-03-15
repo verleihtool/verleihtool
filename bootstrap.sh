@@ -42,11 +42,10 @@ pip install django
 
 python -m django --version
 
-echo "Installing Pylint"
-pip install pylint
-pip install pylint-django
+echo "Installing Flake8"
+pip install flake8
 
-pylint --version
+flake8 --version
 
 # Create helper scripts
 
