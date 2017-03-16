@@ -59,6 +59,31 @@ class LoginTestCase(TestCase):
             'Please enter a correct username and password.'
         )
 
+    def test_logged_out_displays_login_and_not_logout(self):
+        c = Client()
+        response = c.get('/')
+        self.assertContains(
+            response,
+            'Login'
+        )
+        self.assertNotContains(
+            response,
+            'Logout'
+        )
+
+    def test_logged_in_displays_logout_and_not_login(self):
+        c = Client()
+        c.login(username='user', password='password')
+        response = c.get('/')
+        self.assertContains(
+            response,
+            'Logout'
+        )
+        self.assertNotContains(
+            response,
+            'Login'
+        )
+
 
 class AdminLoginTestCase(TestCase):
 
@@ -80,4 +105,12 @@ class AdminLoginTestCase(TestCase):
         self.assertContains(
             response,
             'To Admin Site'
+        )
+
+    def test_admin_not_loggedin(self):
+        c = Client()
+        response = c.get('/')
+        self.assertNotContains(
+            response,
+            'Administration'
         )
