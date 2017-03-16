@@ -1,5 +1,7 @@
 {% extends 'layout.html' %}
 
+{% load layout %}
+
 {% block title %}{{ depot_name }}{% endblock %}
 
 {% block content %}
@@ -13,6 +15,9 @@
             <th>Name</th>
             <th>Quantity</th>
             <th>Location</th>
+            {% if request.user.is_authenticated %}
+                <th>Visibility</th>
+            {% endif %}
             <th>Selected</th>
         </tr>
         {% for item in item_list %}
@@ -20,6 +25,9 @@
                 <td>{{ item.name }}</td>
                 <td>{{ item.quantity }}</td>
                 <td>{{ item.location }}</td>
+                {% if request.user.is_authenticated %}
+                    <td>{% item_visibility item.visibility %}</td>
+                {% endif %}
                 <td>
                      <form>
                           <input type="number" name="{{ item.id }}-quantity" min="0"
