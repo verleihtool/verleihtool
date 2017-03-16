@@ -17,12 +17,13 @@ def index(request):
 
 def detail(request, depot_id):
     depot = get_object_or_404(Depot, pk=depot_id)
+
     if request.user.is_authenticated:
         item_list = depot.item_set.all()
     else:
         item_list = depot.item_set.filter(visibility=Item.VISIBILITY_PUBLIC)
-    context = {
+
+    return render(request, 'depot/detail.html', {
         'depot_name': depot.name,
         'item_list': item_list,
-    }
-    return render(request, 'depot/detail.html', context)
+    })

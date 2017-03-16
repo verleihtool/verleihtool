@@ -1,34 +1,37 @@
 {% extends 'layout.html' %}
 
-{% block title %}{{ depot_name }}{% endblock %}
+{% block title %}
+    {{ depot_name }}
+{% endblock %}
 
 {% block content %}
-    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-    <h1>{{ depot_name }}</h1>
-    <p>WIP: Item list:</p>
+    {% if error_message %}
+        <div class="alert alert-danger" role="alert">{{ error_message }}</div>
+    {% endif %}
+
+    <h1>{{ depot_name }} <small>by organization</small></h1>
+
     <form method="post" action="{% url 'login:home' %}">
         {% csrf_token %}
-    <table style="width:100%">
-        <tr>
-            <th>Name</th>
-            <th>Quantity</th>
-            <th>Location</th>
-            <th>Selected</th>
-        </tr>
-        {% for item in item_list %}
+        <table class="table">
             <tr>
-                <td>{{ item.name }}</td>
-                <td>{{ item.quantity }}</td>
-                <td>{{ item.location }}</td>
-                <td>
-                     <form>
-                          <input type="number" name="{{ item.id }}-quantity" min="0"
-                                 max="{{ item.quantity }}" value="0" >
-                     </form>
-                </td>
+                <th>Name</th>
+                <th>Quantity</th>
+                <th>Location</th>
+                <th>Selected</th>
             </tr>
-        {% endfor %}
-    </table>
-    {% include 'depot/checkout-form.html' %}
+            {% for item in item_list %}
+                <tr>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.location }}</td>
+                    <td>
+                          <input type="number" name="{{ item.id }}-quantity"
+                                min="0" max="{{ item.quantity }}" value="0">
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+        {% include 'depot/checkout-form.html' %}
     </form>
 {% endblock %}
