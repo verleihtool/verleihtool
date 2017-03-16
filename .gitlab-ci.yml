@@ -6,6 +6,8 @@ before_script:
   - pyenv global 3.6.0
   - which python
   - python -V
+  - echo "Merge current branch into master for testing"
+  - git merge origin/master --no-commit --no-ff
 
 lint:
   script:

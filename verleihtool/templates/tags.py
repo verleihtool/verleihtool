@@ -1,5 +1,6 @@
 from django import template
 from django.http import request
+from depot.models import Item
 
 
 register = template.Library()
@@ -17,3 +18,8 @@ def current_page(context, path_name, content):
     url_name = context['request'].resolver_match.url_name
     if '%s:%s' % (app_name, url_name) == path_name:
         return content
+
+
+@register.simple_tag
+def item_visibility(visibility):
+    return dict(Item.VISIBILITY_LEVELS)[visibility]

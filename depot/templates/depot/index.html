@@ -1,26 +1,34 @@
 {% extends 'layout.html' %}
 
-{% block title %}Depots{% endblock %}
+{% block title %}
+    Depots
+{% endblock %}
 
 {% block content %}
     <h1>Depots</h1>
-    <p>WIP: Dropdown menu or somthin'</p>
+
     {% if depot_list %}
-        <table style width="25%">
+        <table class="table">
             <tr>
                 <th>Name</th>
                 {% if superuser %}
-                <th>Active</th>
+                    <th>Active</th>
                 {% endif %}
             </tr>
             {% for depot in depot_list %}
-            <tr>
-                <td><a href="{% url 'depot:detail' depot.id %}">{{ depot.name }}</a></td>
-                {% if superuser %}
-                <td>{{ depot.active }}</td>
-                {% endif %}
-            </tr>
+                <tr>
+                    <td>
+                        <a href="{% url 'depot:detail' depot.id %}">{{ depot.name }}</a>
+                    </td>
+                    {% if superuser %}
+                        <td>{{ depot.active }}</td>
+                    {% endif %}
+                </tr>
             {% endfor %}
         </table>
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            No depots available :(
+        </div>
     {% endif %}
 {% endblock %}

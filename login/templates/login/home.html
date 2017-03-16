@@ -1,19 +1,15 @@
 {% extends 'layout.html' %}
 
-{% block content %}
-    <div class="container">
-        <h1>Awesome Homepage</h1>
-
-        {% if logged_in %}
-            <a href="{% url 'login:logout' %}">Logout</a>
-        {% else %}
-            <a href="{% url 'login:login' %}">Login</a>
-        {% endif %}
-        {% if superuser %}
-             | <a href="{% url 'admin:index' %}">To Admin Site</a>
-        {% endif %}
-        <br>
-        <p><h3>Welcome!</h3></p>
-        <p>Why not visit the list of Depots? &raquo; <a href="{% url 'depot:index' %}">Browse all Depots</a></p>
+{% block container %}
+    <div class="jumbotron">
+        <div class="container">
+            <h1>Welcome to the Verleihtool!</h1>
+            <p>See which items are available for rental and submit a request for them.</p>
+            <p>
+                <a class="btn btn-primary btn-lg" href="{% url 'depot:index' %}" role="button">
+                    Explore the depots
+                </a>
+            </p>
+        </div>
     </div>
 {% endblock %}

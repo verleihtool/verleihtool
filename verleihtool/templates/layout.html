@@ -9,7 +9,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <title>
-            {% block title %}{% endblock %} - Verleihtool
+            {% block title %}Welcome{% endblock %} - Verleihtool
         </title>
         <link href="{% static 'app.css' %}" rel="stylesheet">
     </head>
@@ -26,7 +26,7 @@
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
                         </button>
-                        <a class="navbar-brand" href="#">Verleihtool</a>
+                        <a class="navbar-brand" href="{% url 'login:home' %}">Verleihtool</a>
                     </div>
                     <div id="navbar" class="collapse navbar-collapse">
                         <!-- Left Side Of Navbar -->
@@ -54,7 +54,11 @@
                 </div>
             </nav>
 
-            {% block content %}
+            {% block container %}
+                <div class="container">
+                    {% block content %}
+                    {% endblock %}
+                </div>
             {% endblock %}
         </div>
 
