@@ -79,5 +79,5 @@ class AdminLoginTestCase(TestCase):
         response = c.get('/')
         self.assertContains(
             response,
-            'To Admin Login'
+            'To Admin Site'
         )
