@@ -1,8 +1,8 @@
 from depot.models import Depot, Item
-from verleihtool.test import TestCase
+from verleihtool.test import ClientTestCase
 
 
-class DepotDetailTestCase(TestCase):
+class DepotDetailTestCase(ClientTestCase):
 
     def setUp(self):
         super(DepotDetailTestCase, self).setUp()

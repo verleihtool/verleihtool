@@ -1,7 +1,7 @@
-from verleihtool.test import TestCase
+from verleihtool.test import ClientTestCase
 
 
-class LoginTestCase(TestCase):
+class LoginTestCase(ClientTestCase):
 
     def test_login_form(self):
         response = self.as_guest.get('/login/')
@@ -67,7 +67,7 @@ class LoginTestCase(TestCase):
         )
 
 
-class AdminLoginTestCase(TestCase):
+class AdminLoginTestCase(ClientTestCase):
 
     def test_admin_loggedin(self):
         response = self.as_superuser.get('/')
