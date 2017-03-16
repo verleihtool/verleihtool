@@ -1,3 +1,5 @@
+{% load layout %}
+
 {% extends 'layout.html' %}
 
 {% block title %}
@@ -18,6 +20,9 @@
                 <th>Name</th>
                 <th>Quantity</th>
                 <th>Location</th>
+                {% if request.user.is_authenticated %}
+                    <th>Visibility</th>
+                {% endif %}
                 <th>Selected</th>
             </tr>
             {% for item in item_list %}
@@ -25,13 +30,18 @@
                     <td>{{ item.name }}</td>
                     <td>{{ item.quantity }}</td>
                     <td>{{ item.location }}</td>
+                    {% if request.user.is_authenticated %}
+                        <td>{% item_visibility item.visibility %}</td>
+                    {% endif %}
                     <td>
-                          <input type="number" name="{{ item.id }}-quantity"
-                                min="0" max="{{ item.quantity }}" value="0">
+                         <form>
+                              <input type="number" name="{{ item.id }}-quantity"
+                                      min="0"max="{{ item.quantity }}" value="0">
+                         </form>
                     </td>
-                </tr>
             {% endfor %}
         </table>
+
         {% include 'depot/checkout-form.html' %}
     </form>
 {% endblock %}
