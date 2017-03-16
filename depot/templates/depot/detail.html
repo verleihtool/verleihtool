@@ -28,20 +28,19 @@
             </tr>
 
             {% for item in item_list %}
-                <tr>
-                    <td>{{ item.name }}</td>
-                    <td>{{ item.quantity }}</td>
-                    <td>{{ item.location }}</td>
+                <tr class="rental-item">
+                    <td class="rental-item-name">{{ item.name }}</td>
+                    <td class="rental-item-quantity">{{ item.quantity }}</td>
+                    <td class="rental-item-location">{{ item.location }}</td>
                     {% if request.user.is_authenticated %}
                         <td>{% item_visibility item.visibility %}</td>
                     {% endif %}
-                    <td>
-                         <form>
-                              <input type="number" name="{{ item.id }}-quantity"
-                                      min="0"max="{{ item.quantity }}" value="0">
-                         </form>
+                    <td class="rental-item-selected">
+                        <input type="number" name="item-{{ item.id }}-quantity"
+                               min="0" max="{{ item.quantity }}" value="0">
                     </td>
-    t        {% endfor %}
+                </tr>
+            {% endfor %}
         </table>
 
         {% include 'depot/checkout-modal.html' %}
