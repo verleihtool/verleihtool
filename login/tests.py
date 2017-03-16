@@ -58,3 +58,26 @@ class LoginTestCase(TestCase):
             response,
             'Please enter a correct username and password.'
         )
+
+
+class AdminLoginTestCase(TestCase):
+
+    def setUp(self):
+        User.objects.create_user(
+            username='user',
+            password='password'
+        )
+        User.objects.create_superuser(
+            username='admin',
+            email='admin@example.com',
+            password='pass'
+        )
+
+    def test_admin_loggedin(self):
+        c = Client()
+        c.login(username='admin', password='pass')
+        response = c.get('/')
+        self.assertContains(
+            response,
+            'To Admin Login'
+        )
