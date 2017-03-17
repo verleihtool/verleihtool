@@ -1,4 +1,4 @@
-from verleihtool.test import TestCase
+from verleihtool.test import ClientTestCase
 from depot.models import Depot
 
 
@@ -6,7 +6,7 @@ def create_depot(name, active=True):
     return Depot.objects.create(name=name, active=active)
 
 
-class DepotIndexTestCase(TestCase):
+class DepotIndexTestCase(ClientTestCase):
 
     def test_depot_index_as_guest_no_depots(self):
         response = self.as_guest.get('/depots/')
