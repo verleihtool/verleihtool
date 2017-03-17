@@ -1,7 +1,7 @@
-from verleihtool.test import TestCase
+from verleihtool.test import ClientTestCase
 
 
-class LoginTestCase(TestCase):
+class LoginTestCase(ClientTestCase):
 
     def test_login_form(self):
         response = self.as_guest.get('/login/')
@@ -64,21 +64,4 @@ class LoginTestCase(TestCase):
         self.assertNotContains(
             response,
             'Login'
-        )
-
-
-class AdminLoginTestCase(TestCase):
-
-    def test_admin_loggedin(self):
-        response = self.as_superuser.get('/')
-        self.assertContains(
-            response,
-            'Administration'
-        )
-
-    def test_admin_not_loggedin(self):
-        response = self.as_guest.get('/')
-        self.assertNotContains(
-            response,
-            'Administration'
         )
