@@ -5,13 +5,12 @@ from django.db import transaction
 from django.urls import reverse
 import re
 
-# Create your views here.
 
 @transaction.atomic
 def create(request):
     if request.method != 'POST':
         raise Http404
-    #get data
+    # get data
     data = request.POST
 
     params = (
@@ -22,17 +21,17 @@ def create(request):
     if request.user.is_authenticated:
         user = request.user
 
-    #create Rental object
+    # create Rental object
     rental = Rental(user=user, **{key: data.get(key) for key in params})
     rental.save()
 
-    #create ItemRental objects
+    # create ItemRental objects
     for key, quantity in data.items():
         m = re.match(r'^item-([0-9]+)-quantity$', key)
         if m is not None and int(quantity) > 0:
             item = ItemRental(
                 rental_id=rental.uuid,
-                item_id=m.group(1), 
+                item_id=m.group(1),
                 quantity=quantity
             )
             item.save()
