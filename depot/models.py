@@ -2,6 +2,25 @@ from django.db import models
 from django.contrib.auth.models import Group, User
 
 
+class Organization(models.Model):
+    """
+    Model an organization, such as FSMPI, FSMB or ASTA.
+
+    An organization is defined by a list of user groups,
+    in our case LDAP groups. It is managed by a list of
+    users and has a list of depots.
+
+    :author: Leo Tappe
+    """
+
+    name = models.CharField(max_length=256)
+    groups = models.ManyToManyField(Group)
+    managers = models.ManyToManyField(User)
+
+    def __str__(self):
+        return 'Organization %s' % self.name
+
+
 class Depot(models.Model):
     """
     Model a depot.
@@ -10,7 +29,9 @@ class Depot(models.Model):
     :author: Leo Tappe
     """
     name = models.CharField(max_length=256)
-    managers = models.ManyToManyField(User)
+    organization = models.ForeignKey(Organization)
+    manager_users = models.ManyToManyField(User, blank=True)
+    manager_groups = models.ManyToManyField(Group, blank=True)
     active = models.BooleanField(default=True)
 
     def __str__(self):

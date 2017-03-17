@@ -1,4 +1,4 @@
-from depot.models import Depot, Item
+from depot.models import Depot, Item, Organization
 from verleihtool.test import ClientTestCase
 
 
@@ -7,12 +7,16 @@ class DepotDetailTestCase(ClientTestCase):
     def setUp(self):
         super(DepotDetailTestCase, self).setUp()
 
+        organization = Organization.objects.create()
+
         self.depot = Depot.objects.create(
-            name='My Depot'
+            name='My Depot',
+            organization=organization
         )
 
         self.inactive_depot = Depot.objects.create(
             name='My Inactive Depot',
+            organization=organization,
             active=False
         )
 
