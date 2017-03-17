@@ -1,9 +1,10 @@
 from verleihtool.test import ClientTestCase
-from depot.models import Depot
+from depot.models import Depot, Organization
 
 
 def create_depot(name, active=True):
-    return Depot.objects.create(name=name, active=active)
+    organization = Organization.objects.create()
+    return Depot.objects.create(name=name, active=active, organization=organization)
 
 
 class DepotIndexTestCase(ClientTestCase):

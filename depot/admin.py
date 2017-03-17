@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Depot, Item
+from .models import Depot, Item, Organization
 
 
 # show items in depot
@@ -34,8 +34,11 @@ class DepotAdmin(admin.ModelAdmin):
     make_restored.short_description = "Restore selected depots"
 
 
-# make items modifiable by admin
-admin.site.register(Item)
+# make organizations modifiable by admin
+admin.site.register(Organization)
 
 # make depots modifiable by admin
 admin.site.register(Depot, DepotAdmin)
+
+# make items modifiable by admin
+admin.site.register(Item)
