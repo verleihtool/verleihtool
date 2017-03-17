@@ -3,9 +3,11 @@ from .models import Rental, ItemRental
 from django.http import Http404
 from django.db import transaction
 from django.urls import reverse
+from django.views.decorators.http import require_POST
 import re
 
 
+@require_POST
 @transaction.atomic
 def create(request):
     if request.method != 'POST':
@@ -17,9 +19,7 @@ def create(request):
         'name', 'email', 'purpose', 'start_date', 'return_date'
     )
 
-    user = None
-    if request.user.is_authenticated:
-        user = request.user
+    user = request.user if request.user.is_authenticated else None
 
     # create Rental object
     rental = Rental(user=user, **{key: data.get(key) for key in params})
