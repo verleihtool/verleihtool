@@ -1,18 +1,22 @@
 <div class="form-group">
     <label for="text">Name</label>
-    <input type="text" class="form-control" id="id_username" value="{{ user.username }}">
+    <input type="text" class="form-control" id="id_username" name="name" value="{{ user.username }}">
 </div>
 <div class="form-group">
     <label for="email">Email address</label>
-    <input type="email" class="form-control" id="email" value="{{ user.email }}">
+    <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}">
+</div>
+<div class="form-group">
+    <label for="email">Purpose</label>
+    <input type="text" class="form-control" id="purpose" name="purpose">
 </div>
 <div class="form-group">
     <label for="start_date">From</label>
-    <input type="datetime-local" class="form-control" id="start_date">
+    <input type="datetime-local" class="form-control" id="start_date" name="start_date">
 </div>
 <div class="form-group">
     <label for="end_date">To</label>
-    <input type="datetime-local" class="form-control" id="end_date">
+    <input type="datetime-local" class="form-control" id="end_date" name="return_date">
 </div>
 <div class="form-group">
     <strong>Summary</strong>
