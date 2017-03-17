@@ -1,8 +1,8 @@
 from django.contrib.auth.models import User
-from django.test import TestCase as BaseTestCase, Client
+from django.test import TestCase, Client
 
 
-class TestCase(BaseTestCase):
+class ClientTestCase(TestCase):
     """
     Base test case with convenience methods to login and assert responses
 
