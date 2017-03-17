@@ -13,7 +13,7 @@
 
     <h1>{{ depot_name }} <small>by organization</small></h1>
 
-    <form method="post" action="{% url 'login:home' %}">
+    <form method="post" action="{% url 'rental:create' %}">
         {% csrf_token %}
 
         <table class="table">

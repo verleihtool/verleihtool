@@ -2,6 +2,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from .models import Rental, ItemRental
 from django.http import Http404
 from django.db import transaction
+from django.urls import reverse
 import re
 
 # Create your views here.
@@ -12,35 +13,38 @@ def create(request):
         raise Http404
     #get data
     data = request.POST
-    #parse data
-    name = data.get(name)
-    email = data.get(email)
-    purpose = data.get(purpose)
-    user = data.get(user)
-    start_date = data.get(start_date)
-    return_date = data.get(return_date)
+
+    params = (
+        'name', 'email', 'purpose', 'start_date', 'return_date'
+    )
+
+    user = None
+    if request.user.is_authenticated:
+        user = request.user
 
     #create Rental object
-    rental = Rental(name, email, purpose, user, start_date, return_date)
+    rental = Rental(user=user, **{key: data.get(key) for key in params})
     rental.save()
 
     #create ItemRental objects
-    for key, quantity in data.dict():
+    for key, quantity in data.items():
         m = re.match(r'^item-([0-9]+)-quantity$', key)
-        if m not None:
+        if m is not None and int(quantity) > 0:
             item = ItemRental(
                 rental_id=rental.uuid,
-                item_id=m.group(0), 
+                item_id=m.group(1), 
                 quantity=quantity
             )
             item.save()
-            rental.items.add(item)
 
-    return redirect('detail', rental_id=rental.uuid)
+    return redirect('rental:detail', rental_uuid=rental.uuid)
 
 
-def detail(request, rental_id):
-    return render(request, 'rental/detail.html')
+def detail(request, rental_uuid):
+    rental_url = '/rental/' + rental_uuid
+    return render(request, 'rental/detail.html', {
+        'rental_url': rental_url,
+    })
 
 
 def update(request, rental_id):
