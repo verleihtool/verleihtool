@@ -53,3 +53,10 @@ class ItemRental(models.Model):
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
     quantity = models.PositiveSmallIntegerField()
     returned = models.PositiveSmallIntegerField(default=0)
+
+    def clean(self):
+        if self.quantity <= 0 or self.quantity > self.item.quantity:
+            raise ValidationError({
+                'quantity': 'The quantity must be positive and less than or '
+                            'equal to the total amount of available items.'
+            })
