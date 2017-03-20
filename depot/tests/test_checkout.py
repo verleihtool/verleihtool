@@ -31,6 +31,6 @@ class AutoFillTestCase(ClientTestCase):
         response = self.as_guest.get('/depots/%d/' % self.depot.id)
 
         self.assertInHTML(
-            str('<input type="text" class ="form-control" id="id_username" name="name" value="">'),
+            '<input type="text" class ="form-control" id="id_username" name="name" value="">',
             response.content.decode()
         )
