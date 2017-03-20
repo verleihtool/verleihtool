@@ -1,7 +1,7 @@
 import datetime
 from django.test import TestCase
 from django.core.exceptions import ValidationError
-from .models import Rental, ItemRental
+from rental.models import Rental, ItemRental
 from depot.models import Depot, Item
 
 
