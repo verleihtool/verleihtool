@@ -27,6 +27,6 @@ def detail(request, depot_id):
         item_list = depot.item_set.filter(visibility=Item.VISIBILITY_PUBLIC)
 
     return render(request, 'depot/detail.html', {
-        'depot_name': depot.name,
+        'depot': depot,
         'item_list': item_list,
     })
