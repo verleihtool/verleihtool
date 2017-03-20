@@ -19,11 +19,16 @@ class AutoFillTestCase(ClientTestCase):
             organization=organization
         )
 
-    def test_logged_in_autofill_username(self):
+    def test_logged_in_autofill(self):
         response = self.as_user.get('/depots/%d/' % self.depot.id)
 
         self.assertInHTML(
             '<input type="text" class="form-control" id="id_username" name="name" value="user">',
+            response.content.decode()
+        )
+
+        self.assertInHTML(
+            '<input type="email" class="form-control" id="email" name="email" value="user@example.com">',
             response.content.decode()
         )
 
@@ -32,5 +37,10 @@ class AutoFillTestCase(ClientTestCase):
 
         self.assertInHTML(
             '<input type="text" class ="form-control" id="id_username" name="name" value="">',
+            response.content.decode()
+        )
+
+        self.assertInHTML(
+            '<input type="email" class="form-control" id="email" name="email" value="">',
             response.content.decode()
         )

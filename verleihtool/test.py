@@ -13,6 +13,7 @@ class ClientTestCase(TestCase):
         # Create normal user
         self.user = User.objects.create_user(
             username='user',
+            email='user@example.com',
             password='password'
         )
 
