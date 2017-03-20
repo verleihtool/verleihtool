@@ -11,13 +11,13 @@ class ClientTestCase(TestCase):
 
     def setUp(self):
         # Create normal user
-        User.objects.create_user(
+        self.user = User.objects.create_user(
             username='user',
             password='password'
         )
 
         # Create superuser
-        User.objects.create_superuser(
+        self.superuser = User.objects.create_superuser(
             username='admin',
             email='admin@example.com',
             password='pass'
