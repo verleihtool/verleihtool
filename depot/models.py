@@ -34,6 +34,10 @@ class Depot(models.Model):
     manager_groups = models.ManyToManyField(Group, blank=True)
     active = models.BooleanField(default=True)
 
+    def managed_by(self, user):
+        return (self.manager_users.filter(id=user.id).exists() or
+                self.manager_groups.filter(id__in=user.groups.all()).exists())
+
     def __str__(self):
         return 'Depot %s' % self.name
 
