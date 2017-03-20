@@ -10,19 +10,18 @@ import re
 @require_POST
 @transaction.atomic
 def create(request):
-    if request.method != 'POST':
-        raise Http404
     # get data
     data = request.POST
 
     params = (
-        'name', 'email', 'purpose', 'start_date', 'return_date'
+        'name', 'depot_id', 'email', 'purpose', 'start_date', 'return_date'
     )
 
     user = request.user if request.user.is_authenticated else None
 
     # create Rental object
     rental = Rental(user=user, **{key: data.get(key) for key in params})
+    rental.full_clean()
     rental.save()
 
     # create ItemRental objects
@@ -34,6 +33,7 @@ def create(request):
                 item_id=m.group(1),
                 quantity=quantity
             )
+            item.full_clean()
             item.save()
 
     return redirect('rental:detail', rental_uuid=rental.uuid)

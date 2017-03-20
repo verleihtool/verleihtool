@@ -3,7 +3,7 @@
 {% load layout %}
 
 {% block title %}
-    {{ depot_name }}
+    {{ depot.name }}
 {% endblock %}
 
 {% block content %}
@@ -11,10 +11,12 @@
         <div class="alert alert-danger" role="alert">{{ error_message }}</div>
     {% endif %}
 
-    <h1>{{ depot_name }} <small>by organization</small></h1>
+    <h1>{{ depot.name }} <small>by organization</small></h1>
 
     <form method="post" action="{% url 'rental:create' %}">
         {% csrf_token %}
+        
+        <input type="hidden" name="depot_id" value="{{ depot.id }}">        
 
         <table class="table">
             <tr>

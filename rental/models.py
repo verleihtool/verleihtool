@@ -35,8 +35,13 @@ class Rental(models.Model):
     state = models.CharField(max_length=1, choices=STATES, default=STATE_PENDING)
 
     def clean(self):
+        if not self.depot.active:
+            raise ValidationError({'depot': 'The depot has to be active.'})
+
         if self.start_date > self.return_date:
-            raise ValidationError({'start_date': 'The start date must be before the return date.'})
+            raise ValidationError({
+                'start_date': 'The start date must be before the return date.'
+            })
 
     def __str__(self):
         return 'Rental by %s' % self.name
@@ -59,6 +64,11 @@ class ItemRental(models.Model):
         if self.rental.depot_id != self.item.depot_id:
             raise ValidationError({
                 'item': 'The item must come from the depot the rental was created for'
+            })
+
+        if self.item.visibility != Item.VISIBILITY_PUBLIC:
+            raise ValidationError({
+                'item': 'The item visibility must be public.'
             })
 
         if self.quantity <= 0 or self.quantity > self.item.quantity:
