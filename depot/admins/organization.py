@@ -2,7 +2,16 @@ from depot.models import Depot, Organization
 from django.contrib import admin
 
 
+# show items in depot
+class DepotInline(admin.TabularInline):
+    model = Depot
+    extra = 0
+    can_delete = False
+
+
 class OrganizationAdmin(admin.ModelAdmin):
+
+    inlines = [DepotInline]
 
     def get_queryset(self, request):
         """
