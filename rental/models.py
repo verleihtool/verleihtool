@@ -2,7 +2,7 @@ import uuid
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
-from depot.models import Item
+from depot.models import Depot, Item
 
 
 class Rental(models.Model):
@@ -24,6 +24,7 @@ class Rental(models.Model):
     )
 
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    depot = models.ForeignKey(Depot)
     items = models.ManyToManyField(Item, through='ItemRental')
     name = models.CharField(max_length=256)
     email = models.EmailField()
@@ -55,6 +56,11 @@ class ItemRental(models.Model):
     returned = models.PositiveSmallIntegerField(default=0)
 
     def clean(self):
+        if self.rental.depot_id != self.item.depot_id:
+            raise ValidationError({
+                'item': 'The item must come from the depot the rental was created for'
+            })
+
         if self.quantity <= 0 or self.quantity > self.item.quantity:
             raise ValidationError({
                 'quantity': 'The quantity must be positive and less than or '
