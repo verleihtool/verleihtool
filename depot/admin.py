@@ -55,13 +55,7 @@ class DepotAdmin(admin.ModelAdmin):
         if request.user.is_superuser:
             return True
 
-        if obj.manager_users.filter(id=request.user.id).exists():
-            return True
-
-        if obj.manager_groups.filter(id__in=request.user.groups.all()).exists():
-            return True
-
-        return False
+        return obj.managed_by(request.user)
 
     def has_delete_permission(self, request, obj=None):
         return False
