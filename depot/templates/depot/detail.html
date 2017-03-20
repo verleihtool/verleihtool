@@ -11,12 +11,18 @@
         <div class="alert alert-danger" role="alert">{{ error_message }}</div>
     {% endif %}
 
-    <h1>{{ depot.name }} <small>by organization</small></h1>
+    <h1>
+        {{ depot.name }} <small>by organization</small>
+
+        {% if managed_by_user %}
+            <a href="{% url 'admin:depot_depot_change' depot.id %}" class="btn btn-default">Manage</a>
+        {% endif %}
+    </h1>
 
     <form method="post" action="{% url 'rental:create' %}">
         {% csrf_token %}
-        
-        <input type="hidden" name="depot_id" value="{{ depot.id }}">        
+
+        <input type="hidden" name="depot_id" value="{{ depot.id }}">
 
         <table class="table">
             <tr>
