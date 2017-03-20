@@ -1,4 +1,4 @@
-from depot.models import Depot, Item, Organization
+from depot.models import Depot, Organization
 from verleihtool.test import ClientTestCase
 
 
