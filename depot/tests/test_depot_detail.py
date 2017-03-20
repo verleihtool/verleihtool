@@ -33,3 +33,24 @@ class DepotDetailTestCase(ClientTestCase):
         response = self.as_superuser.get('/depots/%d/' % self.inactive_depot.id)
         self.assertSuccess(response, 'depot/detail.html')
         self.assertContains(response, 'My Inactive Depot')
+
+    def test_manage_link_for_depot_manager(self):
+        self.depot.manager_users.add(self.user)
+        response = self.as_user.get('/depots/%d/' % self.depot.id)
+        self.assertInHTML(
+            ('<a href="/admin/depot/depot/%d/change/" class="btn btn-default">Manage</a>'
+                % self.depot.id),
+            response.content.decode()
+        )
+
+    def test_no_manage_link_for_guest(self):
+        response = self.as_guest.get('/depots/%d/' % self.depot.id)
+        self.assertNotContains(response, '/admin/depot/depot/%d/change/' % self.depot.id)
+
+    def test_no_manage_link_for_normal_user(self):
+        response = self.as_user.get('/depots/%d/' % self.depot.id)
+        self.assertNotContains(response, '/admin/depot/depot/%d/change/' % self.depot.id)
+
+    def test_no_manage_link_for_superuser(self):
+        response = self.as_superuser.get('/depots/%d/' % self.depot.id)
+        self.assertNotContains(response, '/admin/depot/depot/%d/change/' % self.depot.id)

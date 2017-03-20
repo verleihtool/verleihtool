@@ -22,4 +22,9 @@ def current_page(context, path_name, content):
 
 @register.simple_tag
 def item_visibility(visibility):
+    """
+    Turn the given visibility into a readable string.
+
+    :author: Florian Stamer
+    """
     return dict(Item.VISIBILITY_LEVELS)[visibility]

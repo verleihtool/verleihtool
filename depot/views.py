@@ -28,5 +28,6 @@ def detail(request, depot_id):
 
     return render(request, 'depot/detail.html', {
         'depot': depot,
+        'managed_by_user': depot.managed_by(request.user),
         'item_list': item_list,
     })
