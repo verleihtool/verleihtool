@@ -40,7 +40,8 @@ def create(request):
 
 
 def detail(request, rental_uuid):
-    rental_url = '/rental/' + rental_uuid
+    rental = get_object_or_404(Rental, pk=rental_uuid)
+    rental_url = '/rental/' + rental.uuid
     return render(request, 'rental/detail.html', {
         'rental_url': rental_url,
     })
