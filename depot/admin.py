@@ -111,6 +111,3 @@ admin.site.register(Organization, OrganizationAdmin)
 
 # make depots modifiable by admin
 admin.site.register(Depot, DepotAdmin)
-
-# make items modifiable by admin
-admin.site.register(Item)
