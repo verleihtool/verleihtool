@@ -5,7 +5,7 @@ from verleihtool.test import ClientTestCase
 class DepotDetailTestCase(ClientTestCase):
 
     def setUp(self):
-        super(DepotDetailTestCase, self).setUp()
+        super().setUp()
 
         organization = Organization.objects.create()
 
