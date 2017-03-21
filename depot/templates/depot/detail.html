@@ -12,12 +12,26 @@
     {% endif %}
 
     <h1>
-        {{ depot.name }} <small>by organization</small>
+        {{ depot.name }} <small>by {{ depot.organization.name }}</small>
 
         {% if managed_by_user %}
             <a href="{% url 'admin:depot_depot_change' depot.id %}" class="btn btn-default">Manage</a>
         {% endif %}
     </h1>
+
+    <div class="alert alert-info">
+        This depot is managed by
+        {% for manager in depot.managers %}
+            {% if not forloop.first %}
+                {% if forloop.last %}
+                    and
+                {% else %}
+                    ,
+                {% endif %}
+            {% endif %}
+            {{ manager }}
+        {% endfor %}
+    </div>
 
     <form method="post" action="{% url 'rental:create' %}">
         {% csrf_token %}
@@ -29,7 +43,7 @@
                 <th>Name</th>
                 <th>Quantity</th>
                 <th>Location</th>
-                {% if request.user.is_authenticated %}
+                {% if user.is_authenticated %}
                     <th>Visibility</th>
                 {% endif %}
                 <th>Selected</th>
@@ -40,7 +54,7 @@
                     <td class="rental-item-name">{{ item.name }}</td>
                     <td class="rental-item-quantity">{{ item.quantity }}</td>
                     <td class="rental-item-location">{{ item.location }}</td>
-                    {% if request.user.is_authenticated %}
+                    {% if user.is_authenticated %}
                         <td>{% item_visibility item.visibility %}</td>
                     {% endif %}
                     <td class="rental-item-selected">

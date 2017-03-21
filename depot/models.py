@@ -38,6 +38,13 @@ class Depot(models.Model):
         return (self.manager_users.filter(id=user.id).exists() or
                 self.manager_groups.filter(id__in=user.groups.all()).exists())
 
+    @property
+    def managers(self):
+        return User.objects.filter(
+            models.Q(id__in=self.manager_users.all()) |
+            models.Q(groups__in=self.manager_groups.all())
+        )
+
     def __str__(self):
         return 'Depot %s' % self.name
 
