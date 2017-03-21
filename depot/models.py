@@ -17,6 +17,10 @@ class Organization(models.Model):
     groups = models.ManyToManyField(Group)
     managers = models.ManyToManyField(User)
 
+    @property
+    def active_depots(self):
+        return self.depot_set.filter(active=True)
+
     def __str__(self):
         return 'Organization %s' % self.name
 
@@ -44,6 +48,10 @@ class Depot(models.Model):
             models.Q(id__in=self.manager_users.all()) |
             models.Q(groups__in=self.manager_groups.all())
         )
+
+    @property
+    def public_items(self):
+        return self.item_set.filter(visibility=Item.VISIBILITY_PUBLIC)
 
     def __str__(self):
         return 'Depot %s' % self.name

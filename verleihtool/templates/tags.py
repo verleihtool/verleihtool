@@ -27,4 +27,28 @@ def item_visibility(visibility):
 
     :author: Florian Stamer
     """
+
     return dict(Item.VISIBILITY_LEVELS)[visibility]
+
+
+@register.simple_tag
+def concat_with_and(list, final='and'):
+    """
+    Concatenate the given list to a string separated with commas
+    and final concatenator (default "and")
+
+    :author: Benedikt Seidl
+    """
+
+    if not list:
+        return ''
+
+    l = len(list)
+    if l == 1:
+        return list[0]
+
+    return '%s %s %s' % (
+        ', '.join(str(item) for item in list[:l - 1]),
+        final,
+        str(list[l - 1])
+    )
