@@ -11,7 +11,7 @@
         <table class="table">
             <tr>
                 <th>Name</th>
-                {% if superuser %}
+                {% if user.is_superuser %}
                     <th>Active</th>
                 {% endif %}
             </tr>
@@ -20,7 +20,7 @@
                     <td>
                         <a href="{% url 'depot:detail' depot.id %}">{{ depot.name }}</a>
                     </td>
-                    {% if superuser %}
+                    {% if user.is_superuser %}
                         <td>{{ depot.active }}</td>
                     {% endif %}
                 </tr>
