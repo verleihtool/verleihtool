@@ -1,9 +1,51 @@
 {% extends 'layout.html' %}
 
+{% load layout %}
+
 {% block title %}
     Rental
 {% endblock %}
 
 {% block content %}
-    Use "{{ rental_url }}" to get to this page!
+    {% if error_message %}
+        <div class="alert alert-danger" role="alert">{{ error_message }}</div>
+    {% endif %}
+    
+    <h1>
+        Rental Nr. {{ rental.uuid }} <small>by {{ rental.name }}</small>
+    </h1>
+
+    <div class="alert alert-info">
+        State:
+        {% rental_state rental.state %}
+    </div>
+
+    <div>Email: {{ rental.email }}</div>
+    {% if user.is_authenticated %}
+        <div>User: {{ rental.user }}</div>
+    {% endif %}
+    <div>Purpose: {{ rental.purpose }}</div>
+    <div>From: {{ rental.start_date }}</div>
+    <div>To: {{ rental.return_date }}</div>
+
+    <table class="table">
+        <tr>
+            <th>Name</th>
+            <th>Quantity</th>
+            <th>Location</th>
+        </tr>
+        
+        {% for item in item_list %}
+            <tr class="rental-item">
+                <td class="rental-item-name">{{ item.item.name }}</td>
+                <td class="rental-item-quantity">{{ item.quantity }}</td>
+                <td class="rental-item-location">{{ item.item.location }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    {% if dmg %}
+        <a href="{% url 'admin:rental_rental_change' rental.uuid %}" class="btn btn-default">Change State</a>
+    {% endif %}
+    
 {% endblock %}
