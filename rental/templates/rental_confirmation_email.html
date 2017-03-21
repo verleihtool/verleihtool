@@ -3,7 +3,7 @@
     <title>Simple Transactional Email</title>
 
     <p> Hello {{ username }}, </p>
-    <p> You have requested renting the following objects from {{ start_date }} and {{ return_date }}. Go to 127.0.0.1:1337/{{ uuid }} to view the status of your request and to edit your order. </p>
+    <p> You have requested renting the following objects from {{ start_date }} to {{ return_date }}. Go to 127.0.0.1:1337/{{ uuid }} to view the status of your request and to edit your order. </p>
 
     <table class="table">
         <tr>
@@ -19,4 +19,5 @@
         </tr>
         {% endfor %}
     </table>
+    <p>Best - the verleihtool</p>
 </html>
