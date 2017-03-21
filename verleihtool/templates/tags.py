@@ -1,6 +1,7 @@
 from django import template
 from django.http import request
 from depot.models import Item
+from rental.models import Rental
 
 
 register = template.Library()
@@ -28,3 +29,13 @@ def item_visibility(visibility):
     :author: Florian Stamer
     """
     return dict(Item.VISIBILITY_LEVELS)[visibility]
+
+
+@register.simple_tag
+def rental_state(state):
+    """
+    Turn the geiven state into a readable string.
+
+    :author: Florian Stamer
+    """
+    return dict(Rental.STATES)[state]

@@ -1,11 +1,11 @@
-from depot.models import Depot, Item, Organization
+from depot.models import Depot, Organization
 from verleihtool.test import ClientTestCase
 
 
 class DepotDetailTestCase(ClientTestCase):
 
     def setUp(self):
-        super(DepotDetailTestCase, self).setUp()
+        super().setUp()
 
         organization = Organization.objects.create()
 

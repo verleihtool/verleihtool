@@ -3,16 +3,14 @@ from .models import Depot, Item
 
 
 def index(request):
-    superuser = request.user.is_superuser
-    if superuser:
+    if request.user.is_superuser:
         depot_list = Depot.objects.all()
     else:
         depot_list = Depot.objects.filter(active=True)
-    context = {
-        'depot_list': depot_list,
-        'superuser': superuser,
-    }
-    return render(request, 'depot/index.html', context)
+
+    return render(request, 'depot/index.html', {
+        'depot_list': depot_list
+    })
 
 
 def detail(request, depot_id):
