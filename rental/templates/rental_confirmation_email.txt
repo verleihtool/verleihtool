@@ -1,0 +1,16 @@
+Rental request for {{ username }}
+
+Hello {{ username }},
+
+here is a summary of your rental
+from {{ start_date }}
+to {{ return_date }}.
+
+{% for itemrental in itemrental_list %}
+    {{ itemrental.item.name }}  {{ itemrental.item.location }}  {{ itemrental.quantity }}
+{% endfor %}
+
+Go to 127.0.0.1:1337/rental/{{ id }} to view the status of your request and to edit your order.
+
+Best,
+The verleihtool

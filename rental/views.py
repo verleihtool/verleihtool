@@ -1,10 +1,13 @@
-from django.shortcuts import get_object_or_404, render, redirect
+from django.shortcuts import render, redirect
+
 from .models import Rental, ItemRental
-from django.http import Http404
 from django.db import transaction
-from django.urls import reverse
 from django.views.decorators.http import require_POST
 import re
+
+from django.core.mail import send_mail
+from django.template import Context
+from django.template.loader import render_to_string
 
 
 @require_POST
@@ -35,6 +38,26 @@ def create(request):
             )
             item.full_clean()
             item.save()
+
+    mailcontext = Context({
+        'username': rental.name,
+        'start_date': rental.start_date,
+        'return_date': rental.return_date,
+        'id': rental.uuid,
+        'itemrental_list': rental.itemrental_set.all()
+    })
+
+    html_content = render_to_string('rental_confirmation_email.html', mailcontext)
+    txt_content = render_to_string('rental_confirmation_email.txt', mailcontext)
+
+    send_mail(
+        'Your rental request, %s ' % rental.name,
+        txt_content,
+        'su@fs.tum.de',
+        [rental.email],
+        html_message=html_content,
+        fail_silently=True,
+    )
 
     return redirect('rental:detail', rental_uuid=rental.uuid)
 

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
+from . import local_settings
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -57,7 +58,8 @@ ROOT_URLCONF = 'verleihtool.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'verleihtool', 'templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'verleihtool', 'templates'),
+                 os.path.join(BASE_DIR, 'rental', 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -132,3 +134,10 @@ STATICFILES_DIRS = [
 # Login
 
 LOGIN_REDIRECT_URL = '/'
+
+# E-Mail preferences
+"""
+Write Emails to std output instead of sending for development purposes
+"""
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_SUBJECT_PREFIX = '[verleihtool] '

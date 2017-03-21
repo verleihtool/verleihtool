@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+    <title>Simple Transactional Email</title>
+
+    <p> Hello {{ username }}, </p>
+    <p> You have requested renting the following objects from {{ start_date }} and {{ return_date }}. Go to 127.0.0.1:1337/{{ uuid }} to view the status of your request and to edit your order. </p>
+
+    <table class="table">
+        <tr>
+            <th>Name</th>
+            <th>Location</th>
+            <th>Quantity</th>
+        </tr>
+        {% for itemrental in itemrental_list %}
+        <tr>
+            <td>{{ itemrental.item.name }}</td>
+            <td>{{ itemrental.item.location }}</td>
+            <td>{{ itemrental.quantity }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</html>
