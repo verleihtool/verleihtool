@@ -10,7 +10,7 @@ class ItemRentalInline(admin.TabularInline):
 class RentalAdmin(admin.ModelAdmin):
     inlines = [ItemRentalInline]
 
-    list_display = ['uuid', 'state']
+    list_display = ['uuid', 'name', 'email', 'state']
     ordering = ['uuid']
 
     actions = ['make_approved', 'make_declined', 'make_pending', 'make_revoked']
