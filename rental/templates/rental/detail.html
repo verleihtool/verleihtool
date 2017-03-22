@@ -15,9 +15,8 @@
         Rental Nr. {{ rental.uuid }} <small>by {{ rental.name }}</small>
     </h1>
 
-    <div class="alert alert-info">
-        State:
-        {% rental_state rental.state %}
+    <div class="{{ alert }}">
+        <strong>State:</strong> {% rental_state rental.state %}
     </div>
 
     <div>Email: {{ rental.email }}</div>
