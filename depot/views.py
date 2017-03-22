@@ -24,8 +24,14 @@ def detail(request, depot_id):
     else:
         item_list = depot.item_set.filter(visibility=Item.VISIBILITY_PUBLIC)
 
+    error_message = None
+    if 'message' in request.session and request.session['message'] is not None:
+        error_message = request.session['message']
+        request.session.__delitem__('message')
+
     return render(request, 'depot/detail.html', {
         'depot': depot,
         'managed_by_user': depot.managed_by(request.user),
         'item_list': item_list,
+        'error_message': error_message,
     })
