@@ -39,12 +39,15 @@ def create(request):
             item.full_clean()
             item.save()
 
+    p = re.compile("/(create)/")
+
     mailcontext = Context({
         'username': rental.name,
         'start_date': rental.start_date,
         'return_date': rental.return_date,
-        'id': rental.uuid,
-        'itemrental_list': rental.itemrental_set.all()
+        'uuid': rental.uuid,
+        'itemrental_list': rental.itemrental_set.all(),
+        'absoluteuri': p.sub("/", request.build_absolute_uri())
     })
 
     html_content = render_to_string('rental_confirmation_email.html', mailcontext)
@@ -53,7 +56,7 @@ def create(request):
     send_mail(
         'Your rental request, %s ' % rental.name,
         txt_content,
-        'su@fs.tum.de',
+        'verleih@tool.de',
         [rental.email],
         html_message=html_content,
         fail_silently=True,
