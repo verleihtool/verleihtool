@@ -23,7 +23,7 @@ module.exports = {
     },
     resolve: {
         alias: {
-           'jquery': require.resolve('jquery'),
+           'jquery': require.resolve('jquery')
         }
     },
     output: {
