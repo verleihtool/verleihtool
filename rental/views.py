@@ -4,6 +4,7 @@ from .models import Rental, ItemRental
 from django.db import transaction
 from django.views.decorators.http import require_POST
 import re
+import html2text
 
 from django.core.mail import send_mail
 from django.template import Context
@@ -51,11 +52,11 @@ def create(request):
     })
 
     html_content = render_to_string('rental_confirmation_email.html', mailcontext)
-    txt_content = render_to_string('rental_confirmation_email.txt', mailcontext)
+    plain_txt_mail = html2text.html2text(html_content)
 
     send_mail(
         'Your rental request, %s ' % rental.name,
-        txt_content,
+        plain_txt_mail,
         'verleih@tool.de',
         [rental.email],
         html_message=html_content,
