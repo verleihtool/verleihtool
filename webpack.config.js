@@ -21,6 +21,11 @@ module.exports = {
             loader: 'file-loader'
         }]
     },
+    resolve: {
+        alias: {
+           'jquery': require.resolve('jquery')
+        }
+    },
     output: {
         filename: 'app.js',
         path: path.resolve(__dirname, 'static')

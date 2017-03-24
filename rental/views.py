@@ -41,9 +41,22 @@ def create(request):
 
 def detail(request, rental_uuid):
     rental = get_object_or_404(Rental, pk=rental_uuid)
-    rental_url = '/rental/' + rental.uuid
+    dmg = rental.depot.managed_by(request.user)
+    item_list = rental.itemrental_set.all()
+    if rental.state == Rental.STATE_PENDING:
+        alert = "alert alert-info"
+    elif rental.state == Rental.STATE_APPROVED:
+        alert = "alert alert-success"
+    elif rental.state == Rental.STATE_DECLINED:
+        alert = "alert alert-danger"
+    else:
+        alert = "alert alert.warning"
+
     return render(request, 'rental/detail.html', {
-        'rental_url': rental_url,
+        'rental': rental,
+        'dmg': dmg,
+        'item_list': item_list,
+        'alert': alert,
     })
 
 
