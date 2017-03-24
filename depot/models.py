@@ -17,6 +17,9 @@ class Organization(models.Model):
     groups = models.ManyToManyField(Group)
     managers = models.ManyToManyField(User)
 
+    def managed_by(self, user):
+        return user.is_superuser or self.managers.filter(id=user.id).exists()
+
     @property
     def active_depots(self):
         return self.depot_set.filter(active=True)
@@ -39,7 +42,8 @@ class Depot(models.Model):
     active = models.BooleanField(default=True)
 
     def managed_by(self, user):
-        return (self.manager_users.filter(id=user.id).exists() or
+        return (self.organization.managed_by(user) or
+                self.manager_users.filter(id=user.id).exists() or
                 self.manager_groups.filter(id__in=user.groups.all()).exists())
 
     @property
