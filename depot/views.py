@@ -19,7 +19,6 @@ def index(request):
                 'depots': depots
             })
 
-
     return render(request, 'depot/index.html', {
         'organization_depots': organization_depots
     })
