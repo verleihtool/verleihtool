@@ -57,7 +57,9 @@ ROOT_URLCONF = 'verleihtool.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'verleihtool', 'templates')],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'verleihtool', 'templates'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -132,3 +134,10 @@ STATICFILES_DIRS = [
 # Login
 
 LOGIN_REDIRECT_URL = '/'
+
+# E-Mail preferences
+# Write Emails to std output instead of sending for development purposes
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_SUBJECT_PREFIX = '[verleihtool] '
+DEFAULT_FROM_EMAIL = 'verleih@tool.de'

@@ -1,0 +1,18 @@
+Rental request for {{ username }}
+
+Hello {{ username }},
+
+here is a summary of your rental
+from {{ start_date }}
+to {{ return_date }}.
+
+{% for itemrental in itemrental_list %}
+    Name: {{ itemrental.item.name }}
+    Location: {{ itemrental.item.location }}
+    Quantity: {{ itemrental.quantity }}
+{% endfor %}
+
+Go to {{ absoluteuri }}{{ uuid }} to view the status of your request and to edit your order.
+
+Best,
+The verleihtool

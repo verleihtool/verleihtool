@@ -48,6 +48,10 @@ pip install django
 
 python -m django --version
 
+echo "Installing html2text"
+pip install html2text
+html2text --version
+
 echo "Installing Flake8"
 pip install flake8
 
