@@ -12,6 +12,14 @@ class AutoFillTestCase(ClientTestCase):
     def setUp(self):
         super(AutoFillTestCase, self).setUp()
 
+        self.user.first_name = 'Ulrich'
+        self.user.last_name = 'User'
+        self.user.save()
+
+        self.superuser.first_name = 'Armin'
+        self.superuser.last_name = 'Admin'
+        self.superuser.save()
+
         organization = Organization.objects.create()
 
         self.depot = Depot.objects.create(
@@ -19,12 +27,18 @@ class AutoFillTestCase(ClientTestCase):
             organization=organization
         )
 
-    def test_logged_in_autofill(self):
+    def test_user_logged_in_autofill(self):
         response = self.as_user.get('/depots/%d/' % self.depot.id)
 
         self.assertInHTML(
-            '<input type="text" class="form-control" id="id_username"'
-            'name="name" value="user" required>',
+            '<input type="text" class="form-control" '
+            'name="lastname" value="User" required>',
+            response.content.decode()
+        )
+
+        self.assertInHTML(
+            '<input type="text" class="form-control" '
+            'name="firstname" value="Ulrich" required>',
             response.content.decode()
         )
 
@@ -38,8 +52,14 @@ class AutoFillTestCase(ClientTestCase):
         response = self.as_guest.get('/depots/%d/' % self.depot.id)
 
         self.assertInHTML(
-            '<input type="text" class ="form-control" id="id_username"'
-            'name="name" value="" required>',
+            '<input type="text" class="form-control" '
+            'name="lastname" value="" required>',
+            response.content.decode()
+        )
+
+        self.assertInHTML(
+            '<input type="text" class="form-control" '
+            'name="firstname" value="" required>',
             response.content.decode()
         )
 

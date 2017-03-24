@@ -2,11 +2,11 @@
 <html>
 
     <head>
-        <title>Your rental request {{ username }}</title>
+        <title>Your rental request {{ firstname }}{{ lastname }}</title>
     </head>
 
     <body>
-        <p> Hello {{ username }}, </p>
+        <p> Hello {{ firstname }}, </p>
         <p> here is a summary of your rental <br />
             from {{ start_date }} <br />
             to {{ return_date }}. <br /> </p>
@@ -22,7 +22,7 @@
         <p> Go to <a href="{{ absoluteuri }}{{ uuid }}">{{ absoluteuri }}{{ uuid }}</a> to view the status of your request and to edit your order. </p>
 
         <p>Best <br />
-            the verleihtool
+            the Verleihtool
         </p>
     </body>
 
