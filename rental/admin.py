@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import Rental, ItemRental
+from django.db.models import Q
 
 
 class ItemRentalInline(admin.TabularInline):
@@ -42,6 +43,31 @@ class RentalAdmin(admin.ModelAdmin):
         rentals_revoked = queryset.update(state=Rental.STATE_REVOKED)
         self.message_user(request, RentalAdmin.format_message(rentals_revoked, 'revoked'))
     make_revoked.short_description = 'Revoke selected rentals'
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+
+        if request.user.is_superuser:
+            return qs
+
+        # ugliest query alive
+        return qs.filter(Q(depot__manager_users__id=request.user.id) |
+                         Q(depot__manager_groups__id__in=request.user.groups.all()))
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        if not obj:
+            return True
+
+        if request.user.is_superuser:
+            return True
+
+        return obj.depot.managed_by(request.user)
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 # Register your models here.
