@@ -27,7 +27,8 @@ $('#checkout-modal').on('show.bs.modal', () => {
 // show calendar prompt
 $('#start_date').datetimepicker({
     format: 'YYYY-MM-DD HH:mm',
-    stepping: 5
+    stepping: 5,
+    minDate: new Date()
 })
 
 $('#end_date').datetimepicker({
