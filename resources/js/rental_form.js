@@ -25,22 +25,24 @@ $('#checkout-modal').on('show.bs.modal', () => {
 })
 
 // show calendar prompt
-$('#start_date').datetimepicker({
+$('#start_date_picker').datetimepicker({
     format: 'YYYY-MM-DD HH:mm',
     stepping: 5,
+    allowInputToggle: true,
     minDate: new Date()
 })
 
-$('#end_date').datetimepicker({
+$('#end_date_picker').datetimepicker({
     format: 'YYYY-MM-DD HH:mm',
     stepping: 5,
+    allowInputToggle: true,
     useCurrent: false
 })
 
-$('#start_date').on('dp.change', (e) => {
-    $('#end_date').data('DateTimePicker').minDate(e.date)
+$('#start_date_picker').on('dp.change', (e) => {
+    $('#end_date_picker').data('DateTimePicker').minDate(e.date)
 });
 
-$('#end_date').on('dp.change', (e) => {
-    $('#start_date').data('DateTimePicker').maxDate(e.date)
+$('#end_date_picker').on('dp.change', (e) => {
+    $('#start_date_picker').data('DateTimePicker').maxDate(e.date)
 });
