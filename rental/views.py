@@ -40,7 +40,7 @@ def create(request):
             item.full_clean()
             item.save()
 
-    p = re.compile("/(create)/")
+    p = re.compile('/(create)/')
 
     mailcontext = Context({
         'username': rental.name,
@@ -48,7 +48,7 @@ def create(request):
         'return_date': rental.return_date,
         'uuid': rental.uuid,
         'itemrental_list': rental.itemrental_set.all(),
-        'absoluteuri': p.sub("/", request.build_absolute_uri())
+        'absoluteuri': p.sub('/', request.build_absolute_uri())
     })
 
     html_content = render_to_string('rental_confirmation_email.html', mailcontext)
