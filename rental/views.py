@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 from django.template import Context
 from django.template.loader import render_to_string
+from django.http import HttpResponseForbidden
 import re
 import html2text
 
@@ -43,28 +44,112 @@ def create(request):
 
 
 def detail(request, rental_uuid):
+    """
+    Provides necessary information for a rentals detail page
+
+    This includes buttons to change the rentals state,
+    an alert with information about the rentals state
+    and a list of rented items.
+
+    :author: Florian Stamer
+    """
+
     rental = get_object_or_404(Rental, pk=rental_uuid)
     dmg = rental.depot.managed_by(request.user)
     item_list = rental.itemrental_set.all()
+    buttons = []
+    pending = {'class': 'btn btn-info', 'value': 'Pending'}
+    revoke = {'class': 'btn btn-warning', 'value': 'Revoke'}
+    approve = {'class': 'btn btn-success', 'value': 'Approve'}
+    decline = {'class': 'btn btn-danger', 'value': 'Decline'}
+    returned = {'class': 'btn btn-primary', 'value': 'Returned'}
+
+    alert = 'alert alert-info'
     if rental.state == Rental.STATE_PENDING:
-        alert = "alert alert-info"
+        buttons.append(revoke)
+        if dmg:
+            buttons.append(approve)
+            buttons.append(decline)
     elif rental.state == Rental.STATE_APPROVED:
-        alert = "alert alert-success"
+        alert = 'alert alert-success'
+        buttons.append(revoke)
+        if dmg:
+            buttons.append(pending)
+            buttons.append(decline)
+            buttons.append(returned)
     elif rental.state == Rental.STATE_DECLINED:
-        alert = "alert alert-danger"
+        alert = 'alert alert-danger'
+        if dmg:
+            buttons.append(pending)
+            buttons.append(approve)
+    elif rental.state == Rental.STATE_RETURNED:
+        if dmg:
+            buttons.append(approve)
     else:
-        alert = "alert alert.warning"
+        alert = 'alert alert-warning'
+        buttons.append(pending)
 
     return render(request, 'rental/detail.html', {
         'rental': rental,
-        'dmg': dmg,
+        'buttons': buttons,
         'item_list': item_list,
         'alert': alert,
     })
 
 
-def update(request, rental_id):
+@require_POST
+def state(request, rental_uuid):
+    """
+    Changes state of a given rental
+
+    If given an invalid state, return 403.
+
+    :author: Florian Stamer
+    """
+
+    rental = get_object_or_404(Rental, pk=rental_uuid)
+    data = request.POST
+    dmg = rental.depot.managed_by(request.user)
+    state = data.get('state')
+    states = {
+        'Pending': Rental.STATE_PENDING,
+        'Revoke': Rental.STATE_REVOKED,
+        'Approve': Rental.STATE_APPROVED,
+        'Decline': Rental.STATE_DECLINED,
+        'Returned': Rental.STATE_RETURNED
+    }
+
+    if not valid_state_change(dmg, rental.state, state):
+        return HttpResponseForbidden()
+
+    rental.state = states[state]
+    rental.save()
+    return redirect('rental:detail', rental_uuid=rental.uuid)
+
+
+def update(request, rental_uuid):
     return render(request, 'rental/update.html')
+
+
+def valid_state_change(dmg, state, action):
+    if dmg:
+        valid = {
+            Rental.STATE_PENDING: ['Revoke', 'Approve', 'Decline'],
+            Rental.STATE_REVOKED: ['Pending'],
+            Rental.STATE_APPROVED: ['Pending', 'Revoke', 'Decline', 'Returned'],
+            Rental.STATE_DECLINED: ['Pending', 'Approve'],
+            Rental.STATE_RETURNED: ['Approve']
+        }
+    else:
+        valid = {
+            Rental.STATE_PENDING: ['Revoke'],
+            Rental.STATE_REVOKED: ['Pending'],
+            Rental.STATE_APPROVED: ['Revoke'],
+            Rental.STATE_DECLINED: [],
+            Rental.STATE_RETURNED: []
+        }
+
+    return action in valid[state]
 
 
 def create_session_msg(session, e):
