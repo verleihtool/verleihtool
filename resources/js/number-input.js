@@ -16,13 +16,15 @@ $('.number-down').click((ev) => {
 // Validate number inputs
 $('.number input').change((ev) => {
     let val = parseInt($(ev.target).val())
-    let min = parseInt($(ev.target).attr('min'))
-    let max = parseInt($(ev.target).attr('max'))
+    let min = parseInt($(ev.target).data('min'))
+    let max = parseInt($(ev.target).data('max'))
 
     if (!val || val < min) {
         $(ev.target).val(min)
     }
     else if (val > max) {
         $(ev.target).val(max)
+    } else {
+        $(ev.target).val(val)
     }
 })
