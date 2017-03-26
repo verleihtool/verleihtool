@@ -1,12 +1,54 @@
-# __README__
+# Verleihtool
 
+The **Verleihtool** helps with the administration of public depots and allows
+users to send rental requests for items in this depots. It also supports to
+assign managers for each depot and group them into several organizations.
 
-## Test-IP-Address
-  - Address: __*127.0.0.1*__ 
-  - Port: __*1337*__
+## Development
 
-## How to create Superuser
-  - `$ python manage.py createsuperuser`
-  - You will than be guided through the creation process, e.g. entering a name, email address ...
-  
-[Click here](http://127.0.0.1:1337)
+### Setting up Vagrant
+
+The development of the Verleihtool happens via [Vagrant](https://www.vagrantup.com/)
+and preferably with the [VirtualBox](https://www.virtualbox.org/) provider.
+After installing these components, doing `vagrant up` from the project's
+directory will create the virtual machine and run the provisioner on it.
+When the process is finished, one can login to the machine using `vagrant ssh`.
+In case the provision script gets updated afterwards, the command
+`vagrant provision` will update the virtual machine accordingly.
+
+### Starting the tool
+
+To install the dependencies, run `pip install -r requirements.txt` and
+`npm install` from the `/vagrant` directory in the virtual machine. Afterwards,
+apply all migrations using the command `python manage.py migrate`. To generate
+the JavaScript and CSS files, enter `npm run dev` or alternatively
+`npm run watch-poll` if the script should automatically detect changes to the
+source files. Finally, the server can be started using the provided script in
+the home directory of the vagrant user called `startServer.sh`. The tool can
+then be reached at [http://127.0.0.1:1337/](http://127.0.0.1:1337/).
+
+To create a superuser, execute the command `python manage.py createsuperuser`
+in the `/vagrant` folder and follow the process.
+
+### Runing the tests
+
+The Verleihtool comes with a full test suite that can be run using the command
+`python manage.py test`. This will not touch the existing database but create a
+new test database every time. To run the lint script, execute `flake8` from
+the `/vagrant` directory.
+
+## Deployment
+
+The Verleihtool requires Python 3 to be installed on the server as well as a
+database software that is [supported by Django](https://docs.djangoproject.com/en/1.10/ref/databases/).
+The web server must be configured to access static files from the `static`
+directory of this project. Before each deployment, the resource files have to be
+generated either on the production server or on another device using the
+`npm run production` command. This will place the minified JavaScript and CSS
+files in the `static` directory.
+
+## Credits
+
+The Verleihtool was written as a [Projektarbeit](https://mpi.fs.tum.de/fuer-studierende/projektarbeit/)
+for the Fachschaft MPI at TU Munich during winter semester 2016/17
+by Benedikt Seidl, Florian Stamer, Stefan Su and Leo Tappe.
