@@ -14,14 +14,18 @@ class ClientTestCase(TestCase):
         self.user = User.objects.create_user(
             username='user',
             email='user@example.com',
-            password='password'
+            password='password',
+            first_name='Ursula',
+            last_name='User'
         )
 
         # Create superuser
         self.superuser = User.objects.create_superuser(
             username='admin',
             email='admin@example.com',
-            password='pass'
+            password='pass',
+            first_name='Armin',
+            last_name='Admin'
         )
 
     @property

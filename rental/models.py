@@ -29,7 +29,8 @@ class Rental(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     depot = models.ForeignKey(Depot)
     items = models.ManyToManyField(Item, through='ItemRental')
-    name = models.CharField(max_length=256)
+    firstname = models.CharField(max_length=256)
+    lastname = models.CharField(max_length=256)
     email = models.EmailField()
     purpose = models.CharField(max_length=256, blank=True)
     user = models.ForeignKey(User, blank=True, null=True)
@@ -47,7 +48,7 @@ class Rental(models.Model):
             })
 
     def __str__(self):
-        return 'Rental by %s' % self.name
+        return 'Rental by %s %s' % (self.firstname, self.lastname)
 
 
 class ItemRental(models.Model):

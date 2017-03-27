@@ -51,8 +51,8 @@ class RentalTestCase(TestCase):
             rental.clean()
 
     def test_str(self):
-        rental = Rental(name='Fitnessflow')
-        self.assertEqual(rental.__str__(), 'Rental by Fitnessflow')
+        rental = Rental(firstname='Fitness', lastname='Flow')
+        self.assertEqual(rental.__str__(), 'Rental by Fitness Flow')
 
 
 class ItemRentalTestCase(TestCase):

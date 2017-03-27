@@ -10,57 +10,12 @@ import re
 import html2text
 
 
-def create_session_msg(session, e):
-    if 'message' not in session:
-        session['message'] = []
-    for key, message in e:
-        session['message'].append(key + ': ' + str(message))
-
-
-def create_rental(session, user, params, data):
-    rental = Rental(user=user, **{key: data.get(key) for key in params})
-    try:
-        rental.full_clean()
-        rental.save()
-    except ValidationError as e:
-        create_session_msg(session, e)
-        rental = Rental(
-            user=None,
-            depot_id=data.get('depot_id'),
-            name='Debug',
-            email='debug@example.com',
-            start_date='1999-12-31',
-            return_date='2000-01-01'
-        )
-        rental.save()
-    return rental
-
-
-def create_items(session, rental, data):
-    empty = True
-    for key, quantity in data.items():
-        m = re.match(r'^item-([0-9]+)-quantity$', key)
-        if m is not None and int(quantity) > 0:
-            empty = False
-            item = ItemRental(
-                rental_id=rental.uuid,
-                item_id=m.group(1),
-                quantity=quantity
-            )
-            try:
-                item.full_clean()
-                item.save()
-            except ValidationError as e:
-                create_session_msg(session, e)
-    return empty
-
-
 @require_POST
 def create(request):
     data = request.POST
 
     params = (
-        'name', 'depot_id', 'email', 'purpose', 'start_date', 'return_date'
+        'firstname', 'lastname', 'depot_id', 'email', 'purpose', 'start_date', 'return_date'
     )
 
     user = request.user if request.user.is_authenticated else None
@@ -80,7 +35,7 @@ def create(request):
             if 'message' in request.session and request.session['message'] is not None:
                 raise ValidationError('Errors occured.')
 
-            p = re.compile('/(create)/')
+            pattern_obj = re.compile('/(create)/')
 
             mailcontext = Context({
                 'username': rental.name,
@@ -88,7 +43,7 @@ def create(request):
                 'return_date': rental.return_date,
                 'uuid': rental.uuid,
                 'itemrental_list': rental.itemrental_set.all(),
-                'absoluteuri': p.sub('/', request.build_absolute_uri())
+                'absoluteuri': pattern_obj.sub('/', request.build_absolute_uri())
             })
 
             html_content = render_to_string('rental_confirmation_email.html', mailcontext)
@@ -131,3 +86,75 @@ def detail(request, rental_uuid):
 
 def update(request, rental_id):
     return render(request, 'rental/update.html')
+
+
+def create_session_msg(session, e):
+    if 'message' not in session:
+        session['message'] = []
+    for key, message in e:
+        session['message'].append(key + ': ' + str(message))
+
+
+def create_rental(session, user, params, data):
+    rental = Rental(user=user, **{key: data.get(key) for key in params})
+    try:
+        rental.full_clean()
+        rental.save()
+    except ValidationError as e:
+        create_session_msg(session, e)
+        rental = Rental(
+            user=None,
+            depot_id=data.get('depot_id'),
+            firstname='De',
+            lastname='Bug',
+            email='debug@example.com',
+            start_date='1999-12-31',
+            return_date='2000-01-01'
+        )
+        rental.save()
+    return rental
+
+
+def create_items(session, rental, data):
+    empty = True
+    for key, quantity in data.items():
+        m = re.match(r'^item-([0-9]+)-quantity$', key)
+        if m is not None and int(quantity) > 0:
+            empty = False
+            item = ItemRental(
+                rental_id=rental.uuid,
+                item_id=m.group(1),
+                quantity=quantity
+            )
+            try:
+                item.full_clean()
+                item.save()
+            except ValidationError as e:
+                create_session_msg(session, e)
+    return empty
+
+
+def send_confirmation_mail(request, rental):
+    p = re.compile("/(create)/")
+
+    mailcontext = Context({
+        'firstname': rental.firstname,
+        'lastname': rental.lastname,
+        'start_date': rental.start_date,
+        'return_date': rental.return_date,
+        'uuid': rental.uuid,
+        'itemrental_list': rental.itemrental_set.all(),
+        'absoluteuri': p.sub("/", request.build_absolute_uri())
+    })
+
+    html_content = render_to_string('rental_confirmation_email.html', mailcontext)
+    plain_txt_mail = html2text.html2text(html_content)
+
+    send_mail(
+        'Your rental request, %s %s' % (rental.lastname, rental.firstname),
+        plain_txt_mail,
+        'verleih@tool.de',
+        [rental.email],
+        html_message=html_content,
+        fail_silently=True,
+    )
