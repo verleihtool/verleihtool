@@ -3,6 +3,11 @@ from verleihtool.test import ClientTestCase
 
 
 class DepotDetailTestCase(ClientTestCase):
+    """
+    Test the detail page for a depot which can be found at `/depot/{id}/`
+
+    :author: Benedikt Seidl
+    """
 
     def create_item(self, name, visibility):
         Item.objects.create(
