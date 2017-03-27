@@ -16,11 +16,13 @@ class Rental(models.Model):
     STATE_APPROVED = '2'
     STATE_DECLINED = '3'
     STATE_REVOKED = '4'
+    STATE_RETURNED = '5'
     STATES = (
         (STATE_PENDING, 'pending'),
         (STATE_APPROVED, 'approved'),
         (STATE_DECLINED, 'declined'),
         (STATE_REVOKED, 'revoked'),
+        (STATE_RETURNED, 'returned'),
     )
 
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -75,4 +77,10 @@ class ItemRental(models.Model):
             raise ValidationError({
                 'quantity': 'The quantity must be positive and less than or '
                             'equal to the total amount of available items.'
+            })
+
+        if self.returned > self.quantity:
+            raise ValidationError({
+                'returned': 'The amount of returned items must be less than or '
+                            'equal to the total amount of rented items.'
             })
