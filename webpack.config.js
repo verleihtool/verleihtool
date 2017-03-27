@@ -1,7 +1,18 @@
 let path = require('path')
 let webpack = require('webpack')
 let ExtractTextPlugin = require('extract-text-webpack-plugin')
-var OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+let OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+
+let plugins = [
+    new ExtractTextPlugin('app.css')
+]
+
+if (process.env.NODE_ENV === 'production') {
+    plugins.push(
+        new webpack.optimize.UglifyJsPlugin(),
+        new OptimizeCssAssetsPlugin()
+    )
+}
 
 module.exports = {
     entry: [
@@ -36,9 +47,5 @@ module.exports = {
         filename: 'app.js',
         path: path.resolve(__dirname, 'static')
     },
-    plugins: [
-        new ExtractTextPlugin('app.css'),
-        new webpack.optimize.UglifyJsPlugin(),
-        new OptimizeCssAssetsPlugin()
-    ]
+    plugins
 }
