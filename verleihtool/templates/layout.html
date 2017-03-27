@@ -43,7 +43,11 @@
                         <ul class="nav navbar-nav navbar-right">
                             {% if user.is_authenticated %}
                                 {% if user.is_superuser %}
-                                    <li><a href="{% url 'admin:index' %}">Administration</a></li>
+                                    <li>
+                                        <a href="{% url 'admin:index' %}" target="_blank">
+                                            Administration
+                                        </a>
+                                    </li>
                                 {% endif %}
                                 <li><a href="{% url 'login:logout' %}">Logout</a></li>
                             {% else %}
