@@ -12,14 +12,6 @@ class AutoFillTestCase(ClientTestCase):
     def setUp(self):
         super(AutoFillTestCase, self).setUp()
 
-        self.user.first_name = 'Ulrich'
-        self.user.last_name = 'User'
-        self.user.save()
-
-        self.superuser.first_name = 'Armin'
-        self.superuser.last_name = 'Admin'
-        self.superuser.save()
-
         organization = Organization.objects.create()
 
         self.depot = Depot.objects.create(
@@ -38,7 +30,7 @@ class AutoFillTestCase(ClientTestCase):
 
         self.assertInHTML(
             '<input type="text" class="form-control" '
-            'name="firstname" value="Ulrich" required>',
+            'name="firstname" value="Ursula" required>',
             response.content.decode()
         )
 
