@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime, timedelta
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 from rental.models import Rental, ItemRental
@@ -7,44 +7,45 @@ from depot.models import Depot, Item, Organization
 
 class RentalTestCase(TestCase):
 
-    def test_clean__active_depot(self):
-        rental = Rental(
-            depot=Depot(),
-            start_date=datetime.datetime(2017, 3, 15),
-            return_date=datetime.datetime(2017, 3, 17)
-        )
-        rental.clean()
-
-    def test_clean__archived_depot(self):
-        rental = Rental(
-            depot=Depot(active=False),
-            start_date=datetime.datetime(2017, 3, 15),
-            return_date=datetime.datetime(2017, 3, 17)
-        )
-        with self.assertRaises(ValidationError):
-            rental.clean()
-
     def test_clean__valid_rental(self):
         rental = Rental(
             depot=Depot(),
-            start_date=datetime.datetime(2017, 3, 15),
-            return_date=datetime.datetime(2017, 3, 17)
+            start_date=datetime.now() + timedelta(days=1),
+            return_date=datetime.now() + timedelta(days=3)
         )
         rental.clean()
 
     def test_clean__same_dates(self):
         rental = Rental(
             depot=Depot(),
-            start_date=datetime.datetime(2017, 3, 15),
-            return_date=datetime.datetime(2017, 3, 15)
+            start_date=datetime.now() + timedelta(days=1),
+            return_date=datetime.now() + timedelta(days=1)
         )
         rental.clean()
 
-    def test_clean__invalid_rental(self):
+    def test_clean__return_date_before_start_date(self):
         rental = Rental(
             depot=Depot(),
-            start_date=datetime.datetime(2017, 3, 15),
-            return_date=datetime.datetime(2017, 3, 13)
+            start_date=datetime.now() + timedelta(days=3),
+            return_date=datetime.now() + timedelta(days=1)
+        )
+        with self.assertRaises(ValidationError):
+            rental.clean()
+
+    def test_clean__archived_depot(self):
+        rental = Rental(
+            depot=Depot(active=False),
+            start_date=datetime.now() + timedelta(days=1),
+            return_date=datetime.now() + timedelta(days=3)
+        )
+        with self.assertRaises(ValidationError):
+            rental.clean()
+
+    def test_clean__past_start_date(self):
+        rental = Rental(
+            depot=Depot(),
+            start_date=datetime.now() + timedelta(days=-1),
+            return_date=datetime.now() + timedelta(days=3)
         )
         with self.assertRaises(ValidationError):
             rental.clean()

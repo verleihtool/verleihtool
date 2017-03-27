@@ -1,4 +1,5 @@
 import uuid
+from datetime import datetime
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
@@ -40,9 +41,9 @@ class Rental(models.Model):
         if not self.depot.active:
             raise ValidationError({'depot': 'The depot has to be active.'})
 
-        if self.start_date > self.return_date:
+        if self.start_date < datetime.now() or self.start_date > self.return_date:
             raise ValidationError({
-                'start_date': 'The start date must be before the return date.'
+                'start_date': 'The start date must be in the future and before the return date.'
             })
 
     def __str__(self):
