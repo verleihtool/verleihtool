@@ -1,3 +1,14 @@
+// Only enable checkout button when items are selected
+$('.rental-item-selected input').change(() => {
+    let sum = 0
+
+    $('.rental-item-selected input').each((_, el) => {
+        sum += $(el).val()
+    })
+
+    $('#checkout-button').attr('disabled', sum <= 0)
+})
+
 // Display items that have been selected from the depot
 $('#checkout-modal').on('show.bs.modal', () => {
     // delete all items residing in the summary
