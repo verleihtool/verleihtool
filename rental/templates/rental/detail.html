@@ -1,6 +1,6 @@
 {% extends 'layout.html' %}
 
-{% load layout %}
+{% load tags %}
 
 {% block title %}
     Rental
@@ -10,7 +10,7 @@
     {% if error_message %}
         <div class="alert alert-danger" role="alert">{{ error_message }}</div>
     {% endif %}
-    
+
     <h1>
         Rental Nr. {{ rental.uuid }} <small>by {{ rental.name }}</small>
     </h1>
@@ -33,7 +33,7 @@
             <th>Quantity</th>
             <th>Location</th>
         </tr>
-        
+
         {% for item in item_list %}
             <tr class="rental-item">
                 <td class="rental-item-name">{{ item.item.name }}</td>
@@ -46,5 +46,5 @@
     {% if dmg %}
         <a href="{% url 'admin:rental_rental_change' rental.uuid %}" class="btn btn-default">Change State</a>
     {% endif %}
-    
+
 {% endblock %}
