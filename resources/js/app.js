@@ -6,4 +6,5 @@ require('bootstrap-sass');
 require('eonasdan-bootstrap-datetimepicker');
 
 // our scripts
-require('./rental_form');
+require('./number-input')
+require('./rental-form');
