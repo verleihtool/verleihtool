@@ -35,28 +35,7 @@ def create(request):
             if 'message' in request.session and request.session['message'] is not None:
                 raise ValidationError('Errors occured.')
 
-            pattern_obj = re.compile('/(create)/')
-
-            mailcontext = Context({
-                'username': rental.name,
-                'start_date': rental.start_date,
-                'return_date': rental.return_date,
-                'uuid': rental.uuid,
-                'itemrental_list': rental.itemrental_set.all(),
-                'absoluteuri': pattern_obj.sub('/', request.build_absolute_uri())
-            })
-
-            html_content = render_to_string('rental_confirmation_email.html', mailcontext)
-            plain_txt_mail = html2text.html2text(html_content)
-
-            send_mail(
-                'Your rental request, %s ' % rental.name,
-                plain_txt_mail,
-                'verleih@tool.de',
-                [rental.email],
-                html_message=html_content,
-                fail_silently=True,
-            )
+            send_confirmation_mail(request, rental)
 
             return redirect('rental:detail', rental_uuid=rental.uuid)
     except ValidationError:
@@ -135,7 +114,7 @@ def create_items(session, rental, data):
 
 
 def send_confirmation_mail(request, rental):
-    p = re.compile("/(create)/")
+    pattern_obj = re.compile("/(create)/")
 
     mailcontext = Context({
         'firstname': rental.firstname,
@@ -144,7 +123,7 @@ def send_confirmation_mail(request, rental):
         'return_date': rental.return_date,
         'uuid': rental.uuid,
         'itemrental_list': rental.itemrental_set.all(),
-        'absoluteuri': p.sub("/", request.build_absolute_uri())
+        'absoluteuri': pattern_obj.sub("/", request.build_absolute_uri())
     })
 
     html_content = render_to_string('rental_confirmation_email.html', mailcontext)
