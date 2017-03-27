@@ -1,5 +1,6 @@
-var path = require('path'),
-    ExtractTextPlugin = require('extract-text-webpack-plugin');
+let path = require('path')
+let webpack = require('webpack')
+let ExtractTextPlugin = require('extract-text-webpack-plugin')
 
 module.exports = {
     entry: [
@@ -9,7 +10,11 @@ module.exports = {
     module: {
         loaders: [{
             test: /\.js$/,
-            loader: 'babel-loader'
+            exclude: /(node_modules|bower_components)/,
+            loader: 'babel-loader',
+            query: {
+                presets: ['es2015']
+            }
         }, {
             test: /\.scss$/,
             loader: ExtractTextPlugin.extract({
@@ -31,6 +36,7 @@ module.exports = {
         path: path.resolve(__dirname, 'static')
     },
     plugins: [
-        new ExtractTextPlugin('app.css')
+        new ExtractTextPlugin('app.css'),
+        new webpack.optimize.UglifyJsPlugin()
     ]
-};
+}
