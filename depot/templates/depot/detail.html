@@ -8,7 +8,12 @@
 
 {% block content %}
     {% if error_message %}
-        <div class="alert alert-danger" role="alert">{{ error_message }}</div>
+        <div class="alert alert-danger" role="alert">
+            <div><strong>Error:</strong></div>
+            {% for error in error_message %}
+                <div>{{ error }}</div>
+            {% endfor %}
+        </div>
     {% endif %}
 
     <h1>
