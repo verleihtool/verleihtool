@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
+
+from depot.models import Depot
 from .models import Rental, ItemRental
 from django.db import transaction
 from django.views.decorators.http import require_POST
 from django.core.exceptions import ValidationError
-from django.core.mail import send_mail
+from django.core.mail import send_mass_mail
 from django.template import Context
 from django.template.loader import render_to_string
 import re
@@ -35,28 +37,7 @@ def create(request):
             if 'message' in request.session and request.session['message'] is not None:
                 raise ValidationError('Errors occured.')
 
-            pattern_obj = re.compile('/(create)/')
-
-            mailcontext = Context({
-                'username': rental.name,
-                'start_date': rental.start_date,
-                'return_date': rental.return_date,
-                'uuid': rental.uuid,
-                'itemrental_list': rental.itemrental_set.all(),
-                'absoluteuri': pattern_obj.sub('/', request.build_absolute_uri())
-            })
-
-            html_content = render_to_string('rental_confirmation_email.html', mailcontext)
-            plain_txt_mail = html2text.html2text(html_content)
-
-            send_mail(
-                'Your rental request, %s ' % rental.name,
-                plain_txt_mail,
-                'verleih@tool.de',
-                [rental.email],
-                html_message=html_content,
-                fail_silently=True,
-            )
+            send_confirmation_mails(request, rental)
 
             return redirect('rental:detail', rental_uuid=rental.uuid)
     except ValidationError:
@@ -134,8 +115,8 @@ def create_items(session, rental, data):
     return empty
 
 
-def send_confirmation_mail(request, rental):
-    p = re.compile("/(create)/")
+def send_confirmation_mails(request, rental):
+    pattern_obj = re.compile("/(create)/")
 
     mailcontext = Context({
         'firstname': rental.firstname,
@@ -144,17 +125,40 @@ def send_confirmation_mail(request, rental):
         'return_date': rental.return_date,
         'uuid': rental.uuid,
         'itemrental_list': rental.itemrental_set.all(),
-        'absoluteuri': p.sub("/", request.build_absolute_uri())
+        'absoluteuri': pattern_obj.sub("/", request.build_absolute_uri()),
+        'depotname': rental.depot.name
     })
 
-    html_content = render_to_string('rental_confirmation_email.html', mailcontext)
-    plain_txt_mail = html2text.html2text(html_content)
+    html_content_mail_to_requester = render_to_string(
+        'rental_confirmation_email.html',
+        mailcontext
+    )
 
-    send_mail(
+    plain_txt_mail_to_requester = html2text.html2text(html_content_mail_to_requester)
+
+    mail_to_requester = (
         'Your rental request, %s %s' % (rental.lastname, rental.firstname),
-        plain_txt_mail,
+        plain_txt_mail_to_requester,
         'verleih@tool.de',
         [rental.email],
-        html_message=html_content,
-        fail_silently=True,
     )
+
+    plain_txt_mail_to_manager = ''
+
+    dmg_email_list = get_dmg_emailaddr_list(rental.depot.managers)
+
+    mail_to_managers = (
+        'New rental request by %s %s' % (rental.lastname, rental.firstname),
+        plain_txt_mail_to_manager,
+        'verleih@tool.de',
+        dmg_email_list
+    )
+
+    send_mass_mail(mail_to_requester, mail_to_managers)
+
+
+def get_dmg_emailaddr_list(depot_managers):
+    email_list = []
+    for dmg in depot_managers:
+        email_list += dmg.email
+    return email_list
