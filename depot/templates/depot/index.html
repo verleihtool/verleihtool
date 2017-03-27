@@ -9,6 +9,8 @@
 {% block content %}
     <h1>Depots by organization</h1>
 
+    <hr>
+
     {% for organization in organization_depots %}
         <h2>
             {{ organization.model.name }}
