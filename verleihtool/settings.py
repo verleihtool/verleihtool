@@ -69,7 +69,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
             ],
             'libraries': {
-                'layout': 'verleihtool.templates.tags'
+                'tags': 'verleihtool.templates.tags'
             }
         },
     },

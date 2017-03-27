@@ -1,34 +1,55 @@
 {% extends 'layout.html' %}
 
+{% load tags %}
+
 {% block title %}
-    Depots
+    Depots by organization
 {% endblock %}
 
 {% block content %}
-    <h1>Depots</h1>
+    <h1>Depots by organization</h1>
 
-    {% if depot_list %}
+    {% for organization in organization_depots %}
+        <h2>
+            {{ organization.model.name }}
+            {% if organization.managed_by_user %}
+                <a href="{% url 'admin:depot_organization_change' organization.model.id %}"
+                        class="btn btn-default" target="_blank">
+                    Manage
+                </a>
+            {% endif %}
+        </h2>
+
+        <div class="alert alert-info">
+            This organization is managed by {% concat_with_and organization.model.managers.all %}.
+        </div>
+
         <table class="table">
             <tr>
                 <th>Name</th>
-                {% if user.is_superuser %}
+                <th>Items</th>
+                {% if organization.managed_by_user %}
                     <th>Active</th>
                 {% endif %}
             </tr>
-            {% for depot in depot_list %}
+
+            {% for depot in organization.depots %}
                 <tr>
                     <td>
                         <a href="{% url 'depot:detail' depot.id %}">{{ depot.name }}</a>
                     </td>
-                    {% if user.is_superuser %}
+                    <td>
+                        {{ depot.public_items.count }}
+                    </td>
+                    {% if organization.managed_by_user %}
                         <td>{{ depot.active }}</td>
                     {% endif %}
                 </tr>
             {% endfor %}
         </table>
-    {% else %}
-        <div class="alert alert-info" role="alert">
+    {% empty %}
+        <div class="alert alert-danger" role="alert">
             No depots available :(
         </div>
-    {% endif %}
+    {% endfor %}
 {% endblock %}

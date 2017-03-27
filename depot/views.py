@@ -1,15 +1,26 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Depot, Item
+from .models import Depot, Item, Organization
 
 
 def index(request):
-    if request.user.is_superuser:
-        depot_list = Depot.objects.all()
-    else:
-        depot_list = Depot.objects.filter(active=True)
+    organization_depots = []
+
+    for organization in Organization.objects.all():
+        managed_by_user = organization.managed_by(request.user)
+        if managed_by_user:
+            depots = organization.depot_set.all()
+        else:
+            depots = organization.active_depots.all()
+
+        if depots:
+            organization_depots.append({
+                'model': organization,
+                'managed_by_user': managed_by_user,
+                'depots': depots
+            })
 
     return render(request, 'depot/index.html', {
-        'depot_list': depot_list
+        'organization_depots': organization_depots
     })
 
 
@@ -22,7 +33,7 @@ def detail(request, depot_id):
     if request.user.is_authenticated:
         item_list = depot.item_set.all()
     else:
-        item_list = depot.item_set.filter(visibility=Item.VISIBILITY_PUBLIC)
+        item_list = depot.public_items.all()
 
     return render(request, 'depot/detail.html', {
         'depot': depot,

@@ -1,6 +1,6 @@
 {% extends 'layout.html' %}
 
-{% load layout %}
+{% load tags %}
 
 {% block title %}
     {{ depot.name }}
@@ -15,22 +15,15 @@
         {{ depot.name }} <small>by {{ depot.organization.name }}</small>
 
         {% if managed_by_user %}
-            <a href="{% url 'admin:depot_depot_change' depot.id %}" class="btn btn-default">Manage</a>
+            <a href="{% url 'admin:depot_depot_change' depot.id %}"
+                    class="btn btn-default" target="_blank">
+                Manage
+            </a>
         {% endif %}
     </h1>
 
     <div class="alert alert-info">
-        This depot is managed by
-        {% for manager in depot.managers %}
-            {% if not forloop.first %}
-                {% if forloop.last %}
-                    and
-                {% else %}
-                    ,
-                {% endif %}
-            {% endif %}
-            {{ manager }}
-        {% endfor %}
+        This depot is managed by {% concat_with_and depot.managers %}.
     </div>
 
     <form method="post" action="{% url 'rental:create' %}">
