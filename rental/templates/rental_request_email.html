@@ -2,12 +2,12 @@
 <html>
 
     <head>
-        <title>New rental request from {{ firstname }} {{ lastname }}</title>
+        <title>[Verleihtool:] New rental request by {{ firstname }} {{ lastname }} from {{ depotname }}</title>
     </head>
 
     <body>
         <p>Hi,</p>
-        <p>There is a new request on depot {{ depotname }}<br />
+        <p>There is a new request from the depot "{{ depotname }}"<br />
             requested by {{ firstname }} {{ lastname }}<br />
             from {{ start_date }}<br />
             to {{ return_date }}.<br />
@@ -22,7 +22,7 @@
             </p>
         {% endfor %}
 
-        <p>Go to <a href="{{ absoluteuri }}{{ uuid }}">{{ absoluteuri }}{{ uuid }}</a> to view the status of your request and to edit your order.</p>
+        <p>Please go to <a href="{{ absoluteuri }}{{ uuid }}">{{ absoluteuri }}{{ uuid }}</a> to review the request and its state.</p>
 
         <p>Best<br />
             the Verleihtool
