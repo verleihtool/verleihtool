@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
 
-from depot.models import Depot
 from .models import Rental, ItemRental
 from django.db import transaction
 from django.views.decorators.http import require_POST
@@ -132,24 +131,26 @@ def send_confirmation_mails(request, rental):
     dmg_email_list = get_dmg_emailaddr_list(rental.depot.managers)
 
     plain_txt_mail_to_requester = html_template_to_txt(
-        'rental_confirmation_email.html',
+        'rental-confirmation-email.html',
         mailcontext
     )
 
     plain_txt_mail_to_manager = html_template_to_txt(
-        'rental_request_email.html',
+        'rental-request-email.html',
         mailcontext
     )
 
     mail_to_requester = (
-        '[Verleihtool:] Your rental request, %s %s' % (rental.lastname, rental.firstname),
+        '[Verleihtool] Your rental request, %s %s from depot %s'
+        % (rental.lastname, rental.firstname, rental.depot.name),
         plain_txt_mail_to_requester,
         'verleih@fs.tum.de',
         [rental.email],
     )
 
     mail_to_managers = (
-        '[Verleihtool:] New rental request by %s %s' % (rental.lastname, rental.firstname),
+        '[Verleihtool] New rental request by %s %s from depot %s'
+        % (rental.lastname, rental.firstname, rental.depot.name),
         plain_txt_mail_to_manager,
         'verleih@fs.tum.de',
         dmg_email_list

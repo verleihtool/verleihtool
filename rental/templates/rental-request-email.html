@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+
+    <head>
+        <title>[Verleihtool] New rental request by {{ firstname }} {{ lastname }} from {{ depotname }}</title>
+    </head>
+
+    <body>
+        <p>Hi,</p>
+        <p>There is a new request from the depot "{{ depotname }}"<br />
+            requested by {{ firstname }} {{ lastname }}<br />
+            from {{ start_date }}<br />
+            to {{ return_date }}.<br />
+            for the following items:<br />
+        </p>
+
+        {% for itemrental in itemrental_list %}
+            <p>
+                Name: {{ itemrental.item.name }}<br />
+                Location: {{ itemrental.item.location }}<br />
+                Quantity: {{ itemrental.quantity }}<br />
+            </p>
+        {% endfor %}
+
+        <p>Please go to <a href="{{ absoluteuri }}{{ uuid }}">{{ absoluteuri }}{{ uuid }}</a> to review the request and its state.</p>
+
+        <p>Best<br />
+            the Verleihtool
+        </p>
+    </body>
+
+</html>
