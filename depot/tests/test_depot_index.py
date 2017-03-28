@@ -30,6 +30,12 @@ def create_depot(name, active=True, organization=None):
 
 
 class DepotIndexTestCase(ClientTestCase):
+    """
+    Test the index page for all depots at `/depots/`
+
+    :author: Leo Tappe
+    :author: Benedikt Seidl
+    """
 
     def test_as_guest_no_depots(self):
         response = self.as_guest.get('/depots/')
