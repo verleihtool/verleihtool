@@ -1,10 +1,15 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-    <h2>Login</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Login</button>
-    </form>
+    <h1>Login</h1>
+
+    {% for field, errors in form.errors.items %}
+        <div class="alert alert-danger">
+            {% for error in errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endfor %}
+
+    {% include 'login/login-form.html' %}
 {% endblock %}
