@@ -129,36 +129,42 @@ def send_confirmation_mails(request, rental):
         'depotname': rental.depot.name
     })
 
-    html_content_mail_to_requester = render_to_string(
+    dmg_email_list = get_dmg_emailaddr_list(rental.depot.managers)
+
+    plain_txt_mail_to_requester = html_template_to_txt(
         'rental_confirmation_email.html',
         mailcontext
     )
 
-    plain_txt_mail_to_requester = html2text.html2text(html_content_mail_to_requester)
+    plain_txt_mail_to_manager = html_template_to_txt(
+        'rental_request_email.html',
+        mailcontext
+    )
 
     mail_to_requester = (
-        'Your rental request, %s %s' % (rental.lastname, rental.firstname),
+        '[Verleihtool:] Your rental request, %s %s' % (rental.lastname, rental.firstname),
         plain_txt_mail_to_requester,
-        'verleih@tool.de',
+        'verleih@fs.tum.de',
         [rental.email],
     )
 
-    plain_txt_mail_to_manager = ''
-
-    dmg_email_list = get_dmg_emailaddr_list(rental.depot.managers)
-
     mail_to_managers = (
-        'New rental request by %s %s' % (rental.lastname, rental.firstname),
+        '[Verleihtool:] New rental request by %s %s' % (rental.lastname, rental.firstname),
         plain_txt_mail_to_manager,
-        'verleih@tool.de',
+        'verleih@fs.tum.de',
         dmg_email_list
     )
 
-    send_mass_mail(mail_to_requester, mail_to_managers)
+    send_mass_mail((mail_to_requester, mail_to_managers), fail_silently=True)
 
 
 def get_dmg_emailaddr_list(depot_managers):
     email_list = []
     for dmg in depot_managers:
-        email_list += dmg.email
+        email_list += [dmg.email]
     return email_list
+
+
+def html_template_to_txt(template, context):
+    html_content = render_to_string(template, context)
+    return html2text.html2text(html_content)
