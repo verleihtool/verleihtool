@@ -11,8 +11,18 @@
         <div class="alert alert-danger" role="alert">{{ error_message }}</div>
     {% endif %}
 
+    <ol class="breadcrumb">
+        <li>
+            <a href="{% url 'depot:detail' depot.id %}">{{ depot.name }}</a>
+        </li>
+        <li>
+            <a href="{% url 'depot:rentals' depot.id %}">Rentals</a>
+        </li>
+        <li class="active">{{ rental.uuid }}</li>
+    </ol>
+
     <h1>
-        Rental Nr. {{ rental.uuid }} <small>by {{ rental.firstname }} {{ rental.lastname }}</small>
+        Rental <small>by {{ rental.firstname }} {{ rental.lastname }}</small>
     </h1>
 
     <div class="{{ alert }}">
