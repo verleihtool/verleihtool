@@ -20,6 +20,9 @@ class Organization(models.Model):
     def managed_by(self, user):
         return user.is_superuser or self.managers.filter(id=user.id).exists()
 
+    def is_member(self, user):
+        return self.groups.filter(id__in=user.groups.all()).exists()
+
     @property
     def active_depots(self):
         return self.depot_set.filter(active=True)
