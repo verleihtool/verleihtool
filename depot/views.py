@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponseForbidden
 from .models import Depot, Item, Organization
 
 
@@ -25,12 +26,15 @@ def index(request):
 
 
 def detail(request, depot_id):
-    if request.user.is_superuser:
-        depot = get_object_or_404(Depot, pk=depot_id)
-    else:
-        depot = get_object_or_404(Depot, pk=depot_id, active=True)
+    depot = get_object_or_404(Depot, pk=depot_id)
 
-    if request.user.is_authenticated:
+    if not depot.organization.managed_by(request.user) and not depot.active:
+        return HttpResponseForbidden()
+
+    show_visibility = (request.user.is_superuser or
+                       depot.organization.is_member(request.user))
+
+    if show_visibility:
         item_list = depot.item_set.all()
     else:
         item_list = depot.public_items.all()
@@ -42,6 +46,7 @@ def detail(request, depot_id):
 
     return render(request, 'depot/detail.html', {
         'depot': depot,
+        'show_visibility': show_visibility,
         'managed_by_user': depot.managed_by(request.user),
         'item_list': item_list,
         'error_message': error_message,
