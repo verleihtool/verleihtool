@@ -36,7 +36,7 @@
             <th>Name</th>
             <th>Quantity</th>
             <th>Location</th>
-            {% if user.is_authenticated %}
+            {% if show_visibility %}
                 <th>Visibility</th>
             {% endif %}
             <th>Selected</th>
@@ -47,7 +47,7 @@
                 <td class="rental-item-name">{{ item.name }}</td>
                 <td class="rental-item-quantity">{{ item.quantity }}</td>
                 <td class="rental-item-location">{{ item.location }}</td>
-                {% if user.is_authenticated %}
+                {% if show_visibility %}
                     <td>{% item_visibility item.visibility %}</td>
                 {% endif %}
                 <td class="rental-item-selected">

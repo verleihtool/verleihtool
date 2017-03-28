@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.test import TestCase, Client
 
 
@@ -27,6 +27,10 @@ class ClientTestCase(TestCase):
             first_name='Armin',
             last_name='Admin'
         )
+
+        # Create a group
+        self.group = Group.objects.create()
+        self.user.groups.add(self.group)
 
     @property
     def as_guest(self):
