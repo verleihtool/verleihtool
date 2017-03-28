@@ -7,7 +7,6 @@ from django.template.loader import render_to_string
 import html2text
 
 
-
 class Command(BaseCommand):
 
     @staticmethod
@@ -48,7 +47,8 @@ class Command(BaseCommand):
         # todo set time interval externally by passing arguments to a method when setting cron job
         interval = 7
         due_since_interval_rentals = Rental.objects.filter(
-            return_date=today-timedelta(days=interval), state='2'
+            return_date=today - timedelta(days=interval),
+            state='2'
         )
 
         emails = ()
