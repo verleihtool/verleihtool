@@ -4,7 +4,8 @@
     <div class="form-group">
         <label for="username" class="sr-only">Username</label>
         <input type="text" name="username" id="username" class="form-control"
-                maxlength="254" placeholder="Username" autofocus required>
+                placeholder="Username" value="{{ form.username.value }}"
+                maxlength="150" autofocus required>
     </div>
 
     <div class="form-group">
