@@ -16,7 +16,10 @@ def create_depot(name, active=True, organization=None):
 
     for i in range(42):
         Item.objects.create(
-            depot=depot, quantity=1, visibility=Item.VISIBILITY_PUBLIC
+            name='Item %d' % i,
+            depot=depot,
+            quantity=1,
+            visibility=Item.VISIBILITY_PUBLIC
         )
 
     Item.objects.create(

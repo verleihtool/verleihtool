@@ -84,6 +84,11 @@ class Item(models.Model):
     depot = models.ForeignKey(Depot, on_delete=models.CASCADE)
     location = models.CharField(max_length=256)
 
+    class Meta:
+        unique_together = (
+            ('name', 'depot'),
+        )
+
     def __str__(self):
         return ('%s unit(s) of %s (visib.: %s) in %s'
                 % (self.quantity, self.name, self.visibility, self.location))
