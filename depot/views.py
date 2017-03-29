@@ -38,7 +38,7 @@ def index(request):
     })
 
 
-def detail(request, depot_id, start=datetime.now(), end=datetime.now() + timedelta(days=3)):
+def detail(request, depot_id):
     """
     Provide a detailed overview of all items in a depot
 
@@ -52,6 +52,14 @@ def detail(request, depot_id, start=datetime.now(), end=datetime.now() + timedel
 
     if not depot.organization.managed_by(request.user) and not depot.active:
         return HttpResponseForbidden()
+
+    # configure time frame
+    start = datetime.now()
+    end = datetime.now() + timedelta(days=3)
+    if request.method == 'POST':
+        data = request.POST
+        start = datetime.strptime(data.get('start_date'), '%Y-%m-%d %H:%M')
+        end = datetime.strptime(data.get('return_date'), '%Y-%m-%d %H:%M')
 
     show_visibility = (request.user.is_superuser or
                        depot.organization.is_member(request.user))
@@ -80,7 +88,6 @@ def detail(request, depot_id, start=datetime.now(), end=datetime.now() + timedel
         'managed_by_user': depot.managed_by(request.user),
         'item_list': item_list,
         'error_message': error_message,
-        'availability_list': availability_list,
         'start': start,
         'end': end,
     })
