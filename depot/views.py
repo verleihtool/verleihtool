@@ -69,13 +69,10 @@ def detail(request, depot_id):
     else:
         item_list = depot.public_items.all()
 
-    #figure out availability in given time frame
-    availability_list = []
-    for item in item_list:
-        intervals = get_availability_intervals(start, end, item, Rental.objects.all())
-        availability_list.append(get_maximum_availability(intervals))
+    item_availability_list = get_item_availability_list(start, end, depot_id, item_list)
 
-    item_list = zip(item_list, availability_list)
+    start = start.strftime('%Y-%m-%d %H:%M')
+    end = end.strftime('%Y-%m-%d %H:%M')
 
     error_message = None
     if 'message' in request.session:
@@ -86,8 +83,31 @@ def detail(request, depot_id):
         'depot': depot,
         'show_visibility': show_visibility,
         'managed_by_user': depot.managed_by(request.user),
-        'item_list': item_list,
+        'item_availability_list': item_availability_list,
         'error_message': error_message,
         'start': start,
         'end': end,
     })
+
+
+def get_item_availability_list(from_date, to_date, depot_id, item_list):
+    """
+    Calculate availability for each item in item_list
+
+    :return: A list of availabilities
+    """
+
+    rentals = Rental.objects.filter(
+        start_date__lt=to_date,
+        return_date__gt=from_date,
+        depot_id=depot_id,
+        state=Rental.STATE_APPROVED
+    )
+    availability_list = []
+    for item in item_list:
+        intervals = get_availability_intervals(from_date, to_date, item, rentals)
+        availability_list.append(
+            (item, get_maximum_availability(intervals))
+        )
+
+    return availability_list

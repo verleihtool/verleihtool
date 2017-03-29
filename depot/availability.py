@@ -47,6 +47,7 @@ def get_availability_intervals(start, end, item, rentals):
 
     return intervals
 
+
 def get_maximum_availability(intervals):
     """
     Get the maximum quantity that is available in every interval
