@@ -54,7 +54,7 @@ def detail(request, depot_id):
         return HttpResponseForbidden()
 
     # configure time frame
-    start = datetime.now()
+    start = datetime.now() + timedelta(minutes=5)
     end = datetime.now() + timedelta(days=3)
     if request.method == 'POST':
         data = request.POST
