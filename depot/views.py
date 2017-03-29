@@ -1,6 +1,9 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseForbidden
 from .models import Depot, Item, Organization
+from datetime import datetime, timedelta
+from .availability import get_availability_intervals, get_maximum_availability
+from rental.models import Rental
 
 
 def index(request):
@@ -50,6 +53,14 @@ def detail(request, depot_id):
     if not depot.organization.managed_by(request.user) and not depot.active:
         return HttpResponseForbidden()
 
+    # configure time frame
+    start = datetime.now()
+    end = datetime.now() + timedelta(days=3)
+    if request.method == 'POST':
+        data = request.POST
+        start = datetime.strptime(data.get('start_date'), '%Y-%m-%d %H:%M')
+        end = datetime.strptime(data.get('return_date'), '%Y-%m-%d %H:%M')
+
     show_visibility = (request.user.is_superuser or
                        depot.organization.is_member(request.user))
 
@@ -57,6 +68,11 @@ def detail(request, depot_id):
         item_list = depot.item_set.all()
     else:
         item_list = depot.public_items.all()
+
+    item_availability_list = get_item_availability_list(start, end, depot_id, item_list)
+
+    start = start.strftime('%Y-%m-%d %H:%M')
+    end = end.strftime('%Y-%m-%d %H:%M')
 
     error_message = None
     if 'message' in request.session:
@@ -67,6 +83,31 @@ def detail(request, depot_id):
         'depot': depot,
         'show_visibility': show_visibility,
         'managed_by_user': depot.managed_by(request.user),
-        'item_list': item_list,
+        'item_availability_list': item_availability_list,
         'error_message': error_message,
+        'start': start,
+        'end': end,
     })
+
+
+def get_item_availability_list(from_date, to_date, depot_id, item_list):
+    """
+    Calculate availability for each item in item_list
+
+    :return: A list of availabilities
+    """
+
+    rentals = Rental.objects.filter(
+        start_date__lt=to_date,
+        return_date__gt=from_date,
+        depot_id=depot_id,
+        state=Rental.STATE_APPROVED
+    )
+    availability_list = []
+    for item in item_list:
+        intervals = get_availability_intervals(from_date, to_date, item, rentals)
+        availability_list.append(
+            (item, get_maximum_availability(intervals))
+        )
+
+    return availability_list

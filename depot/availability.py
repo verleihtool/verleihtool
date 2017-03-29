@@ -46,3 +46,18 @@ def get_availability_intervals(start, end, item, rentals):
                 interval[2] -= item_rental.quantity
 
     return intervals
+
+
+def get_maximum_availability(intervals):
+    """
+    Get the maximum quantity that is available in every interval
+
+    :param intervals: the intervals for which availability has been calculated
+    :return: the minimum num_available value across all intervals
+    """
+
+    min = intervals[0][2]
+    for interval in intervals[1:]:
+        if interval[2] < min:
+            min = interval[2]
+    return min
