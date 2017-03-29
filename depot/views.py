@@ -1,6 +1,9 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseForbidden
 from .models import Depot, Item, Organization
+from datetime import datetime, timedelta
+from .availability import get_availability_intervals, get_maximum_availability
+from rental.models import Rental
 
 
 def index(request):
@@ -35,7 +38,7 @@ def index(request):
     })
 
 
-def detail(request, depot_id):
+def detail(request, depot_id, start=datetime.now(), end=datetime.now() + timedelta(days=3)):
     """
     Provide a detailed overview of all items in a depot
 
@@ -58,6 +61,14 @@ def detail(request, depot_id):
     else:
         item_list = depot.public_items.all()
 
+    #figure out availability in given time frame
+    availability_list = []
+    for item in item_list:
+        intervals = get_availability_intervals(start, end, item, Rental.objects.all())
+        availability_list.append(get_maximum_availability(intervals))
+
+    item_list = zip(item_list, availability_list)
+
     error_message = None
     if 'message' in request.session:
         error_message = request.session['message']
@@ -69,4 +80,7 @@ def detail(request, depot_id):
         'managed_by_user': depot.managed_by(request.user),
         'item_list': item_list,
         'error_message': error_message,
+        'availability_list': availability_list,
+        'start': start,
+        'end': end,
     })
