@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Rental, ItemRental
+from depot.models import Depot
 from django.db import transaction
 from django.views.decorators.http import require_POST
 from django.core.exceptions import ValidationError
@@ -55,6 +56,7 @@ def detail(request, rental_uuid):
     """
 
     rental = get_object_or_404(Rental, pk=rental_uuid)
+    depot = get_object_or_404(Depot, pk=rental.depot_id)
     dmg = rental.depot.managed_by(request.user)
     item_list = rental.itemrental_set.all()
     buttons = []
@@ -91,6 +93,7 @@ def detail(request, rental_uuid):
 
     return render(request, 'rental/detail.html', {
         'rental': rental,
+        'depot': depot,
         'buttons': buttons,
         'item_list': item_list,
         'alert': alert,

@@ -63,3 +63,14 @@ def concat_with_and(list, final='and'):
         final,
         str(list[l - 1])
     )
+
+
+@register.filter
+def key(dictionary, key):
+    """
+    Returns the appropriate label for the given state
+
+    :author: Florian Stamer
+    """
+
+    return dictionary.get(key)

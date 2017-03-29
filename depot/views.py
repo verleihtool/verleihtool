@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseForbidden
 from .models import Depot, Item, Organization
 from datetime import datetime, timedelta
@@ -111,3 +111,34 @@ def get_item_availability_list(from_date, to_date, depot_id, item_list):
         )
 
     return availability_list
+
+
+def rentals(request, depot_id):
+    """
+    Provides an overview over all rentals for one depot
+
+    Show labels to visually differentiate the state a
+    rental is in.
+
+    :author: Florian Stamer
+    """
+
+    depot = get_object_or_404(Depot, pk=depot_id)
+
+    if not depot.managed_by(request.user):
+        return HttpResponseForbidden()
+
+    rentals = Rental.objects.filter(depot_id=depot.id)
+    state_labels = {
+        Rental.STATE_PENDING: 'label label-info',
+        Rental.STATE_REVOKED: 'label label-warning',
+        Rental.STATE_APPROVED: 'label label-success',
+        Rental.STATE_DECLINED: 'label label-danger',
+        Rental.STATE_RETURNED: 'label label-default',
+    }
+
+    return render(request, 'depot/rentals.html', {
+        'rentals': rentals,
+        'depot': depot,
+        'state_labels': state_labels,
+    })
