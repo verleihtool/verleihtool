@@ -27,10 +27,18 @@ class Organization(models.Model):
         return user.is_superuser or self.managers.filter(id=user.id).exists()
 
     def is_member(self, user):
+        """
+        Checks if the user is in one of the groups defined in this organization.
+        """
+
         return self.groups.filter(id__in=user.groups.all()).exists()
 
     @property
     def active_depots(self):
+        """
+        Returns all depots in this organization which have the active flag set.
+        """
+
         return self.depot_set.filter(active=True)
 
     def __str__(self):
@@ -64,6 +72,12 @@ class Depot(models.Model):
 
     @property
     def managers(self):
+        """
+        The list of users explicitly listed as managers of this depot.
+        Does not include any organization managers or superusers which are
+        not added to the depot.
+        """
+
         return User.objects.filter(
             models.Q(id__in=self.manager_users.all()) |
             models.Q(groups__in=self.manager_groups.all())
@@ -71,6 +85,10 @@ class Depot(models.Model):
 
     @property
     def public_items(self):
+        """
+        List all items with the visibility set to public.
+        """
+
         return self.item_set.filter(visibility=Item.VISIBILITY_PUBLIC)
 
     def __str__(self):
