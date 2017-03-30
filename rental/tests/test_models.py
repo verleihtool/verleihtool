@@ -47,8 +47,7 @@ class RentalTestCase(TestCase):
             start_date=datetime.now() + timedelta(days=-1),
             return_date=datetime.now() + timedelta(days=3)
         )
-        with self.assertRaises(ValidationError):
-            rental.clean()
+        rental.clean()
 
     def test_str(self):
         rental = Rental(firstname='Fitness', lastname='Flow')
