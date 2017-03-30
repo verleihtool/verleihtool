@@ -67,7 +67,7 @@ class Depot(models.Model):
         return User.objects.filter(
             models.Q(id__in=self.manager_users.all()) |
             models.Q(groups__in=self.manager_groups.all())
-        )
+        ).distinct()
 
     @property
     def public_items(self):
