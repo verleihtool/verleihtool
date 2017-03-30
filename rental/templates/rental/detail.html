@@ -13,12 +13,19 @@
 
     <ol class="breadcrumb">
         <li>
-            <a href="{% url 'depot:detail' depot.id %}">{{ depot.name }}</a>
+            <a href="{% url 'depot:index' %}">Depots</a>
         </li>
         <li>
-            <a href="{% url 'depot:rentals' depot.id %}">Rentals</a>
+            <a href="{% url 'depot:detail' depot.id %}">{{ depot.name }}</a>
         </li>
-        <li class="active">{{ rental.uuid }}</li>
+        {% if managed_by_user %}
+            <li>
+                <a href="{% url 'depot:rentals' depot.id %}">Rentals</a>
+            </li>
+        {% endif %}
+        <li class="active">
+            <span>{{ rental.uuid }}<span>
+        </li>
     </ol>
 
     <h1>

@@ -16,6 +16,15 @@
         </div>
     {% endif %}
 
+    <ol class="breadcrumb">
+        <li>
+            <a href="{% url 'depot:index' %}">Depots</a>
+        </li>
+        <li class="active">
+            <span>{{ depot.name }}</span>
+        </li>
+    </ol>
+
     <h1>
         {{ depot.name }} <small>by {{ depot.organization.name }}</small>
 
