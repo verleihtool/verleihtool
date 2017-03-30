@@ -129,7 +129,7 @@ class Item(models.Model):
     quantity = models.PositiveSmallIntegerField()
     visibility = models.CharField(max_length=1, choices=VISIBILITY_LEVELS)
     depot = models.ForeignKey(Depot, on_delete=models.CASCADE)
-    location = models.CharField(max_length=256)
+    location = models.CharField(max_length=256, blank=True)
 
     class Meta:
         unique_together = (
