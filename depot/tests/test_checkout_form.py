@@ -3,14 +3,16 @@ from depot.models import Depot, Organization
 from verleihtool.test import ClientTestCase
 
 
-class AutoFillTestCase(ClientTestCase):
+class CheckoutFormTestCase(ClientTestCase):
     """
-    Test cases asserting the auto-fill functionality for checkout-form
+    Test the checkout form by asserting the auto-fill
+    functionality for checkout-form
 
     :author: Stefan Su
     """
+
     def setUp(self):
-        super(AutoFillTestCase, self).setUp()
+        super().setUp()
 
         organization = Organization.objects.create()
 

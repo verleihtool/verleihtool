@@ -9,6 +9,16 @@ from depot.models import Depot, Item
 class Rental(models.Model):
     """
     A rental defines the amount of items and has a start and return date.
+    Only items from one depot can be requested for rental at once.
+
+    When requesting a rental, the user has to enter his full name and email
+    address as well as describing the purpose of his rental. If they are
+    logged in, the user's id will be stored as well.
+
+    After creating a rental request, it is in the PENDING state. From this,
+    it can be either APPROVED or DECLINED by a depot manager or REVOKED by
+    the requesting user. If all items were returned correctly, it can be
+    set to RETURNED to finish the rental process.
 
     :author: Benedikt Seidl
     """

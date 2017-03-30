@@ -4,13 +4,15 @@ from django.contrib.auth.models import Group, User
 
 class Organization(models.Model):
     """
-    Model an organization, such as FSMPI, FSMB or ASTA.
+    Representation of an organization,
+    such as FSMPI, FSMB or ASTA.
 
     An organization is defined by a list of user groups,
     in our case LDAP groups. It is managed by a list of
     users and has a list of depots.
 
     :author: Leo Tappe
+    :author: Benedikt Seidl
     """
 
     name = models.CharField(max_length=256)
@@ -18,6 +20,10 @@ class Organization(models.Model):
     managers = models.ManyToManyField(User)
 
     def managed_by(self, user):
+        """
+        Organizations are managed by superusers and organization managers.
+        """
+
         return user.is_superuser or self.managers.filter(id=user.id).exists()
 
     def is_member(self, user):
@@ -33,11 +39,12 @@ class Organization(models.Model):
 
 class Depot(models.Model):
     """
-    Model a depot.
     A depot has a name and many depot managers.
 
     :author: Leo Tappe
+    :author: Benedikt Seidl
     """
+
     name = models.CharField(max_length=256)
     organization = models.ForeignKey(Organization)
     manager_users = models.ManyToManyField(User, blank=True)
@@ -45,7 +52,13 @@ class Depot(models.Model):
     active = models.BooleanField(default=True)
 
     def managed_by(self, user):
-        return (self.organization.managed_by(user) or
+        """
+        Depots are managed by superusers, the organization's managers,
+        any manager user and any user in a manager group.
+        """
+
+        return (user.is_superuser or
+                self.organization.managed_by(user) or
                 self.manager_users.filter(id=user.id).exists() or
                 self.manager_groups.filter(id__in=user.groups.all()).exists())
 
@@ -66,21 +79,25 @@ class Depot(models.Model):
 
 class Item(models.Model):
     """
-    Model an item.
-    An item has a name.
-    Quantity: how many versions of this item exist.
-    An item has different visibility levels, which determine who can view them.
-    An item is in a depot.
-    An item has a specific location within its depot.
+    An item describes one or more instances of an object in a depot.
+
+    It always belongs to a single depot and has a unique name within the depot.
+    The location field can be used to roughly describe where
+    the item can be found in the depot.
+    Items can either be public or private which affects the visibility
+    of the item to users outside of the organization connected to the depot.
+    The quantity describes how many version of the item exist in the depot.
 
     :author: Leo Tappe
     """
+
     VISIBILITY_PUBLIC = '1'
     VISIBILITY_PRIVATE = '2'
     VISIBILITY_LEVELS = (
         (VISIBILITY_PUBLIC, 'public'),
         (VISIBILITY_PRIVATE, 'private'),
     )
+
     name = models.CharField(max_length=256)
     quantity = models.PositiveSmallIntegerField()
     visibility = models.CharField(max_length=1, choices=VISIBILITY_LEVELS)

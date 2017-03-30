@@ -1,0 +1,36 @@
+{% extends 'layout.html' %}
+
+{% load tags %}
+
+{% block title %}
+    Rentals
+{% endblock %}
+
+{% block content %}
+    <h1>
+        Rentals <small>for {{ depot.name }}</small>
+    </h1>
+
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Start Date</th>
+                <th>Return Date</th>
+                <th>State</th>
+                <th>&nbsp;</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for rental in rentals %}
+                <tr>
+                    <td>{{ rental.firstname }} {{ rental.lastname }}</td>
+                    <td>{{ rental.start_date }}</td>
+                    <td>{{ rental.return_date }}</td>
+                    <td><span class="{{ state_labels|key:rental.state }}">{% rental_state rental.state %}</span></td>
+                    <td><a href="{% url 'rental:detail' rental.uuid %}" class="btn btn-default" role="button">Detail</a>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
