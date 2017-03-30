@@ -40,9 +40,18 @@ class OrganizationAdmin(admin.ModelAdmin):
 
     def has_change_permission(self, request, obj=None):
         if not obj:
-            return True
+            return self.get_queryset(request).exists()
 
         return obj.managed_by(request.user)
 
     def has_delete_permission(self, request, obj=None):
         return False
+
+    def get_actions(self, request):
+        # Remove delete action from dropdown
+        actions = super().get_actions(request)
+
+        if 'delete_selected' in actions:
+            del actions['delete_selected']
+
+        return actions
