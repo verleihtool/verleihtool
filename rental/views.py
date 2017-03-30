@@ -5,10 +5,12 @@ from depot.models import Depot
 from django.db import transaction
 from django.views.decorators.http import require_POST
 from django.core.exceptions import ValidationError
-from django.core.mail import mail, EmailMessage, send_mass_mail
+from django.core import mail
+from django.core.mail import EmailMessage, send_mass_mail
 from django.template import Context
 from django.template.loader import render_to_string
 from django.http import HttpResponseForbidden
+from django.conf import settings
 import re
 import html2text
 
@@ -210,6 +212,7 @@ def send_confirmation_mails(request, rental):
     Send emails to requester and dmgs of a depot when a new rental from a depot has been requested
     :author: Stefan Su
     """
+    connection = mail.get_connection()
     mailcontext=get_mail_context(request, rental)
     dmg_email_list = get_dmg_emailaddr_list(rental.depot)
     plain_txt_mail_to_requester = html_template_to_txt(
@@ -220,21 +223,23 @@ def send_confirmation_mails(request, rental):
         'rental-request-email.html',
         mailcontext
     )
-    mail_to_requester = (
-        '[Verleihtool] Your rental request, %s %s from depot %s'
+    mail_to_requester = EmailMessage(
+        settings.EMAIL_SUBJECT_PREFIX + 'Your rental request, %s %s from depot %s'
         % (rental.firstname, rental.lastname, rental.depot.name),
-        plain_txt_mail_to_requester,
-        'verleih@fs.tum.de',
+        plain_txt_mail_to_requester.encode(encoding='utf-8',errors='ignore'),
+        settings.DEFAULT_FROM_EMAIL,
         [rental.email],
     )
-    mail_to_managers = (
-        '[Verleihtool] New rental request by %s %s from depot %s'
+    mail_to_managers = EmailMessage(
+        settings.EMAIL_SUBJECT_PREFIX + 'New rental request by %s %s from depot %s'
         % (rental.firstname, rental.lastname, rental.depot.name),
-        plain_txt_mail_to_manager,
-        'verleih@fs.tum.de',
+        plain_txt_mail_to_manager.encode(encoding='utf-8',errors='ignore'),
+        settings.DEFAULT_FROM_EMAIL,
         dmg_email_list
     )
-    send_mass_mail((mail_to_requester, mail_to_managers), fail_silently=True)
+    connection.open()
+    connection.send_messages([mail_to_requester, mail_to_managers])
+    connection.close()
 
 
 def send_state_mails(request, rental):
@@ -248,12 +253,12 @@ def send_state_mails(request, rental):
         mailcontext
     )
     mail_to_requester = EmailMessage(
-        '[Verleihtool] State changed - Your rental request, %s %s from depot %s'
+        settings.EMAIL_SUBJECT_PREFIX + 'State changed - Your rental request, %s %s from depot %s'
         % (rental.firstname, rental.lastname, rental.depot.name),
         plain_txt_state_change_mail,
-        from_email='verleih@fs.tum.de',
+        from_email=settings.DEFAULT_FROM_MAIL,
         to=[rental.email],
-        cc='verleih@fs.tum.de'
+        cc=settings.DEFAULT_FROM_EMAIL
     )
     mail_to_requester.send(fail_silently=True)
 
@@ -276,7 +281,7 @@ def get_mail_context(request, rental):
         'itemrental_list': rental.itemrental_set.all(),
         'absoluteuri': pattern_obj.sub("/", request.build_absolute_uri()),
         'depotname': rental.depot.name,
-        'state': rental._get_state_display()
+        'state': rental.get_state_display()
     })
 
     return mailcontext
