@@ -106,3 +106,28 @@ class DepotDetailTestCase(ClientTestCase):
         self.assertSuccess(response, 'depot/detail.html')
         self.assertContains(response, 'Public Item')
         self.assertContains(response, 'Private Item')
+
+    def test_no_deleted_items_for_guest(self):
+        self.create_item('Deleted Item', Item.VISIBILITY_DELETED)
+        response = self.as_guest.get('/depots/%d/' % self.depot.id)
+        self.assertSuccess(response, 'depot/detail.html')
+        self.assertNotContains(response, 'Deleted Item')
+
+    def test_no_deleted_items_for_normal_user(self):
+        self.create_item('Deleted Item', Item.VISIBILITY_DELETED)
+        response = self.as_user.get('/depots/%d/' % self.depot.id)
+        self.assertSuccess(response, 'depot/detail.html')
+        self.assertNotContains(response, 'Deleted Item')
+
+    def test_no_deleted_items_for_organization_member(self):
+        self.create_item('Deleted Item', Item.VISIBILITY_DELETED)
+        self.organization.groups.add(self.group)
+        response = self.as_user.get('/depots/%d/' % self.depot.id)
+        self.assertSuccess(response, 'depot/detail.html')
+        self.assertNotContains(response, 'Deleted Item')
+
+    def test_no_deleted_items_for_superuser(self):
+        self.create_item('Deleted Item', Item.VISIBILITY_DELETED)
+        response = self.as_superuser.get('/depots/%d/' % self.depot.id)
+        self.assertSuccess(response, 'depot/detail.html')
+        self.assertNotContains(response, 'Deleted Item')
