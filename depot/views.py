@@ -65,7 +65,7 @@ def detail(request, depot_id):
                        depot.organization.is_member(request.user))
 
     if show_visibility:
-        item_list = depot.item_set.all()
+        item_list = depot.active_items.all()
     else:
         item_list = depot.public_items.all()
 

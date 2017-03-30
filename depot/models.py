@@ -73,6 +73,13 @@ class Depot(models.Model):
     def public_items(self):
         return self.item_set.filter(visibility=Item.VISIBILITY_PUBLIC)
 
+    @property
+    def active_items(self):
+        return self.item_set.filter(
+            models.Q(visibility=Item.VISIBILITY_PUBLIC) |
+            models.Q(visibility=Item.VISIBILITY_PRIVATE)
+        )
+
     def __str__(self):
         return 'Depot %s' % self.name
 
@@ -93,9 +100,11 @@ class Item(models.Model):
 
     VISIBILITY_PUBLIC = '1'
     VISIBILITY_PRIVATE = '2'
+    VISIBILITY_DELETED = '3'
     VISIBILITY_LEVELS = (
         (VISIBILITY_PUBLIC, 'public'),
         (VISIBILITY_PRIVATE, 'private'),
+        (VISIBILITY_DELETED, 'deleted'),
     )
 
     name = models.CharField(max_length=256)
