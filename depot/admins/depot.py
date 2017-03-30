@@ -90,9 +90,10 @@ class DepotAdmin(admin.ModelAdmin):
         return []
 
     def get_form(self, request, obj=None, **kwargs):
-        form = super().get_form(request, **kwargs)
+        form = super().get_form(request, obj=obj, **kwargs)
 
         # Limit organization selection to the ones the current user is managing
-        form.base_fields['organization'].queryset = request.user.organization_set
+        if 'organization' in form.base_fields:
+            form.base_fields['organization'].queryset = request.user.organization_set
 
         return form
