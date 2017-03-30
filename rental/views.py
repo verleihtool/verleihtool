@@ -5,7 +5,7 @@ from depot.models import Depot
 from django.db import transaction
 from django.views.decorators.http import require_POST
 from django.core.exceptions import ValidationError
-from django.core.mail import send_mass_mail
+from django.core.mail import mail, EmailMessage, send_mass_mail
 from django.template import Context
 from django.template.loader import render_to_string
 from django.http import HttpResponseForbidden
@@ -128,6 +128,9 @@ def state(request, rental_uuid):
 
     rental.state = states[state]
     rental.save()
+
+    send_state_mails(request, rental)
+
     return redirect('rental:detail', rental_uuid=rental.uuid)
 
 
@@ -203,8 +206,67 @@ def create_items(session, rental, data):
 
 
 def send_confirmation_mails(request, rental):
-    pattern_obj = re.compile("/(create)/")
+    """
+    Send emails to requester and dmgs of a depot when a new rental from a depot has been requested
+    :author: Stefan Su
+    """
+    mailcontext=get_mail_context(request, rental)
+    dmg_email_list = get_dmg_emailaddr_list(rental.depot)
+    plain_txt_mail_to_requester = html_template_to_txt(
+        'rental-confirmation-email.html',
+        mailcontext
+    )
+    plain_txt_mail_to_manager = html_template_to_txt(
+        'rental-request-email.html',
+        mailcontext
+    )
+    mail_to_requester = (
+        '[Verleihtool] Your rental request, %s %s from depot %s'
+        % (rental.firstname, rental.lastname, rental.depot.name),
+        plain_txt_mail_to_requester,
+        'verleih@fs.tum.de',
+        [rental.email],
+    )
+    mail_to_managers = (
+        '[Verleihtool] New rental request by %s %s from depot %s'
+        % (rental.firstname, rental.lastname, rental.depot.name),
+        plain_txt_mail_to_manager,
+        'verleih@fs.tum.de',
+        dmg_email_list
+    )
+    send_mass_mail((mail_to_requester, mail_to_managers), fail_silently=True)
 
+
+def send_state_mails(request, rental):
+    """
+    Send an email to the requester when the state of his/her rental has been changed
+    :author: Stefan Su
+    """
+    mailcontext = get_mail_context(request, rental)
+    plain_txt_state_change_mail = html_template_to_txt(
+        'rental-state-changed-notif-email.html',
+        mailcontext
+    )
+    mail_to_requester = EmailMessage(
+        '[Verleihtool] State changed - Your rental request, %s %s from depot %s'
+        % (rental.firstname, rental.lastname, rental.depot.name),
+        plain_txt_state_change_mail,
+        from_email='verleih@fs.tum.de',
+        to=[rental.email],
+        cc='verleih@fs.tum.de'
+    )
+    mail_to_requester.send(fail_silently=True)
+
+
+def get_mail_context(request, rental):
+    """
+    Get mail context to fill out custom data in mail template
+    :param request: is needed for build_absolute_uri() method call
+    :param rental:
+    :return:
+    :author: Stefan Su
+    """
+    pattern_obj = re.compile("/(create)/")
     mailcontext = Context({
         'firstname': rental.firstname,
         'lastname': rental.lastname,
@@ -213,47 +275,31 @@ def send_confirmation_mails(request, rental):
         'uuid': rental.uuid,
         'itemrental_list': rental.itemrental_set.all(),
         'absoluteuri': pattern_obj.sub("/", request.build_absolute_uri()),
-        'depotname': rental.depot.name
+        'depotname': rental.depot.name,
+        'state': rental._get_state_display()
     })
 
-    dmg_email_list = get_dmg_emailaddr_list(rental.depot.managers)
-
-    plain_txt_mail_to_requester = html_template_to_txt(
-        'rental-confirmation-email.html',
-        mailcontext
-    )
-
-    plain_txt_mail_to_manager = html_template_to_txt(
-        'rental-request-email.html',
-        mailcontext
-    )
-
-    mail_to_requester = (
-        '[Verleihtool] Your rental request, %s %s from depot %s'
-        % (rental.lastname, rental.firstname, rental.depot.name),
-        plain_txt_mail_to_requester,
-        'verleih@fs.tum.de',
-        [rental.email],
-    )
-
-    mail_to_managers = (
-        '[Verleihtool] New rental request by %s %s from depot %s'
-        % (rental.lastname, rental.firstname, rental.depot.name),
-        plain_txt_mail_to_manager,
-        'verleih@fs.tum.de',
-        dmg_email_list
-    )
-
-    send_mass_mail((mail_to_requester, mail_to_managers), fail_silently=True)
+    return mailcontext
 
 
-def get_dmg_emailaddr_list(depot_managers):
+def get_dmg_emailaddr_list(depot):
+    """
+    Get list of email addresses of depot managers within a depot
+    :return: list of depot managers
+    :author: Stefan Su
+    """
     email_list = []
-    for dmg in depot_managers:
+
+    for dmg in depot.managers:
         email_list += [dmg.email]
     return email_list
 
 
 def html_template_to_txt(template, context):
+    """
+    Transforms a html template with context including necessary parameters to a string
+    :return: formatted email string
+    :author: Stefan Su
+    """
     html_content = render_to_string(template, context)
     return html2text.html2text(html_content)
