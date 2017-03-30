@@ -7,6 +7,7 @@ from django.db.models import Q
 class ItemsInline(admin.TabularInline):
     model = Item
     extra = 0
+    can_delete = False
 
 
 class DepotAdmin(admin.ModelAdmin):
@@ -56,17 +57,41 @@ class DepotAdmin(admin.ModelAdmin):
 
         return qs.filter(Q(organization__managers__id=request.user.id) |
                          Q(manager_users__id=request.user.id) |
-                         Q(manager_groups__id__in=request.user.groups.all()))
+                         Q(manager_groups__id__in=request.user.groups.all())).distinct()
 
     def has_add_permission(self, request):
         # Only via the organization's inline admin interface
-        return False
+        return request.user.organization_set.exists()
 
     def has_change_permission(self, request, obj=None):
         if not obj:
-            return True
+            return self.get_queryset(request).exists()
 
         return obj.managed_by(request.user)
 
     def has_delete_permission(self, request, obj=None):
         return False
+
+    def get_actions(self, request):
+        # Remove delete action from dropdown
+        actions = super().get_actions(request)
+
+        if 'delete_selected' in actions:
+            del actions['delete_selected']
+
+        return actions
+
+    def get_readonly_fields(self, request, obj=None):
+        # Depots cannot be moved to another organization
+        if obj:
+            return ['organization']
+
+        return []
+
+    def get_form(self, request, obj=None, **kwargs):
+        form = super().get_form(request, **kwargs)
+
+        # Limit organization selection to the ones the current user is managing
+        form.base_fields['organization'].queryset = request.user.organization_set
+
+        return form

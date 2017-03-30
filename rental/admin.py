@@ -90,6 +90,22 @@ class RentalAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         return False
 
+    def get_actions(self, request):
+        # Remove delete action from dropdown
+        actions = super().get_actions(request)
+
+        if 'delete_selected' in actions:
+            del actions['delete_selected']
+
+        return actions
+
+    def get_readonly_fields(self, request, obj=None):
+        # The depot of a rental cannot be changed
+        if obj:
+            return ['depot']
+
+        return []
+
 
 # Register your models here.
 admin.site.register(Rental, RentalAdmin)
