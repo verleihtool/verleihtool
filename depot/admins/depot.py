@@ -23,6 +23,7 @@ class DepotAdmin(admin.ModelAdmin):
     inlines = [ItemsInline]
     list_display = ['name', 'active']
     ordering = ['name']
+    filter_horizontal = ['manager_users', 'manager_groups']
 
     # Custom admin actions
     actions = ['make_archived', 'make_restored']

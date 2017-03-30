@@ -8,6 +8,8 @@ class DepotInline(admin.TabularInline):
     extra = 0
     can_delete = False
 
+    filter_vertical = ['manager_users', 'manager_groups']
+
 
 class OrganizationAdmin(admin.ModelAdmin):
     """
@@ -20,6 +22,7 @@ class OrganizationAdmin(admin.ModelAdmin):
     """
 
     inlines = [DepotInline]
+    filter_horizontal = ['groups', 'managers']
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
