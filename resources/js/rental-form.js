@@ -49,8 +49,7 @@ $('#checkout-modal').on('show.bs.modal', () => {
 $('#start_date_picker').datetimepicker({
     format: 'YYYY-MM-DD HH:mm',
     stepping: 5,
-    allowInputToggle: true,
-    minDate: new Date()
+    allowInputToggle: true
 })
 
 $('#end_date_picker').datetimepicker({

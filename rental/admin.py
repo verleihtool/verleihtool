@@ -75,7 +75,7 @@ class RentalAdmin(admin.ModelAdmin):
 
         return qs.filter(Q(depot__organization__managers__id=request.user.id) |
                          Q(depot__manager_users__id=request.user.id) |
-                         Q(depot__manager_groups__id__in=request.user.groups.all()))
+                         Q(depot__manager_groups__id__in=request.user.groups.all())).distinct()
 
     def has_add_permission(self, request):
         # Only via the rental request form
@@ -89,6 +89,22 @@ class RentalAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return False
+
+    def get_actions(self, request):
+        # Remove delete action from dropdown
+        actions = super().get_actions(request)
+
+        if 'delete_selected' in actions:
+            del actions['delete_selected']
+
+        return actions
+
+    def get_readonly_fields(self, request, obj=None):
+        # The depot of a rental cannot be changed
+        if obj:
+            return ['depot']
+
+        return []
 
 
 # Register your models here.

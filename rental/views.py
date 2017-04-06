@@ -97,6 +97,7 @@ def detail(request, rental_uuid):
     return render(request, 'rental/detail.html', {
         'rental': rental,
         'depot': depot,
+        'managed_by_user': depot.managed_by(request.user),
         'buttons': buttons,
         'item_list': item_list,
         'alert': alert,

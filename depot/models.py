@@ -27,10 +27,18 @@ class Organization(models.Model):
         return user.is_superuser or self.managers.filter(id=user.id).exists()
 
     def is_member(self, user):
+        """
+        Checks if the user is in one of the groups defined in this organization.
+        """
+
         return self.groups.filter(id__in=user.groups.all()).exists()
 
     @property
     def active_depots(self):
+        """
+        Returns all depots in this organization which have the active flag set.
+        """
+
         return self.depot_set.filter(active=True)
 
     def __str__(self):
@@ -64,14 +72,31 @@ class Depot(models.Model):
 
     @property
     def managers(self):
+        """
+        The list of users explicitly listed as managers of this depot.
+        Does not include any organization managers or superusers which are
+        not added to the depot.
+        """
+
         return User.objects.filter(
             models.Q(id__in=self.manager_users.all()) |
             models.Q(groups__in=self.manager_groups.all())
-        )
+        ).distinct()
 
     @property
     def public_items(self):
+        """
+        List all items with the visibility set to public.
+        """
+
         return self.item_set.filter(visibility=Item.VISIBILITY_PUBLIC)
+
+    @property
+    def active_items(self):
+        return self.item_set.filter(
+            models.Q(visibility=Item.VISIBILITY_PUBLIC) |
+            models.Q(visibility=Item.VISIBILITY_PRIVATE)
+        )
 
     def __str__(self):
         return 'Depot %s' % self.name
@@ -93,16 +118,18 @@ class Item(models.Model):
 
     VISIBILITY_PUBLIC = '1'
     VISIBILITY_PRIVATE = '2'
+    VISIBILITY_DELETED = '3'
     VISIBILITY_LEVELS = (
         (VISIBILITY_PUBLIC, 'public'),
         (VISIBILITY_PRIVATE, 'private'),
+        (VISIBILITY_DELETED, 'deleted'),
     )
 
     name = models.CharField(max_length=256)
     quantity = models.PositiveSmallIntegerField()
     visibility = models.CharField(max_length=1, choices=VISIBILITY_LEVELS)
     depot = models.ForeignKey(Depot, on_delete=models.CASCADE)
-    location = models.CharField(max_length=256)
+    location = models.CharField(max_length=256, blank=True)
 
     class Meta:
         unique_together = (

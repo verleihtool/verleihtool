@@ -52,9 +52,9 @@ class Rental(models.Model):
         if not self.depot.active:
             raise ValidationError({'depot': 'The depot has to be active.'})
 
-        if self.start_date < datetime.now() or self.start_date > self.return_date:
+        if self.start_date > self.return_date:
             raise ValidationError({
-                'start_date': 'The start date must be in the future and before the return date.'
+                'start_date': 'The start date must be before the return date.'
             })
 
     def __str__(self):
@@ -78,14 +78,19 @@ class ItemRental(models.Model):
         if self.rental.depot_id != self.item.depot_id:
             tag = 'item [' + self.item.name + ']'
             raise ValidationError({
-                tag: 'The item must come from the depot the rental was created for'
+                tag: 'The item must come from the depot the rental was created for.'
             })
 
         if self.item.visibility != Item.VISIBILITY_PUBLIC:
-            tag = 'item [' + self.item.name + ']'
-            raise ValidationError({
-                tag: 'The item visibility must be public.'
-            })
+            organization = self.rental.depot.organization
+            user = self.rental.user
+
+            if user is None or not organization.is_member(user):
+                tag = 'item [' + self.item.name + ']'
+                raise ValidationError({
+                    tag: 'You have to be a member of the organization'
+                         'that manages this depot to rent a private item.'
+                })
 
         if self.quantity <= 0 or self.quantity > self.item.quantity:
             tag = 'quantity [' + self.item.name + ']'
