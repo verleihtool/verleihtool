@@ -6,7 +6,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision :shell, path: "bootstrap.sh", privileged: false
 
   # Configure port forwarding
-  config.vm.network :forwarded_port, guest: 8000, host: 1337
+  config.vm.network :forwarded_port, guest: 8000, host: 1337, host_ip: "127.0.0.1"
 
   # Virtualbox configuration
   config.vm.provider "virtualbox" do |v|
