@@ -7,6 +7,7 @@ class DepotInline(admin.TabularInline):
     model = Depot
     extra = 0
     can_delete = False
+    show_change_link = True
 
     filter_vertical = ['manager_users', 'manager_groups']
 
