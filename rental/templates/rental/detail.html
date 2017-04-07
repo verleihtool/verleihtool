@@ -7,20 +7,16 @@
 {% endblock %}
 
 {% block content %}
-    {% if error_message %}
-        <div class="alert alert-danger" role="alert">{{ error_message }}</div>
-    {% endif %}
-
     <ol class="breadcrumb">
         <li>
             <a href="{% url 'depot:index' %}">Depots</a>
         </li>
         <li>
-            <a href="{% url 'depot:detail' depot.id %}">{{ depot.name }}</a>
+            <a href="{% url 'depot:detail' rental.depot.id %}">{{ rental.depot.name }}</a>
         </li>
         {% if managed_by_user %}
             <li>
-                <a href="{% url 'depot:rentals' depot.id %}">Rentals</a>
+                <a href="{% url 'depot:rentals' rental.depot.id %}">Rentals</a>
             </li>
         {% endif %}
         <li class="active">
@@ -52,7 +48,7 @@
             <th>Location</th>
         </tr>
 
-        {% for item in item_list %}
+        {% for item in depot.itemrental_set.all %}
             <tr class="rental-item">
                 <td class="rental-item-name">{{ item.item.name }}</td>
                 <td class="rental-item-quantity">{{ item.quantity }}</td>
