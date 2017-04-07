@@ -90,29 +90,6 @@ def detail(request, depot_id):
     })
 
 
-def get_item_availability_list(from_date, to_date, depot_id, item_list):
-    """
-    Calculate availability for each item in item_list
-
-    :return: A list of availabilities
-    """
-
-    rentals = Rental.objects.filter(
-        start_date__lt=to_date,
-        return_date__gt=from_date,
-        depot_id=depot_id,
-        state=Rental.STATE_APPROVED
-    )
-    availability_list = []
-    for item in item_list:
-        intervals = get_availability_intervals(from_date, to_date, item, rentals)
-        availability_list.append(
-            (item, get_maximum_availability(intervals))
-        )
-
-    return availability_list
-
-
 def rentals(request, depot_id):
     """
     Provides an overview over all rentals for one depot
