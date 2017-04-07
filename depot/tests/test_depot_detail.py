@@ -131,3 +131,22 @@ class DepotDetailTestCase(ClientTestCase):
         response = self.as_superuser.get('/depots/%d/' % self.depot.id)
         self.assertSuccess(response, 'depot/detail.html')
         self.assertNotContains(response, 'Deleted Item')
+
+    def test_manager_users_list(self):
+        self.depot.manager_users.add(self.user)
+        response = self.as_guest.get('/depots/%d/' % self.depot.id)
+        self.assertSuccess(response, 'depot/detail.html')
+        self.assertContains(response, 'This depot is managed by Ursula User.')
+
+    def test_manager_groups_list(self):
+        self.depot.manager_groups.add(self.group)
+        response = self.as_guest.get('/depots/%d/' % self.depot.id)
+        self.assertSuccess(response, 'depot/detail.html')
+        self.assertContains(response, 'This depot is managed by Ursula User.')
+
+    def test_manager_users_and_groups_list(self):
+        self.depot.manager_users.add(self.user)
+        self.depot.manager_groups.add(self.group)
+        response = self.as_guest.get('/depots/%d/' % self.depot.id)
+        self.assertSuccess(response, 'depot/detail.html')
+        self.assertContains(response, 'This depot is managed by Ursula User.')
