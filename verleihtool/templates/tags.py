@@ -68,9 +68,34 @@ def concat_with_and(list, final='and'):
 @register.filter
 def key(dictionary, key):
     """
-    Returns the appropriate label for the given state
+    Return the appropriate label for the given state
 
     :author: Florian Stamer
     """
 
     return dictionary.get(key)
+
+
+@register.filter
+def full_name(user):
+    """
+    Return first and last name of the user if available
+
+    :author: Benedikt Seidl
+    """
+
+    if user.first_name and user.last_name:
+        return '%s %s' % (user.first_name, user.last_name)
+    else:
+        return user.username
+
+
+@register.filter
+def full_names(users):
+    """
+    Turn the given user list into a list of full names
+
+    :author: Benedikt Seidl
+    """
+
+    return list(map(full_name, users))

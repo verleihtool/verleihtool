@@ -41,7 +41,7 @@
     </h1>
 
     <div class="alert alert-info">
-        This depot is managed by {% concat_with_and depot.managers %}.
+        This depot is managed by {% concat_with_and depot.managers|full_names %}.
     </div>
 
     <form method="post" action="{% url 'depot:detail' depot.id %}">
