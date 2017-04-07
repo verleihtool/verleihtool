@@ -3,19 +3,10 @@
 {% load tags %}
 
 {% block title %}
-    {{ depot.name }}
+    {{ depot.name }} by {{ depot.organization.name }}
 {% endblock %}
 
 {% block content %}
-    {% if error_message %}
-        <div class="alert alert-danger" role="alert">
-            <div><strong>Error:</strong></div>
-            {% for error in error_message %}
-                <div>{{ error }}</div>
-            {% endfor %}
-        </div>
-    {% endif %}
-
     <ol class="breadcrumb">
         <li>
             <a href="{% url 'depot:index' %}">Depots</a>
@@ -44,80 +35,32 @@
         This depot is managed by {% concat_with_and depot.managers %}.
     </div>
 
-    <form method="post" action="{% url 'depot:detail' depot.id %}">
-        {% csrf_token %}
-        <div class="row">
-            <div class="form-group col-md-4">
-                <label for="start_date">From</label>
-                <div class="input-group date" id="start_date_picker">
-                    <input type="text" class="form-control"
-                            id="start_date" name="start_date"
-                            value="{{ start }}" required>
-                    <span class="input-group-addon">
-                        <span class="glyphicon glyphicon-calendar"></span>
-                    </span>
-                </div>
-            </div>
-            <div class="form-group col-md-4">
-                <label for="end_date">To</label>
-                <div class="input-group date" id="end_date_picker">
-                    <input type="text" class="form-control"
-                            id="end_date" name="return_date"
-                            value="{{ end }}" required>
-                    <span class="input-group-addon">
-                        <span class="glyphicon glyphicon-calendar"></span>
-                    </span>
-                </div>
-            </div>
-            <div class="form-group col-md-4">
-                <label for="refresh">Refresh</label>
-                <div class="input-group">
-                    <button type="submit" class="btn btn-primary" id="refresh">
-                        Update
-                    </button>
-                </div>
-            </div>
-        </div>
-    </form>
-
     <table class="table">
         <tr>
             <th>Name</th>
             <th>Quantity</th>
-            <th>Available</th>
             <th>Location</th>
             {% if show_visibility %}
                 <th>Visibility</th>
             {% endif %}
-            <th>Selected</th>
         </tr>
 
-        {% for item, availability in item_availability_list %}
-            <tr class="rental-item">
-                <td class="rental-item-name">{{ item.name }}</td>
-                <td class="rental-item-quantity">{{ item.quantity }}</td>
-                <td class="rental-item-availability">{{ availability }} </td>
-                <td class="rental-item-location">{{ item.location }}</td>
+        {% for item in item_list %}
+            <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.location }}</td>
                 {% if show_visibility %}
                     <td>{% item_visibility item.visibility %}</td>
                 {% endif %}
-                <td class="rental-item-selected">
-                    <div class="input-group number">
-                        <input type="text" class="form-control" data-name="item-{{ item.id }}-quantity"
-                               data-min="0" data-max="{{ availability }}" value="0">
-                        <div class="input-group-btn">
-                            <button type="button" class="btn btn-default number-up">
-                                <span class="glyphicon glyphicon-chevron-up"></span>
-                            </button>
-                            <button type="button" class="btn btn-default number-down">
-                                <span class="glyphicon glyphicon-chevron-down"></span>
-                            </button>
-                        </div>
-                    </div>
-                </td>
             </tr>
         {% endfor %}
     </table>
 
-    {% include 'depot/checkout-modal.html' %}
+    <button type="button" class="btn btn-primary"
+            data-toggle="modal" data-target="#date-modal">
+        Request rental
+    </button>
+
+    {% include 'depot/modals/date-modal.html' %}
 {% endblock %}
