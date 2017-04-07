@@ -205,7 +205,7 @@ def create_items(session, rental, data):
 def send_confirmation_mail(request, rental):
     pattern_obj = re.compile("/(create)/")
 
-    mailcontext = Context({
+    mailcontext = {
         'firstname': rental.firstname,
         'lastname': rental.lastname,
         'start_date': rental.start_date,
@@ -213,7 +213,7 @@ def send_confirmation_mail(request, rental):
         'uuid': rental.uuid,
         'itemrental_list': rental.itemrental_set.all(),
         'absoluteuri': pattern_obj.sub("/", request.build_absolute_uri())
-    })
+    }
 
     html_content = render_to_string('rental_confirmation_email.html', mailcontext)
     plain_txt_mail = html2text.html2text(html_content)
