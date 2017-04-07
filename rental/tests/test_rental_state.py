@@ -42,25 +42,25 @@ class RentalStateTestCase(ClientTestCase):
 
     def test_update_rental_state_as_depot_manager(self):
         data = [
-            (Rental.STATE_PENDING, 'Revoke', Rental.STATE_REVOKED),
-            (Rental.STATE_APPROVED, 'Revoke', Rental.STATE_REVOKED),
-            (Rental.STATE_REVOKED, 'Pending', Rental.STATE_PENDING),
-            (Rental.STATE_APPROVED, 'Pending', Rental.STATE_PENDING),
-            (Rental.STATE_DECLINED, 'Pending', Rental.STATE_PENDING),
-            (Rental.STATE_PENDING, 'Approve', Rental.STATE_APPROVED),
-            (Rental.STATE_DECLINED, 'Approve', Rental.STATE_APPROVED),
-            (Rental.STATE_RETURNED, 'Approve', Rental.STATE_APPROVED),
-            (Rental.STATE_PENDING, 'Decline', Rental.STATE_DECLINED),
-            (Rental.STATE_APPROVED, 'Decline', Rental.STATE_DECLINED),
-            (Rental.STATE_APPROVED, 'Returned', Rental.STATE_RETURNED)
+            (Rental.STATE_PENDING, Rental.STATE_REVOKED),
+            (Rental.STATE_APPROVED, Rental.STATE_REVOKED),
+            (Rental.STATE_REVOKED, Rental.STATE_PENDING),
+            (Rental.STATE_APPROVED, Rental.STATE_PENDING),
+            (Rental.STATE_DECLINED, Rental.STATE_PENDING),
+            (Rental.STATE_PENDING, Rental.STATE_APPROVED),
+            (Rental.STATE_DECLINED, Rental.STATE_APPROVED),
+            (Rental.STATE_RETURNED, Rental.STATE_APPROVED),
+            (Rental.STATE_PENDING, Rental.STATE_DECLINED),
+            (Rental.STATE_APPROVED, Rental.STATE_DECLINED),
+            (Rental.STATE_APPROVED, Rental.STATE_RETURNED)
         ]
 
         self.depot.manager_users.add(self.user)
 
-        for initial_state, action, expected_state in data:
+        for initial_state, expected_state in data:
             rental = self.create_rental(initial_state)
             response = self.as_user.post('/rentals/%s/state/' % rental.uuid, {
-                'state': action
+                'state': expected_state
             })
             self.assertRedirects(response, '/rentals/%s/' % rental.uuid)
             rental.refresh_from_db()
@@ -68,20 +68,20 @@ class RentalStateTestCase(ClientTestCase):
 
     def test_invalid_rental_state_as_depot_manager(self):
         data = [
-            (Rental.STATE_REVOKED, 'Revoke'),
-            (Rental.STATE_DECLINED, 'Revoke'),
-            (Rental.STATE_RETURNED, 'Revoke'),
-            (Rental.STATE_PENDING, 'Pending'),
-            (Rental.STATE_RETURNED, 'Pending'),
-            (Rental.STATE_REVOKED, 'Approve'),
-            (Rental.STATE_APPROVED, 'Approve'),
-            (Rental.STATE_REVOKED, 'Decline'),
-            (Rental.STATE_DECLINED, 'Decline'),
-            (Rental.STATE_RETURNED, 'Decline'),
-            (Rental.STATE_PENDING, 'Returned'),
-            (Rental.STATE_REVOKED, 'Returned'),
-            (Rental.STATE_DECLINED, 'Returned'),
-            (Rental.STATE_RETURNED, 'Returned'),
+            (Rental.STATE_REVOKED, Rental.STATE_REVOKED),
+            (Rental.STATE_DECLINED, Rental.STATE_REVOKED),
+            (Rental.STATE_RETURNED, Rental.STATE_REVOKED),
+            (Rental.STATE_PENDING, Rental.STATE_PENDING),
+            (Rental.STATE_RETURNED, Rental.STATE_PENDING),
+            (Rental.STATE_REVOKED, Rental.STATE_APPROVED),
+            (Rental.STATE_APPROVED, Rental.STATE_APPROVED),
+            (Rental.STATE_REVOKED, Rental.STATE_DECLINED),
+            (Rental.STATE_DECLINED, Rental.STATE_DECLINED),
+            (Rental.STATE_RETURNED, Rental.STATE_DECLINED),
+            (Rental.STATE_PENDING, Rental.STATE_RETURNED),
+            (Rental.STATE_REVOKED, Rental.STATE_RETURNED),
+            (Rental.STATE_DECLINED, Rental.STATE_RETURNED),
+            (Rental.STATE_RETURNED, Rental.STATE_RETURNED),
             (Rental.STATE_PENDING, '')
         ]
 
@@ -96,9 +96,9 @@ class RentalStateTestCase(ClientTestCase):
 
     def test_update_rental_state_as_guest(self):
         data = [
-            (Rental.STATE_PENDING, 'Revoke', Rental.STATE_REVOKED),
-            (Rental.STATE_APPROVED, 'Revoke', Rental.STATE_REVOKED),
-            (Rental.STATE_REVOKED, 'Pending', Rental.STATE_PENDING)
+            (Rental.STATE_PENDING, Rental.STATE_REVOKED, Rental.STATE_REVOKED),
+            (Rental.STATE_APPROVED, Rental.STATE_REVOKED, Rental.STATE_REVOKED),
+            (Rental.STATE_REVOKED, Rental.STATE_PENDING, Rental.STATE_PENDING)
         ]
 
         for initial_state, action, expected_state in data:
@@ -112,28 +112,28 @@ class RentalStateTestCase(ClientTestCase):
 
     def test_invalid_rental_state_as_guest(self):
         data = [
-            (Rental.STATE_REVOKED, 'Revoke'),
-            (Rental.STATE_DECLINED, 'Revoke'),
-            (Rental.STATE_RETURNED, 'Revoke'),
-            (Rental.STATE_PENDING, 'Pending'),
-            (Rental.STATE_APPROVED, 'Pending'),
-            (Rental.STATE_DECLINED, 'Pending'),
-            (Rental.STATE_RETURNED, 'Pending'),
-            (Rental.STATE_PENDING, 'Approve'),
-            (Rental.STATE_REVOKED, 'Approve'),
-            (Rental.STATE_APPROVED, 'Approve'),
-            (Rental.STATE_DECLINED, 'Approve'),
-            (Rental.STATE_RETURNED, 'Approve'),
-            (Rental.STATE_PENDING, 'Decline'),
-            (Rental.STATE_REVOKED, 'Decline'),
-            (Rental.STATE_APPROVED, 'Decline'),
-            (Rental.STATE_DECLINED, 'Decline'),
-            (Rental.STATE_RETURNED, 'Decline'),
-            (Rental.STATE_PENDING, 'Returned'),
-            (Rental.STATE_REVOKED, 'Returned'),
-            (Rental.STATE_APPROVED, 'Returned'),
-            (Rental.STATE_DECLINED, 'Returned'),
-            (Rental.STATE_RETURNED, 'Returned'),
+            (Rental.STATE_REVOKED, Rental.STATE_REVOKED),
+            (Rental.STATE_DECLINED, Rental.STATE_REVOKED),
+            (Rental.STATE_RETURNED, Rental.STATE_REVOKED),
+            (Rental.STATE_PENDING, Rental.STATE_PENDING),
+            (Rental.STATE_APPROVED, Rental.STATE_PENDING),
+            (Rental.STATE_DECLINED, Rental.STATE_PENDING),
+            (Rental.STATE_RETURNED, Rental.STATE_PENDING),
+            (Rental.STATE_PENDING, Rental.STATE_APPROVED),
+            (Rental.STATE_REVOKED, Rental.STATE_APPROVED),
+            (Rental.STATE_APPROVED, Rental.STATE_APPROVED),
+            (Rental.STATE_DECLINED, Rental.STATE_APPROVED),
+            (Rental.STATE_RETURNED, Rental.STATE_APPROVED),
+            (Rental.STATE_PENDING, Rental.STATE_DECLINED),
+            (Rental.STATE_REVOKED, Rental.STATE_DECLINED),
+            (Rental.STATE_APPROVED, Rental.STATE_DECLINED),
+            (Rental.STATE_DECLINED, Rental.STATE_DECLINED),
+            (Rental.STATE_RETURNED, Rental.STATE_DECLINED),
+            (Rental.STATE_PENDING, Rental.STATE_RETURNED),
+            (Rental.STATE_REVOKED, Rental.STATE_RETURNED),
+            (Rental.STATE_APPROVED, Rental.STATE_RETURNED),
+            (Rental.STATE_DECLINED, Rental.STATE_RETURNED),
+            (Rental.STATE_RETURNED, Rental.STATE_RETURNED),
             (Rental.STATE_PENDING, '')
         ]
 
