@@ -158,10 +158,6 @@ def state(request, rental_uuid):
     return redirect('rental:detail', rental_uuid=rental.uuid)
 
 
-def update(request, rental_uuid):
-    return render(request, 'rental/update.html')
-
-
 def valid_state_transition(managed_by_user, old_state, new_state):
     if managed_by_user:
         return new_state in STATE_TRANSITIONS_MANAGER[old_state]
