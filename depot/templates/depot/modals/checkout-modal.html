@@ -6,8 +6,8 @@
                 {% csrf_token %}
 
                 <input type="hidden" name="depot_id" value="{{ depot.id }}">
-                <input type="hidden" name="start_date" value="{{ start_date.isoformat }}">
-                <input type="hidden" name="return_date" value="{{ return_date.isoformat }}">
+                <input type="hidden" name="start_date" value="{{ start_date_formatted }}">
+                <input type="hidden" name="return_date" value="{{ return_date_formatted }}">
 
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">

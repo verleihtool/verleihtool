@@ -9,6 +9,7 @@ from django.template import Context
 from django.template.loader import render_to_string
 from django.http import HttpResponseForbidden
 import re
+import urllib
 import html2text
 
 
@@ -16,32 +17,25 @@ import html2text
 def create(request):
     data = request.POST
 
-    params = (
-        'firstname', 'lastname', 'depot_id', 'email', 'purpose', 'start_date', 'return_date'
-    )
-
     user = request.user if request.user.is_authenticated else None
 
     try:
         with transaction.atomic():
-            rental = create_rental(request.session, user, params, data)
-
-            if create_items(request.session, rental, data):
-                create_session_msg(
-                    request.session,
-                    ValidationError({
-                        'items': 'The rental cannot be submitted without any items.'
-                    })
-                )
-
-            if 'message' in request.session and request.session['message'] is not None:
-                raise ValidationError('Errors occured.')
+            rental = create_rental(user, data)
+            create_items(rental, data)
 
             send_confirmation_mail(request, rental)
 
             return redirect('rental:detail', rental_uuid=rental.uuid)
-    except ValidationError:
-        return redirect('depot:create_rental', depot_id=data.get('depot_id'))
+    except ValidationError as e:
+        request.session['errors'] = e.message_dict
+        request.session['data'] = data
+        response = redirect('depot:create_rental', depot_id=data.get('depot_id'))
+        response['Location'] += '?' + urllib.parse.urlencode({
+            'start_date': data.get('start_date'),
+            'return_date': data.get('return_date')
+        })
+        return response
 
 
 # Allowed state transitions for managers of the connected depot
@@ -165,50 +159,44 @@ def valid_state_transition(managed_by_user, old_state, new_state):
         return new_state in STATE_TRANSITIONS_USER[old_state]
 
 
-def create_session_msg(session, e):
-    if 'message' not in session:
-        session['message'] = []
-    for key, message in e:
-        session['message'].append(key + ': ' + str(message))
-
-
-def create_rental(session, user, params, data):
-    rental = Rental(user=user, **{key: data.get(key) for key in params})
-    try:
-        rental.full_clean()
-        rental.save()
-    except ValidationError as e:
-        create_session_msg(session, e)
-        rental = Rental(
-            user=None,
-            depot_id=data.get('depot_id'),
-            firstname='De',
-            lastname='Bug',
-            email='debug@example.com',
-            start_date='1999-12-31',
-            return_date='2000-01-01'
-        )
-        rental.save()
+def create_rental(user, data):
+    keys = (
+        'firstname', 'lastname', 'depot_id', 'email', 'purpose', 'start_date', 'return_date'
+    )
+    rental = Rental(user=user, **{key: data.get(key) for key in keys})
+    rental.full_clean()
+    rental.save()
     return rental
 
 
-def create_items(session, rental, data):
+def create_items(rental, data):
+    errors = {}
     empty = True
+
     for key, quantity in data.items():
         m = re.match(r'^item-([0-9]+)-quantity$', key)
         if m is not None and int(quantity) > 0:
-            empty = False
+            item_id = m.group(1)
             item = ItemRental(
                 rental_id=rental.uuid,
-                item_id=m.group(1),
+                item_id=item_id,
                 quantity=quantity
             )
             try:
                 item.full_clean()
                 item.save()
+                empty = False
             except ValidationError as e:
-                create_session_msg(session, e)
-    return empty
+                for key, value in e:
+                    errors['item-%s-%s' % (item_id, key)] = value
+
+    if errors:
+        raise ValidationError(errors)
+
+    if empty:
+        raise ValidationError({
+            'items': 'The rental cannot be submitted without any items.'
+        })
 
 
 def send_confirmation_mail(request, rental):

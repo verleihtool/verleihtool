@@ -76,9 +76,8 @@ class ItemRental(models.Model):
 
     def clean(self):
         if self.rental.depot_id != self.item.depot_id:
-            tag = 'item [' + self.item.name + ']'
             raise ValidationError({
-                tag: 'The item must come from the depot the rental was created for.'
+                'item': 'The item must come from the depot the rental was created for.'
             })
 
         if self.item.visibility != Item.VISIBILITY_PUBLIC:
@@ -86,17 +85,15 @@ class ItemRental(models.Model):
             user = self.rental.user
 
             if user is None or not organization.is_member(user):
-                tag = 'item [' + self.item.name + ']'
                 raise ValidationError({
-                    tag: 'You have to be a member of the organization'
-                         'that manages this depot to rent a private item.'
+                    'item': 'You have to be a member of the organization'
+                            'that manages this depot to rent a private item.'
                 })
 
         if self.quantity <= 0 or self.quantity > self.item.quantity:
-            tag = 'quantity [' + self.item.name + ']'
             raise ValidationError({
-                tag: 'The quantity must be positive and less than or '
-                     'equal to the total amount of available items.'
+                'quantity': 'The quantity must be positive and less than or '
+                            'equal to the total amount of available items.'
             })
 
         if self.returned > self.quantity:

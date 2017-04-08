@@ -18,3 +18,8 @@ body {
 .login-form label {
     display: none;
 }
+
+// don't let the user resize textarea inputs
+textarea {
+    resize: none;
+}

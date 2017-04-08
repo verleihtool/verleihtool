@@ -25,13 +25,13 @@ class CheckoutFormTestCase(ClientTestCase):
         response = self.as_user.get('/depots/%d/rentals/create/' % self.depot.id)
 
         self.assertInHTML(
-            '<input type="text" class="form-control" id="id_lastname" '
+            '<input type="text" class="form-control" id="lastname" '
             'name="lastname" value="User" required>',
             response.content.decode()
         )
 
         self.assertInHTML(
-            '<input type="text" class="form-control" id="id_firstname" '
+            '<input type="text" class="form-control" id="firstname" '
             'name="firstname" value="Ursula" required>',
             response.content.decode()
         )
@@ -46,13 +46,13 @@ class CheckoutFormTestCase(ClientTestCase):
         response = self.as_guest.get('/depots/%d/rentals/create/' % self.depot.id)
 
         self.assertInHTML(
-            '<input type="text" class="form-control" id="id_lastname" '
+            '<input type="text" class="form-control" id="lastname" '
             'name="lastname" value="" required>',
             response.content.decode()
         )
 
         self.assertInHTML(
-            '<input type="text" class="form-control" id="id_firstname" '
+            '<input type="text" class="form-control" id="firstname" '
             'name="firstname" value="" required>',
             response.content.decode()
         )
