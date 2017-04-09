@@ -8,16 +8,15 @@ register = template.Library()
 
 
 @register.simple_tag(takes_context=True)
-def current_page(context, path_name, content):
+def current_app(context, app_name, content):
     """
-    If the current page equals the path_name, then return the given content.
+    If the current page belongs to the given app, then return the given content.
 
     :author: Benedikt Seidl
     """
 
-    app_name = context['request'].resolver_match.app_names[0]
-    url_name = context['request'].resolver_match.url_name
-    if '%s:%s' % (app_name, url_name) == path_name:
+    current_app_name = context['request'].resolver_match.app_names[0]
+    if app_name == current_app_name:
         return content
 
 

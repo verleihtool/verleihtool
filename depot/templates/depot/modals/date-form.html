@@ -23,7 +23,9 @@
     </div>
 </div>
 
-<div class="alert alert-warning">
-    Changing the dates will reset all selected items because the availability
-    of these items may be different in the new time frame.
-</div>
+{% if request.resolver_match.url_name == 'create_rental' %}
+    <div class="alert alert-warning">
+        Changing the dates will reset all selected items because the availability
+        of these items may be different in the new time frame.
+    </div>
+{% endif %}
