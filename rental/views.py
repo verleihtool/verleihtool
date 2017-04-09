@@ -12,15 +12,30 @@ from django.views.decorators.http import require_POST
 from depot import availability, helpers
 from depot.models import Depot, Item
 from .models import Rental, ItemRental
+from .state_transitions import allowed_transitions
 
 
 @require_POST
 def create(request):
+    """
+    Create a new rental object and assign the selected items to it
+
+    When the object is successfully created, the user is redirected
+    to the detail view of the new rental.
+    If an error occurs, the message dictionary is stored in the
+    current session and the user gets back to the edit view to
+    correct their mistakes.
+
+    :author: Florian Stamer
+    """
+
     data = request.POST
 
     user = request.user if request.user.is_authenticated else None
 
     try:
+        # The transaction is cancelled if an unhandled exception occurs
+        # in the following block
         with transaction.atomic():
             rental = create_rental(user, data)
             create_items(rental, data)
@@ -29,60 +44,23 @@ def create(request):
 
             return redirect('rental:detail', rental_uuid=rental.uuid)
     except ValidationError as e:
+        # Store the errors and the submitted data in the current session
         request.session['errors'] = e.message_dict
         request.session['data'] = data
+
+        # Redirect to the form where the errors are displayed
         response = redirect('depot:create_rental', depot_id=data.get('depot_id'))
         response['Location'] += '?' + urllib.parse.urlencode({
             'start_date': data.get('start_date'),
             'return_date': data.get('return_date')
         })
+
         return response
-
-
-# Allowed state transitions for managers of the connected depot
-STATE_TRANSITIONS_MANAGER = {
-    Rental.STATE_PENDING: [
-        Rental.STATE_REVOKED,
-        Rental.STATE_APPROVED,
-        Rental.STATE_DECLINED,
-    ],
-    Rental.STATE_REVOKED: [
-        Rental.STATE_PENDING,
-    ],
-    Rental.STATE_APPROVED: [
-        Rental.STATE_PENDING,
-        Rental.STATE_REVOKED,
-        Rental.STATE_DECLINED,
-        Rental.STATE_RETURNED,
-    ],
-    Rental.STATE_DECLINED: [
-        Rental.STATE_PENDING,
-        Rental.STATE_APPROVED,
-    ],
-    Rental.STATE_RETURNED: [
-        Rental.STATE_APPROVED,
-    ]
-}
-
-# Allowed state transitions for any other user
-STATE_TRANSITIONS_USER = {
-    Rental.STATE_PENDING: [
-        Rental.STATE_REVOKED,
-    ],
-    Rental.STATE_REVOKED: [
-        Rental.STATE_PENDING,
-    ],
-    Rental.STATE_APPROVED: [
-        Rental.STATE_REVOKED,
-    ],
-    Rental.STATE_DECLINED: [],
-    Rental.STATE_RETURNED: [],
-}
 
 
 def detail(request, rental_uuid):
     """
-    Provides necessary information for a rentals detail page
+    Provide necessary information for a rentals detail page
 
     This includes buttons to change the rentals state,
     an alert with information about the rentals state
@@ -94,10 +72,7 @@ def detail(request, rental_uuid):
     rental = get_object_or_404(Rental, pk=rental_uuid)
     managed_by_user = rental.depot.managed_by(request.user)
 
-    if managed_by_user:
-        buttons = STATE_TRANSITIONS_MANAGER[rental.state]
-    else:
-        buttons = STATE_TRANSITIONS_USER[rental.state]
+    buttons = allowed_transitions(managed_by_user, rental.state)
 
     alert_classes = {
         Rental.STATE_PENDING: 'info',
@@ -115,6 +90,7 @@ def detail(request, rental_uuid):
         Rental.STATE_RETURNED: 'Returned',
     }
 
+    # Copy dictionary so that we can change the copy safely
     btn_classes = alert_classes.copy()
     btn_classes[Rental.STATE_RETURNED] = 'primary'
 
@@ -131,9 +107,9 @@ def detail(request, rental_uuid):
 @require_POST
 def state(request, rental_uuid):
     """
-    Changes state of a given rental
+    Change the state of a given rental
 
-    If given an invalid state, return 403.
+    If given an invalid state, this shows a 403 Forbidden response.
 
     :author: Florian Stamer
     """
@@ -144,20 +120,13 @@ def state(request, rental_uuid):
     data = request.POST
     state = data.get('state')
 
-    if not valid_state_transition(managed_by_user, rental.state, state):
+    if state not in allowed_transitions(managed_by_user, rental.state):
         return HttpResponseForbidden('Invalid state transition')
 
     rental.state = state
     rental.save()
 
     return redirect('rental:detail', rental_uuid=rental.uuid)
-
-
-def valid_state_transition(managed_by_user, old_state, new_state):
-    if managed_by_user:
-        return new_state in STATE_TRANSITIONS_MANAGER[old_state]
-    else:
-        return new_state in STATE_TRANSITIONS_USER[old_state]
 
 
 def create_rental(user, data):
@@ -182,7 +151,7 @@ def create_items(rental, data):
             'items': 'The rental cannot be submitted without any items.'
         })
 
-    for item, avail in get_item_availabilities(rental, item_quantities):
+    for item, avail in get_item_availability_list(rental, item_quantities):
         try:
             create_item_rental(rental, item, item_quantities[item.id], avail)
         except ValidationError as e:
@@ -193,14 +162,11 @@ def create_items(rental, data):
         raise ValidationError(errors)
 
 
-def get_item_availabilities(rental, item_quantities):
+def get_item_availability_list(rental, item_quantities):
     item_list = Item.objects.filter(id__in=item_quantities.keys())
 
     return availability.get_item_availability_list(
-        rental.start_date,
-        rental.return_date,
-        rental.depot_id,
-        item_list
+        rental.start_date, rental.return_date, rental.depot_id, item_list
     )
 
 
