@@ -21,10 +21,28 @@
 
     {% if errors %}
         <div class="alert alert-danger" role="alert">
-            Please fix the errors below and in the
-            <a href="#" class="alert-link" data-toggle="modal" data-target="#checkout-modal">
-                checkout form
+            Please fix the
+            <a href="#errors-collapse" class="alert-link" data-toggle="collapse">errors below</a>
+            and in the
+            <a href="#checkout-modal" class="alert-link" data-toggle="modal">checkout form</a>
+
+            <a href="#errors-collapse" class="alert-link pull-right" data-toggle="collapse">
+                <span class="caret"></span>
             </a>
+
+            <div class="collapse" id="errors-collapse">
+                <hr>
+                <dl class="dl-horizontal">
+                    {% for key, error_list in errors.items %}
+                        <dt>{{ key }}</dt>
+                        <dd>
+                            {% for error in error_list %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </dd>
+                    {% endfor %}
+                </dl>
+            </div>
         </div>
     {% endif %}
 
@@ -32,7 +50,7 @@
 
     <div class="alert alert-info">
         Create a new rental
-        <a href="#" class="alert-link" data-toggle="modal" data-target="#date-modal">
+        <a href="#date-modal" class="alert-link" data-toggle="modal">
             from {{ start_date }} to {{ return_date }}
         </a>
     </div>
@@ -59,7 +77,7 @@
                 <td class="rental-item-selected">
                     <div class="input-group number">
                         <input type="text" class="form-control"
-                                value="{% firstof data_quantities|key:item.id '0' %}"
+                                value="{% firstof item_quantities|key:item.id '0' %}"
                                 data-name="item-{{ item.id }}-quantity"
                                 data-min="0" data-max="{{ availability }}">
                         <div class="input-group-btn">
@@ -78,7 +96,7 @@
 
     <button type="button" class="btn btn-primary" id="checkout-button"
             data-toggle="modal" data-target="#checkout-modal"
-            {% if not data_quantities %} disabled {% endif %}>
+            {% if not errors %} disabled {% endif %}>
         Checkout
     </button>
 

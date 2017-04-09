@@ -1,16 +1,17 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from .models import Rental, ItemRental
-from depot.models import Depot
-from django.db import transaction
-from django.views.decorators.http import require_POST
-from django.core.exceptions import ValidationError
-from django.core.mail import send_mail
-from django.template import Context
-from django.template.loader import render_to_string
-from django.http import HttpResponseForbidden
 import re
 import urllib
 import html2text
+from django.core.exceptions import ValidationError
+from django.core.mail import send_mail
+from django.db import transaction
+from django.http import HttpResponseForbidden
+from django.shortcuts import render, redirect, get_object_or_404
+from django.template import Context
+from django.template.loader import render_to_string
+from django.views.decorators.http import require_POST
+from depot import availability, helpers
+from depot.models import Depot, Item
+from .models import Rental, ItemRental
 
 
 @require_POST
@@ -166,37 +167,57 @@ def create_rental(user, data):
     rental = Rental(user=user, **{key: data.get(key) for key in keys})
     rental.full_clean()
     rental.save()
+    # Refresh Rental object to fix issue with depot_id
+    rental.refresh_from_db()
     return rental
 
 
 def create_items(rental, data):
     errors = {}
-    empty = True
 
-    for key, quantity in data.items():
-        m = re.match(r'^item-([0-9]+)-quantity$', key)
-        if m is not None and int(quantity) > 0:
-            item_id = m.group(1)
-            item = ItemRental(
-                rental_id=rental.uuid,
-                item_id=item_id,
-                quantity=quantity
-            )
-            try:
-                item.full_clean()
-                item.save()
-                empty = False
-            except ValidationError as e:
-                for key, value in e:
-                    errors['item-%s-%s' % (item_id, key)] = value
+    item_quantities = helpers.extract_item_quantities(data)
+
+    if not item_quantities:
+        raise ValidationError({
+            'items': 'The rental cannot be submitted without any items.'
+        })
+
+    for item, avail in get_item_availabilities(rental, item_quantities):
+        try:
+            create_item_rental(rental, item, item_quantities[item.id], avail)
+        except ValidationError as e:
+            for key, value in e:
+                errors['%s %s' % (item.name, key)] = value
 
     if errors:
         raise ValidationError(errors)
 
-    if empty:
+
+def get_item_availabilities(rental, item_quantities):
+    item_list = Item.objects.filter(id__in=item_quantities.keys())
+
+    return availability.get_item_availability_list(
+        rental.start_date,
+        rental.return_date,
+        rental.depot_id,
+        item_list
+    )
+
+
+def create_item_rental(rental, item, quantity, availability):
+    if quantity > availability:
         raise ValidationError({
-            'items': 'The rental cannot be submitted without any items.'
+            'quantity': 'The quantity must not exceed the availability '
+                        'of the item in the requested time frame.'
         })
+
+    item_rental = ItemRental(
+        rental=rental,
+        item=item,
+        quantity=quantity
+    )
+    item_rental.full_clean()
+    item_rental.save()
 
 
 def send_confirmation_mail(request, rental):
