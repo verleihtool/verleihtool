@@ -23,6 +23,10 @@ class DepotAdmin(admin.ModelAdmin):
 
     inlines = [ItemsInline]
     list_display = ['name', 'active']
+    list_filter = [
+        ('active', admin.BooleanFieldListFilter),
+        ('organization', admin.RelatedOnlyFieldListFilter),
+    ]
     ordering = ['name']
     filter_horizontal = ['manager_users', 'manager_groups']
 

@@ -22,7 +22,11 @@ class RentalAdmin(admin.ModelAdmin):
     """
 
     inlines = [ItemRentalInline]
-    list_display = ['uuid', 'firstname', 'lastname', 'email', 'state']
+    list_display = ['uuid', 'depot', 'firstname', 'lastname', 'state']
+    list_filter = [
+        ('depot', admin.RelatedOnlyFieldListFilter),
+        'state'
+    ]
     ordering = ['uuid']
 
     # Custom admin actions
@@ -39,13 +43,13 @@ class RentalAdmin(admin.ModelAdmin):
         rentals_approved = queryset.update(state=Rental.STATE_APPROVED)
         self.message_user(request, self.format_message(rentals_approved, 'approved'))
 
-    make_approved.short_description = 'Approve selected rentals'
+    make_approved.short_description = 'Mark selected rentals as approved'
 
     def make_declined(self, request, queryset):
         rentals_declined = queryset.update(state=Rental.STATE_DECLINED)
         self.message_user(request, self.format_message(rentals_declined, 'declined'))
 
-    make_declined.short_description = 'Decline selected rentals'
+    make_declined.short_description = 'Mark selected rentals as declined'
 
     def make_pending(self, request, queryset):
         rentals_pending = queryset.update(state=Rental.STATE_PENDING)
@@ -57,13 +61,13 @@ class RentalAdmin(admin.ModelAdmin):
         rentals_revoked = queryset.update(state=Rental.STATE_REVOKED)
         self.message_user(request, self.format_message(rentals_revoked, 'revoked'))
 
-    make_revoked.short_description = 'Revoke selected rentals'
+    make_revoked.short_description = 'Mark selected rentals as revoked'
 
     def make_returned(self, request, queryset):
         rentals_returned = queryset.update(state=Rental.STATE_RETURNED)
         self.message_user(request, self.format_message(rentals_returned, 'returned'))
 
-    make_revoked.short_description = 'Mark selected rentals as returned'
+    make_returned.short_description = 'Mark selected rentals as returned'
 
     # Limit access to rentals to the managers of the connected depots
 
