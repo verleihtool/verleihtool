@@ -1,8 +1,20 @@
+// add some distance from the header
 body {
   padding-top: 100px;
 }
 
+// override bootstraps max-height: 200px on small screens
+.navbar-fixed-top .navbar-collapse {
+    max-height: none;
+}
+
+// more space in the login dropdown
 .login-form {
     padding: 10px;
     width: 240px;
+}
+
+// hide the username and password labels in the dropdown
+.login-form label {
+    display: none;
 }
