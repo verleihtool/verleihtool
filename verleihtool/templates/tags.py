@@ -1,3 +1,4 @@
+import json
 from django import template
 from django.http import request
 from depot.models import Item
@@ -73,6 +74,17 @@ def key(dictionary, key):
     """
 
     return dictionary.get(key)
+
+
+@register.filter
+def tojson(object):
+    """
+    Turn the given object into its JSON representation
+
+    :author: Benedikt Seidl
+    """
+
+    return json.dumps(object)
 
 
 @register.filter

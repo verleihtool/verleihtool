@@ -151,9 +151,16 @@ def create_items(rental, data):
             'items': 'The rental cannot be submitted without any items.'
         })
 
-    for item, avail in get_item_availability_list(rental, item_quantities):
+    item_list = Item.objects.filter(id__in=item_quantities.keys())
+
+    item_availability_intervals = availability.get_item_availability_intervals(
+        rental.start_date, rental.return_date, rental.depot_id, item_list
+    )
+
+    for item, intervals in item_availability_intervals:
         try:
-            create_item_rental(rental, item, item_quantities[item.id], avail)
+            available = availability.get_minimum_availability(intervals)
+            create_item_rental(rental, item, item_quantities[item.id], available)
         except ValidationError as e:
             for key, value in e:
                 errors['%s %s' % (item.name, key)] = value
@@ -162,16 +169,8 @@ def create_items(rental, data):
         raise ValidationError(errors)
 
 
-def get_item_availability_list(rental, item_quantities):
-    item_list = Item.objects.filter(id__in=item_quantities.keys())
-
-    return availability.get_item_availability_list(
-        rental.start_date, rental.return_date, rental.depot_id, item_list
-    )
-
-
-def create_item_rental(rental, item, quantity, availability):
-    if quantity > availability:
+def create_item_rental(rental, item, quantity, available):
+    if quantity > available:
         raise ValidationError({
             'quantity': 'The quantity must not exceed the availability '
                         'of the item in the requested time frame.'
