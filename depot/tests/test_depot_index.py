@@ -156,3 +156,11 @@ class DepotIndexTestCase(ClientTestCase):
         self.assertContains(
             response, '/admin/depot/organization/%d/change/' % depot.organization_id
         )
+
+    def test_managers_list(self):
+        organization = create_organization('My organization')
+        create_depot('My depot', organization=organization)
+        organization.managers.add(self.user)
+        response = self.as_guest.get('/depots/')
+        self.assertSuccess(response, 'depot/index.html')
+        self.assertContains(response, 'This organization is managed by Ursula User.')
