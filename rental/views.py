@@ -214,7 +214,7 @@ def send_confirmation_mails(request, rental):
     :author: Stefan Su
     """
     connection = mail.get_connection()
-    mailcontext=get_mail_context(request, rental)
+    mailcontext = get_mail_context(request, rental)
     dmg_email_list = get_dmg_emailaddr_list(rental.depot)
     plain_txt_mail_to_requester = html_template_to_txt(
         'rental-confirmation-email.html',
@@ -227,14 +227,14 @@ def send_confirmation_mails(request, rental):
     mail_to_requester = EmailMessage(
         settings.EMAIL_SUBJECT_PREFIX + 'Your rental request, %s %s from depot %s'
         % (rental.firstname, rental.lastname, rental.depot.name),
-        plain_txt_mail_to_requester.encode(encoding='utf-8',errors='ignore'),
+        plain_txt_mail_to_requester.encode(encoding='utf-8', errors='ignore'),
         settings.DEFAULT_FROM_EMAIL,
         [rental.email],
     )
     mail_to_managers = EmailMessage(
         settings.EMAIL_SUBJECT_PREFIX + 'New rental request by %s %s from depot %s'
         % (rental.firstname, rental.lastname, rental.depot.name),
-        plain_txt_mail_to_manager.encode(encoding='utf-8',errors='ignore'),
+        plain_txt_mail_to_manager.encode(encoding='utf-8', errors='ignore'),
         settings.DEFAULT_FROM_EMAIL,
         dmg_email_list
     )
@@ -257,9 +257,9 @@ def send_state_mails(request, rental):
         settings.EMAIL_SUBJECT_PREFIX + 'State changed - Your rental request, %s %s from depot %s'
         % (rental.firstname, rental.lastname, rental.depot.name),
         plain_txt_state_change_mail,
-        from_email=settings.DEFAULT_FROM_MAIL,
+        from_email=settings.DEFAULT_FROM_EMAIL,
         to=[rental.email],
-        cc=settings.DEFAULT_FROM_EMAIL
+        cc=[settings.DEFAULT_FROM_EMAIL]
     )
     mail_to_requester.send(fail_silently=True)
 
@@ -284,7 +284,6 @@ def get_mail_context(request, rental):
         'depotname': rental.depot.name,
         'state': rental.get_state_display()
     })
-
     return mailcontext
 
 
