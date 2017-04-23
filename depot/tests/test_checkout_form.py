@@ -22,7 +22,7 @@ class CheckoutFormTestCase(ClientTestCase):
         )
 
     def test_user_logged_in_autofill(self):
-        response = self.as_user.get('/depots/%d/' % self.depot.id)
+        response = self.as_user.get('/depots/%d/rentals/create/' % self.depot.id)
 
         self.assertInHTML(
             '<input type="text" class="form-control" id="id_lastname" '
@@ -43,7 +43,7 @@ class CheckoutFormTestCase(ClientTestCase):
         )
 
     def test_not_logged_in_no_autofill(self):
-        response = self.as_guest.get('/depots/%d/' % self.depot.id)
+        response = self.as_guest.get('/depots/%d/rentals/create/' % self.depot.id)
 
         self.assertInHTML(
             '<input type="text" class="form-control" id="id_lastname" '

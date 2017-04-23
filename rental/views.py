@@ -41,7 +41,7 @@ def create(request):
 
             return redirect('rental:detail', rental_uuid=rental.uuid)
     except ValidationError:
-        return redirect('depot:detail', depot_id=data.get('depot_id'))
+        return redirect('depot:create_rental', depot_id=data.get('depot_id'))
 
 
 # Allowed state transitions for managers of the connected depot
