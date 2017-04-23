@@ -44,6 +44,47 @@ def create(request):
         return redirect('depot:detail', depot_id=data.get('depot_id'))
 
 
+# Allowed state transitions for managers of the connected depot
+STATE_TRANSITIONS_MANAGER = {
+    Rental.STATE_PENDING: [
+        Rental.STATE_REVOKED,
+        Rental.STATE_APPROVED,
+        Rental.STATE_DECLINED,
+    ],
+    Rental.STATE_REVOKED: [
+        Rental.STATE_PENDING,
+    ],
+    Rental.STATE_APPROVED: [
+        Rental.STATE_PENDING,
+        Rental.STATE_REVOKED,
+        Rental.STATE_DECLINED,
+        Rental.STATE_RETURNED,
+    ],
+    Rental.STATE_DECLINED: [
+        Rental.STATE_PENDING,
+        Rental.STATE_APPROVED,
+    ],
+    Rental.STATE_RETURNED: [
+        Rental.STATE_APPROVED,
+    ]
+}
+
+# Allowed state transitions for any other user
+STATE_TRANSITIONS_USER = {
+    Rental.STATE_PENDING: [
+        Rental.STATE_REVOKED,
+    ],
+    Rental.STATE_REVOKED: [
+        Rental.STATE_PENDING,
+    ],
+    Rental.STATE_APPROVED: [
+        Rental.STATE_REVOKED,
+    ],
+    Rental.STATE_DECLINED: [],
+    Rental.STATE_RETURNED: [],
+}
+
+
 def detail(request, rental_uuid):
     """
     Provides necessary information for a rentals detail page
@@ -57,43 +98,38 @@ def detail(request, rental_uuid):
 
     rental = get_object_or_404(Rental, pk=rental_uuid)
     managed_by_user = rental.depot.managed_by(request.user)
-    buttons = []
-    pending = {'class': 'btn btn-info', 'value': 'Pending'}
-    revoke = {'class': 'btn btn-warning', 'value': 'Revoke'}
-    approve = {'class': 'btn btn-success', 'value': 'Approve'}
-    decline = {'class': 'btn btn-danger', 'value': 'Decline'}
-    returned = {'class': 'btn btn-primary', 'value': 'Returned'}
 
-    alert = 'alert alert-info'
-    if rental.state == Rental.STATE_PENDING:
-        buttons.append(revoke)
-        if managed_by_user:
-            buttons.append(approve)
-            buttons.append(decline)
-    elif rental.state == Rental.STATE_APPROVED:
-        alert = 'alert alert-success'
-        buttons.append(revoke)
-        if managed_by_user:
-            buttons.append(pending)
-            buttons.append(decline)
-            buttons.append(returned)
-    elif rental.state == Rental.STATE_DECLINED:
-        alert = 'alert alert-danger'
-        if managed_by_user:
-            buttons.append(pending)
-            buttons.append(approve)
-    elif rental.state == Rental.STATE_RETURNED:
-        if managed_by_user:
-            buttons.append(approve)
+    if managed_by_user:
+        buttons = STATE_TRANSITIONS_MANAGER[rental.state]
     else:
-        alert = 'alert alert-warning'
-        buttons.append(pending)
+        buttons = STATE_TRANSITIONS_USER[rental.state]
+
+    alert_classes = {
+        Rental.STATE_PENDING: 'info',
+        Rental.STATE_REVOKED: 'warning',
+        Rental.STATE_APPROVED: 'success',
+        Rental.STATE_DECLINED: 'danger',
+        Rental.STATE_RETURNED: 'info',
+    }
+
+    btn_texts = {
+        Rental.STATE_PENDING: 'Pending',
+        Rental.STATE_REVOKED: 'Revoke',
+        Rental.STATE_APPROVED: 'Approve',
+        Rental.STATE_DECLINED: 'Decline',
+        Rental.STATE_RETURNED: 'Returned',
+    }
+
+    btn_classes = alert_classes.copy()
+    btn_classes[Rental.STATE_RETURNED] = 'primary'
 
     return render(request, 'rental/detail.html', {
         'rental': rental,
         'managed_by_user': managed_by_user,
         'buttons': buttons,
-        'alert': alert,
+        'alert_classes': alert_classes,
+        'btn_texts': btn_texts,
+        'btn_classes': btn_classes,
     })
 
 
@@ -108,22 +144,17 @@ def state(request, rental_uuid):
     """
 
     rental = get_object_or_404(Rental, pk=rental_uuid)
+    managed_by_user = rental.depot.managed_by(request.user)
+
     data = request.POST
-    dmg = rental.depot.managed_by(request.user)
     state = data.get('state')
-    states = {
-        'Pending': Rental.STATE_PENDING,
-        'Revoke': Rental.STATE_REVOKED,
-        'Approve': Rental.STATE_APPROVED,
-        'Decline': Rental.STATE_DECLINED,
-        'Returned': Rental.STATE_RETURNED
-    }
 
-    if not valid_state_change(dmg, rental.state, state):
-        return HttpResponseForbidden()
+    if not valid_state_transition(managed_by_user, rental.state, state):
+        return HttpResponseForbidden('Invalid state transition')
 
-    rental.state = states[state]
+    rental.state = state
     rental.save()
+
     return redirect('rental:detail', rental_uuid=rental.uuid)
 
 
@@ -131,25 +162,11 @@ def update(request, rental_uuid):
     return render(request, 'rental/update.html')
 
 
-def valid_state_change(dmg, state, action):
-    if dmg:
-        valid = {
-            Rental.STATE_PENDING: ['Revoke', 'Approve', 'Decline'],
-            Rental.STATE_REVOKED: ['Pending'],
-            Rental.STATE_APPROVED: ['Pending', 'Revoke', 'Decline', 'Returned'],
-            Rental.STATE_DECLINED: ['Pending', 'Approve'],
-            Rental.STATE_RETURNED: ['Approve']
-        }
+def valid_state_transition(managed_by_user, old_state, new_state):
+    if managed_by_user:
+        return new_state in STATE_TRANSITIONS_MANAGER[old_state]
     else:
-        valid = {
-            Rental.STATE_PENDING: ['Revoke'],
-            Rental.STATE_REVOKED: ['Pending'],
-            Rental.STATE_APPROVED: ['Revoke'],
-            Rental.STATE_DECLINED: [],
-            Rental.STATE_RETURNED: []
-        }
-
-    return action in valid[state]
+        return new_state in STATE_TRANSITIONS_USER[old_state]
 
 
 def create_session_msg(session, e):

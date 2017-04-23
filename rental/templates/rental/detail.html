@@ -28,7 +28,7 @@
         Rental <small>by {{ rental.firstname }} {{ rental.lastname }}</small>
     </h1>
 
-    <div class="{{ alert }}">
+    <div class="alert alert-{{ alert_classes|key:rental.state }}">
         <strong>State:</strong> {% rental_state rental.state %}
     </div>
 
@@ -61,7 +61,10 @@
     <form method="POST" action="{% url 'rental:state' rental.uuid %}">
         {% csrf_token %}
         {% for button in buttons %}
-            <input class="{{ button.class }}" type="submit" name="state" value="{{ button.value }}">
+            <button type="submit" class="btn btn-{{ btn_classes|key:button }}"
+                    name="state" value="{{ button }}">
+                {{ btn_texts|key:button }}
+            </button>
         {% endfor %}
     </form>
 {% endblock %}
