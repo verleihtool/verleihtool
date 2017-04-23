@@ -66,10 +66,12 @@
             <th>Selected</th>
         </tr>
 
-        {% for item, availability in item_availability_list %}
-            <tr class="rental-item">
+        {% for item, intervals, availability in availability_data %}
+            <tr class="rental-item" data-name="{{ item.name }}" data-intervals="{{ intervals|tojson }}">
                 <td class="rental-item-name">{{ item.name }}</td>
-                <td class="rental-item-availability">{{ availability }}</td>
+                <td class="rental-item-availability">
+                    <a href="#availability-modal" data-toggle="modal">{{ availability }}</a>
+                </td>
                 <td class="rental-item-location">{{ item.location }}</td>
                 {% if show_visibility %}
                     <td>{% item_visibility item.visibility %}</td>
@@ -107,4 +109,5 @@
 
     {% include 'depot/modals/checkout-modal.html' %}
     {% include 'depot/modals/date-modal.html' %}
+    {% include 'depot/modals/availability-modal.html' %}
 {% endblock %}

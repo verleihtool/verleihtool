@@ -78,3 +78,25 @@ def extract_item_quantities(data):
             item_quantities[int(m.group(1))] = int(quantity)
 
     return item_quantities
+
+
+def get_chart_data(intervals):
+    """
+    Generate the data the JavaScript can render
+
+    :author: Benedikt Seidl
+    """
+
+    data = []
+
+    for begin, end, availability in intervals:
+        data.append({
+            "x": begin.isoformat(),
+            "y": availability
+        })
+        data.append({
+            "x": end.isoformat(),
+            "y": availability
+        })
+
+    return data
