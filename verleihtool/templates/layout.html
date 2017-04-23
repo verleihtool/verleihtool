@@ -33,10 +33,10 @@
                     <div id="navbar" class="collapse navbar-collapse">
                         <!-- Left Side Of Navbar -->
                         <ul class="nav navbar-nav">
-                            <li {% current_page 'login:home' 'class="active"' %}>
+                            <li class="{% current_app 'login' 'active' %}">
                                 <a href="{% url 'login:home' %}">Home</a>
                             </li>
-                            <li {% current_page 'depot:index' 'class="active"' %}>
+                            <li class="{% current_app 'depot' 'active' %}">
                                 <a href="{% url 'depot:index' %}">Depots</a>
                             </li>
                         </ul>
