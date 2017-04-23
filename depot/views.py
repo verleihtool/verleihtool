@@ -1,4 +1,3 @@
-import re
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseForbidden
 from depot.models import Depot, Organization
@@ -111,11 +110,6 @@ def create_rental(request, depot_id):
 
     errors = request.session.pop('errors', None)
     data = request.session.pop('data', {})
-    data_quantities = {}
-    for key, quantity in data.items():
-        m = re.match(r'^item-([0-9]+)-quantity$', key)
-        if m is not None and int(quantity) > 0:
-            data_quantities[int(m.group(1))] = quantity
 
     return render(request, 'depot/create-rental.html', {
         'depot': depot,
@@ -123,7 +117,7 @@ def create_rental(request, depot_id):
         'item_availability_list': item_availability_list,
         'errors': errors,
         'data': data,
-        'data_quantities': data_quantities,
+        'item_quantities': helpers.extract_item_quantities(data),
         'start_date': start_date,
         'return_date': return_date,
         'start_date_formatted': start_date.strftime('%Y-%m-%d %H:%M'),

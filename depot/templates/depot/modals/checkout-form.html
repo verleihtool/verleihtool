@@ -3,7 +3,7 @@
         <label for="firstname">First Name</label>
         <div class="input-group name">
             <input type="text" class="form-control" id="firstname"
-                   name="firstname" value="{% firstof data.first_name user.first_name %}" required>
+                   name="firstname" value="{% firstof data.firstname user.first_name %}" required>
             <span class="input-group-addon">
                 <span class="glyphicon glyphicon-user"></span>
             </span>
@@ -20,7 +20,7 @@
         <label for="lastname">Last Name</label>
         <div class="input-group name">
             <input type="text" class="form-control" id="lastname"
-                   name="lastname" value="{% firstof data.last_name user.last_name %}" required>
+                   name="lastname" value="{% firstof data.lastname user.last_name %}" required>
             <span class="input-group-addon">
                 <span class="glyphicon glyphicon-user"></span>
             </span>
