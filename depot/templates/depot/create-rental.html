@@ -7,15 +7,6 @@
 {% endblock %}
 
 {% block content %}
-    {% if error_message %}
-        <div class="alert alert-danger" role="alert">
-            <div><strong>Error:</strong></div>
-            {% for error in error_message %}
-                <div>{{ error }}</div>
-            {% endfor %}
-        </div>
-    {% endif %}
-
     <ol class="breadcrumb">
         <li>
             <a href="{% url 'depot:index' %}">Depots</a>
@@ -28,12 +19,22 @@
         </li>
     </ol>
 
+    {% if errors %}
+        <div class="alert alert-danger" role="alert">
+            Please fix the errors below and in the
+            <a href="#" class="alert-link" data-toggle="modal" data-target="#checkout-modal">
+                checkout form
+            </a>
+        </div>
+    {% endif %}
+
     <h1>New Rental <small>for {{ depot.name }}</small></h1>
 
     <div class="alert alert-info">
-        Create a new rental from <strong>{{ start_date }}</strong>
-        to <strong>{{ return_date }}</strong>
-        (<a href="#" data-toggle="modal" data-target="#date-modal">Change time frame</a>).
+        Create a new rental
+        <a href="#" class="alert-link" data-toggle="modal" data-target="#date-modal">
+            from {{ start_date }} to {{ return_date }}
+        </a>
     </div>
 
     <table class="table">
@@ -57,9 +58,10 @@
                 {% endif %}
                 <td class="rental-item-selected">
                     <div class="input-group number">
-                        <input type="text" class="form-control" value="0"
-                               data-name="item-{{ item.id }}-quantity"
-                               data-min="0" data-max="{{ availability }}">
+                        <input type="text" class="form-control"
+                                value="{% firstof data_quantities|key:item.id '0' %}"
+                                data-name="item-{{ item.id }}-quantity"
+                                data-min="0" data-max="{{ availability }}">
                         <div class="input-group-btn">
                             <button type="button" class="btn btn-default number-up">
                                 <span class="glyphicon glyphicon-chevron-up"></span>
@@ -75,7 +77,8 @@
     </table>
 
     <button type="button" class="btn btn-primary" id="checkout-button"
-            data-toggle="modal" data-target="#checkout-modal" disabled>
+            data-toggle="modal" data-target="#checkout-modal"
+            {% if not data_quantities %} disabled {% endif %}>
         Checkout
     </button>
 
