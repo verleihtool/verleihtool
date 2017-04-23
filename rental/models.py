@@ -42,7 +42,7 @@ class Rental(models.Model):
     firstname = models.CharField(max_length=256)
     lastname = models.CharField(max_length=256)
     email = models.EmailField()
-    purpose = models.CharField(max_length=256, blank=True)
+    purpose = models.CharField(max_length=256)
     user = models.ForeignKey(User, blank=True, null=True)
     start_date = models.DateTimeField()
     return_date = models.DateTimeField()
