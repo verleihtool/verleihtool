@@ -56,9 +56,7 @@ def detail(request, rental_uuid):
     """
 
     rental = get_object_or_404(Rental, pk=rental_uuid)
-    depot = get_object_or_404(Depot, pk=rental.depot_id)
-    dmg = rental.depot.managed_by(request.user)
-    item_list = rental.itemrental_set.all()
+    managed_by_user = rental.depot.managed_by(request.user)
     buttons = []
     pending = {'class': 'btn btn-info', 'value': 'Pending'}
     revoke = {'class': 'btn btn-warning', 'value': 'Revoke'}
@@ -69,23 +67,23 @@ def detail(request, rental_uuid):
     alert = 'alert alert-info'
     if rental.state == Rental.STATE_PENDING:
         buttons.append(revoke)
-        if dmg:
+        if managed_by_user:
             buttons.append(approve)
             buttons.append(decline)
     elif rental.state == Rental.STATE_APPROVED:
         alert = 'alert alert-success'
         buttons.append(revoke)
-        if dmg:
+        if managed_by_user:
             buttons.append(pending)
             buttons.append(decline)
             buttons.append(returned)
     elif rental.state == Rental.STATE_DECLINED:
         alert = 'alert alert-danger'
-        if dmg:
+        if managed_by_user:
             buttons.append(pending)
             buttons.append(approve)
     elif rental.state == Rental.STATE_RETURNED:
-        if dmg:
+        if managed_by_user:
             buttons.append(approve)
     else:
         alert = 'alert alert-warning'
@@ -93,10 +91,8 @@ def detail(request, rental_uuid):
 
     return render(request, 'rental/detail.html', {
         'rental': rental,
-        'depot': depot,
-        'managed_by_user': depot.managed_by(request.user),
+        'managed_by_user': managed_by_user,
         'buttons': buttons,
-        'item_list': item_list,
         'alert': alert,
     })
 
