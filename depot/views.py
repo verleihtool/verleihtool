@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseForbidden
-from .models import Depot, Item, Organization
-from datetime import datetime, timedelta
-from .availability import get_availability_intervals, get_maximum_availability
+from depot.models import Depot, Organization
 from rental.models import Rental
+from datetime import datetime, timedelta
+from . import availability, helpers
 
 
 def index(request):
@@ -48,74 +48,21 @@ def detail(request, depot_id):
     :author: Florian Stamer
     """
 
-    depot = get_object_or_404(Depot, pk=depot_id)
-
-    if not depot.organization.managed_by(request.user) and not depot.active:
-        return HttpResponseForbidden()
-
-    # configure time frame
-    start = datetime.now() + timedelta(minutes=5)
-    end = datetime.now() + timedelta(days=3)
-    if request.method == 'POST':
-        data = request.POST
-        start = datetime.strptime(data.get('start_date'), '%Y-%m-%d %H:%M')
-        end = datetime.strptime(data.get('return_date'), '%Y-%m-%d %H:%M')
-
-    show_visibility = (request.user.is_superuser or
-                       depot.organization.is_member(request.user))
-
-    if show_visibility:
-        item_list = depot.active_items.all()
-    else:
-        item_list = depot.public_items.all()
-
-    item_availability_list = get_item_availability_list(start, end, depot_id, item_list)
-
-    start = start.strftime('%Y-%m-%d %H:%M')
-    end = end.strftime('%Y-%m-%d %H:%M')
-
-    error_message = None
-    if 'message' in request.session:
-        error_message = request.session['message']
-        request.session.__delitem__('message')
+    depot = helpers.get_depot_if_allowed(depot_id, request.user)
 
     return render(request, 'depot/detail.html', {
         'depot': depot,
-        'show_visibility': show_visibility,
+        'item_list': helpers.get_item_list(depot, request.user),
+        'show_visibility': helpers.show_private_items(depot, request.user),
         'managed_by_user': depot.managed_by(request.user),
-        'item_availability_list': item_availability_list,
-        'error_message': error_message,
-        'start': start,
-        'end': end,
+        'start_date': datetime.now() + timedelta(days=1),
+        'return_date': datetime.now() + timedelta(days=4)
     })
-
-
-def get_item_availability_list(from_date, to_date, depot_id, item_list):
-    """
-    Calculate availability for each item in item_list
-
-    :return: A list of availabilities
-    """
-
-    rentals = Rental.objects.filter(
-        start_date__lt=to_date,
-        return_date__gt=from_date,
-        depot_id=depot_id,
-        state=Rental.STATE_APPROVED
-    )
-    availability_list = []
-    for item in item_list:
-        intervals = get_availability_intervals(from_date, to_date, item, rentals)
-        availability_list.append(
-            (item, get_maximum_availability(intervals))
-        )
-
-    return availability_list
 
 
 def rentals(request, depot_id):
     """
-    Provides an overview over all rentals for one depot
+    Provide an overview over all rentals for one depot
 
     Show labels to visually differentiate the state a
     rental is in.
@@ -126,7 +73,7 @@ def rentals(request, depot_id):
     depot = get_object_or_404(Depot, pk=depot_id)
 
     if not depot.managed_by(request.user):
-        return HttpResponseForbidden()
+        return HttpResponseForbidden('Not a manager of this depot')
 
     rentals = Rental.objects.filter(depot_id=depot.id)
     state_labels = {
@@ -141,4 +88,46 @@ def rentals(request, depot_id):
         'rentals': rentals,
         'depot': depot,
         'state_labels': state_labels,
+    })
+
+
+def create_rental(request, depot_id):
+    """
+    Show a form to create a new rental for the given depot
+
+    :author: Benedikt Seidl
+    """
+
+    depot = helpers.get_depot_if_allowed(depot_id, request.user)
+
+    # configure time frame
+    start_date, return_date = helpers.get_start_return_date(request.GET)
+
+    item_list = helpers.get_item_list(depot, request.user)
+    item_availability_intervals = availability.get_item_availability_intervals(
+        start_date, return_date, depot_id, item_list
+    )
+
+    availability_data = []
+    for item, intervals in item_availability_intervals:
+        availability_data.append((
+            item,
+            helpers.get_chart_data(intervals),
+            availability.get_minimum_availability(intervals)
+        ))
+
+    errors = request.session.pop('errors', None)
+    data = request.session.pop('data', {})
+
+    return render(request, 'depot/create-rental.html', {
+        'depot': depot,
+        'show_visibility': helpers.show_private_items(depot, request.user),
+        'availability_data': availability_data,
+        'errors': errors,
+        'data': data,
+        'item_quantities': helpers.extract_item_quantities(data),
+        'start_date': start_date,
+        'return_date': return_date,
+        'start_date_formatted': start_date.strftime('%Y-%m-%d %H:%M'),
+        'return_date_formatted': return_date.strftime('%Y-%m-%d %H:%M')
     })

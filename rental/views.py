@@ -1,55 +1,68 @@
-from django.shortcuts import render, redirect, get_object_or_404
-
-from .models import Rental, ItemRental
-from depot.models import Depot
-from django.db import transaction
-from django.views.decorators.http import require_POST
+import re
+import urllib
+import html2text
 from django.core.exceptions import ValidationError
 from django.core import mail
 from django.core.mail import EmailMessage, send_mass_mail
+from django.conf import settings
+from django.db import transaction
+from django.http import HttpResponseForbidden
+from django.shortcuts import render, redirect, get_object_or_404
 from django.template import Context
 from django.template.loader import render_to_string
-from django.http import HttpResponseForbidden
-from django.conf import settings
-import re
-import html2text
+from django.views.decorators.http import require_POST
+from depot import availability, helpers
+from depot.models import Depot, Item
+from .models import Rental, ItemRental
+from .state_transitions import allowed_transitions
 
 
 @require_POST
 def create(request):
-    data = request.POST
+    """
+    Create a new rental object and assign the selected items to it
 
-    params = (
-        'firstname', 'lastname', 'depot_id', 'email', 'purpose', 'start_date', 'return_date'
-    )
+    When the object is successfully created, the user is redirected
+    to the detail view of the new rental.
+    If an error occurs, the message dictionary is stored in the
+    current session and the user gets back to the edit view to
+    correct their mistakes.
+
+    :author: Florian Stamer
+    """
+
+    data = request.POST
 
     user = request.user if request.user.is_authenticated else None
 
     try:
+        # The transaction is cancelled if an unhandled exception occurs
+        # in the following block
         with transaction.atomic():
-            rental = create_rental(request.session, user, params, data)
-
-            if create_items(request.session, rental, data):
-                create_session_msg(
-                    request.session,
-                    ValidationError({
-                        'items': 'The rental cannot be submitted without any items.'
-                    })
-                )
-
-            if 'message' in request.session and request.session['message'] is not None:
-                raise ValidationError('Errors occured.')
+            rental = create_rental(user, data)
+            create_items(rental, data)
 
             send_confirmation_mails(request, rental)
 
             return redirect('rental:detail', rental_uuid=rental.uuid)
-    except ValidationError:
-        return redirect('depot:detail', depot_id=data.get('depot_id'))
+    except ValidationError as e:
+        # Store the errors and the submitted data in the current session
+        request.session['errors'] = e.message_dict
+        request.session['data'] = data
+
+        # Redirect to the form where the errors are displayed
+        response = redirect('depot:create_rental', depot_id=data.get('depot_id'))
+        response['Location'] += '?' + urllib.parse.urlencode({
+            'start_date': data.get('start_date'),
+            'return_date': data.get('return_date')
+        })
+
+        return response
 
 
 def detail(request, rental_uuid):
     """
-    Provides necessary information for a rentals detail page
+    Provide necessary information for a rentals detail page
 
     This includes buttons to change the rentals state,
     an alert with information about the rentals state
@@ -59,77 +72,60 @@ def detail(request, rental_uuid):
     """
 
     rental = get_object_or_404(Rental, pk=rental_uuid)
-    depot = get_object_or_404(Depot, pk=rental.depot_id)
-    dmg = rental.depot.managed_by(request.user)
-    item_list = rental.itemrental_set.all()
-    buttons = []
-    pending = {'class': 'btn btn-info', 'value': 'Pending'}
-    revoke = {'class': 'btn btn-warning', 'value': 'Revoke'}
-    approve = {'class': 'btn btn-success', 'value': 'Approve'}
-    decline = {'class': 'btn btn-danger', 'value': 'Decline'}
-    returned = {'class': 'btn btn-primary', 'value': 'Returned'}
+    managed_by_user = rental.depot.managed_by(request.user)
 
-    alert = 'alert alert-info'
-    if rental.state == Rental.STATE_PENDING:
-        buttons.append(revoke)
-        if dmg:
-            buttons.append(approve)
-            buttons.append(decline)
-    elif rental.state == Rental.STATE_APPROVED:
-        alert = 'alert alert-success'
-        buttons.append(revoke)
-        if dmg:
-            buttons.append(pending)
-            buttons.append(decline)
-            buttons.append(returned)
-    elif rental.state == Rental.STATE_DECLINED:
-        alert = 'alert alert-danger'
-        if dmg:
-            buttons.append(pending)
-            buttons.append(approve)
-    elif rental.state == Rental.STATE_RETURNED:
-        if dmg:
-            buttons.append(approve)
-    else:
-        alert = 'alert alert-warning'
-        buttons.append(pending)
+    buttons = allowed_transitions(managed_by_user, rental.state)
+
+    alert_classes = {
+        Rental.STATE_PENDING: 'info',
+        Rental.STATE_REVOKED: 'warning',
+        Rental.STATE_APPROVED: 'success',
+        Rental.STATE_DECLINED: 'danger',
+        Rental.STATE_RETURNED: 'info',
+    }
+
+    btn_texts = {
+        Rental.STATE_PENDING: 'Pending',
+        Rental.STATE_REVOKED: 'Revoke',
+        Rental.STATE_APPROVED: 'Approve',
+        Rental.STATE_DECLINED: 'Decline',
+        Rental.STATE_RETURNED: 'Returned',
+    }
+
+    # Copy dictionary so that we can change the copy safely
+    btn_classes = alert_classes.copy()
+    btn_classes[Rental.STATE_RETURNED] = 'primary'
 
     return render(request, 'rental/detail.html', {
         'rental': rental,
-        'depot': depot,
-        'managed_by_user': depot.managed_by(request.user),
+        'managed_by_user': managed_by_user,
         'buttons': buttons,
-        'item_list': item_list,
-        'alert': alert,
+        'alert_classes': alert_classes,
+        'btn_texts': btn_texts,
+        'btn_classes': btn_classes,
     })
 
 
 @require_POST
 def state(request, rental_uuid):
     """
-    Changes state of a given rental
+    Change the state of a given rental
 
-    If given an invalid state, return 403.
+    If given an invalid state, this shows a 403 Forbidden response.
 
     :author: Florian Stamer
     """
 
     rental = get_object_or_404(Rental, pk=rental_uuid)
+    managed_by_user = rental.depot.managed_by(request.user)
+
     data = request.POST
-    dmg = rental.depot.managed_by(request.user)
     state = data.get('state')
-    states = {
-        'Pending': Rental.STATE_PENDING,
-        'Revoke': Rental.STATE_REVOKED,
-        'Approve': Rental.STATE_APPROVED,
-        'Decline': Rental.STATE_DECLINED,
-        'Returned': Rental.STATE_RETURNED
-    }
 
-    if not valid_state_change(dmg, rental.state, state):
-        return HttpResponseForbidden()
+    if state not in allowed_transitions(managed_by_user, rental.state):
+        return HttpResponseForbidden('Invalid state transition')
 
-    rental.state = states[state]
+    rental.state = state
     rental.save()
 
     send_state_mails(request, rental)
@@ -137,75 +133,60 @@ def state(request, rental_uuid):
     return redirect('rental:detail', rental_uuid=rental.uuid)
 
 
-def update(request, rental_uuid):
-    return render(request, 'rental/update.html')
-
-
-def valid_state_change(dmg, state, action):
-    if dmg:
-        valid = {
-            Rental.STATE_PENDING: ['Revoke', 'Approve', 'Decline'],
-            Rental.STATE_REVOKED: ['Pending'],
-            Rental.STATE_APPROVED: ['Pending', 'Revoke', 'Decline', 'Returned'],
-            Rental.STATE_DECLINED: ['Pending', 'Approve'],
-            Rental.STATE_RETURNED: ['Approve']
-        }
-    else:
-        valid = {
-            Rental.STATE_PENDING: ['Revoke'],
-            Rental.STATE_REVOKED: ['Pending'],
-            Rental.STATE_APPROVED: ['Revoke'],
-            Rental.STATE_DECLINED: [],
-            Rental.STATE_RETURNED: []
-        }
-
-    return action in valid[state]
-
-
-def create_session_msg(session, e):
-    if 'message' not in session:
-        session['message'] = []
-    for key, message in e:
-        session['message'].append(key + ': ' + str(message))
-
-
-def create_rental(session, user, params, data):
-    rental = Rental(user=user, **{key: data.get(key) for key in params})
-    try:
-        rental.full_clean()
-        rental.save()
-    except ValidationError as e:
-        create_session_msg(session, e)
-        rental = Rental(
-            user=None,
-            depot_id=data.get('depot_id'),
-            firstname='De',
-            lastname='Bug',
-            email='debug@example.com',
-            start_date='1999-12-31',
-            return_date='2000-01-01'
-        )
-        rental.save()
+def create_rental(user, data):
+    keys = (
+        'firstname', 'lastname', 'depot_id', 'email', 'purpose', 'start_date', 'return_date'
+    )
+    rental = Rental(user=user, **{key: data.get(key) for key in keys})
+    rental.full_clean()
+    rental.save()
+    # Refresh Rental object to fix issue with depot_id
+    rental.refresh_from_db()
     return rental
 
 
-def create_items(session, rental, data):
-    empty = True
-    for key, quantity in data.items():
-        m = re.match(r'^item-([0-9]+)-quantity$', key)
-        if m is not None and int(quantity) > 0:
-            empty = False
-            item = ItemRental(
-                rental_id=rental.uuid,
-                item_id=m.group(1),
-                quantity=quantity
-            )
-            try:
-                item.full_clean()
-                item.save()
-            except ValidationError as e:
-                create_session_msg(session, e)
-    return empty
+def create_items(rental, data):
+    errors = {}
+
+    item_quantities = helpers.extract_item_quantities(data)
+
+    if not item_quantities:
+        raise ValidationError({
+            'items': 'The rental cannot be submitted without any items.'
+        })
+
+    item_list = Item.objects.filter(id__in=item_quantities.keys())
+
+    item_availability_intervals = availability.get_item_availability_intervals(
+        rental.start_date, rental.return_date, rental.depot_id, item_list
+    )
+
+    for item, intervals in item_availability_intervals:
+        try:
+            available = availability.get_minimum_availability(intervals)
+            create_item_rental(rental, item, item_quantities[item.id], available)
+        except ValidationError as e:
+            for key, value in e:
+                errors['%s %s' % (item.name, key)] = value
+
+    if errors:
+        raise ValidationError(errors)
+
+
+def create_item_rental(rental, item, quantity, available):
+    if quantity > available:
+        raise ValidationError({
+            'quantity': 'The quantity must not exceed the availability '
+                        'of the item in the requested time frame.'
+        })
+
+    item_rental = ItemRental(
+        rental=rental,
+        item=item,
+        quantity=quantity
+    )
+    item_rental.full_clean()
+    item_rental.save()
 
 
 def send_confirmation_mails(request, rental):

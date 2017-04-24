@@ -14,6 +14,35 @@ class RentalDetailTestCase(ClientTestCase):
             state=state
         )
 
+    def assertButtonCount(self, response, action, count):
+        btn_class = {
+            'Pending': 'info',
+            'Revoke': 'warning',
+            'Approve': 'success',
+            'Decline': 'danger',
+            'Returned': 'primary',
+        }
+
+        values = {
+            'Pending': Rental.STATE_PENDING,
+            'Revoke': Rental.STATE_REVOKED,
+            'Approve': Rental.STATE_APPROVED,
+            'Decline': Rental.STATE_DECLINED,
+            'Returned': Rental.STATE_RETURNED,
+        }
+
+        button = ('<button type="submit" class="btn btn-%s"'
+                  ' name="state" value="%s">%s</button>'
+                  % (btn_class[action], values[action], action))
+
+        self.assertInHTML(button, response.content.decode(), count)
+
+    def assertButton(self, response, action):
+        self.assertButtonCount(response, action, count=1)
+
+    def assertNotButton(self, response, action):
+        self.assertButtonCount(response, action, count=0)
+
     def setUp(self):
         super().setUp()
 
@@ -44,94 +73,94 @@ class RentalDetailTestCase(ClientTestCase):
     def test_buttons_as_guest_pending(self):
         rental = self.create_rental(Rental.STATE_PENDING)
         response = self.as_guest.get('/rentals/%s/' % rental.uuid)
-        self.assertContains(response, 'value="Revoke"')
-        self.assertNotContains(response, 'value="Pending"')
-        self.assertNotContains(response, 'value="Approve"')
-        self.assertNotContains(response, 'value="Decline"')
-        self.assertNotContains(response, 'value="Returned"')
+        self.assertButton(response, 'Revoke')
+        self.assertNotButton(response, 'Pending')
+        self.assertNotButton(response, 'Approve')
+        self.assertNotButton(response, 'Decline')
+        self.assertNotButton(response, 'Returned')
 
     def test_buttons_as_guest_revoked(self):
         rental = self.create_rental(Rental.STATE_REVOKED)
         response = self.as_guest.get('/rentals/%s/' % rental.uuid)
-        self.assertNotContains(response, 'value="Revoke"')
-        self.assertContains(response, 'value="Pending"')
-        self.assertNotContains(response, 'value="Approve"')
-        self.assertNotContains(response, 'value="Decline"')
-        self.assertNotContains(response, 'value="Returned"')
+        self.assertNotButton(response, 'Revoke')
+        self.assertButton(response, 'Pending')
+        self.assertNotButton(response, 'Approve')
+        self.assertNotButton(response, 'Decline')
+        self.assertNotButton(response, 'Returned')
 
     def test_buttons_as_guest_approved(self):
         rental = self.create_rental(Rental.STATE_APPROVED)
         response = self.as_guest.get('/rentals/%s/' % rental.uuid)
-        self.assertContains(response, 'value="Revoke"')
-        self.assertNotContains(response, 'value="Pending"')
-        self.assertNotContains(response, 'value="Approve"')
-        self.assertNotContains(response, 'value="Decline"')
-        self.assertNotContains(response, 'value="Returned"')
+        self.assertButton(response, 'Revoke')
+        self.assertNotButton(response, 'Pending')
+        self.assertNotButton(response, 'Approve')
+        self.assertNotButton(response, 'Decline')
+        self.assertNotButton(response, 'Returned')
 
     def test_buttons_as_guest_declined(self):
         rental = self.create_rental(Rental.STATE_DECLINED)
         response = self.as_guest.get('/rentals/%s/' % rental.uuid)
-        self.assertNotContains(response, 'value="Revoke"')
-        self.assertNotContains(response, 'value="Pending"')
-        self.assertNotContains(response, 'value="Approve"')
-        self.assertNotContains(response, 'value="Decline"')
-        self.assertNotContains(response, 'value="Returned"')
+        self.assertNotButton(response, 'Revoke')
+        self.assertNotButton(response, 'Pending')
+        self.assertNotButton(response, 'Approve')
+        self.assertNotButton(response, 'Decline')
+        self.assertNotButton(response, 'Returned')
 
     def test_buttons_as_guest_returned(self):
         rental = self.create_rental(Rental.STATE_RETURNED)
         response = self.as_guest.get('/rentals/%s/' % rental.uuid)
-        self.assertNotContains(response, 'value="Revoke"')
-        self.assertNotContains(response, 'value="Pending"')
-        self.assertNotContains(response, 'value="Approve"')
-        self.assertNotContains(response, 'value="Decline"')
-        self.assertNotContains(response, 'value="Returned"')
+        self.assertNotButton(response, 'Revoke')
+        self.assertNotButton(response, 'Pending')
+        self.assertNotButton(response, 'Approve')
+        self.assertNotButton(response, 'Decline')
+        self.assertNotButton(response, 'Returned')
 
     def test_buttons_as_depot_manager_pending(self):
         self.depot.manager_users.add(self.user)
         rental = self.create_rental(Rental.STATE_PENDING)
         response = self.as_user.get('/rentals/%s/' % rental.uuid)
-        self.assertContains(response, 'value="Revoke"')
-        self.assertNotContains(response, 'value="Pending"')
-        self.assertContains(response, 'value="Approve"')
-        self.assertContains(response, 'value="Decline"')
-        self.assertNotContains(response, 'value="Returned"')
+        self.assertButton(response, 'Revoke')
+        self.assertNotButton(response, 'Pending')
+        self.assertButton(response, 'Approve')
+        self.assertButton(response, 'Decline')
+        self.assertNotButton(response, 'Returned')
 
     def test_buttons_as_depot_manager_revoked(self):
         self.depot.manager_users.add(self.user)
         rental = self.create_rental(Rental.STATE_REVOKED)
         response = self.as_user.get('/rentals/%s/' % rental.uuid)
-        self.assertNotContains(response, 'value="Revoke"')
-        self.assertContains(response, 'value="Pending"')
-        self.assertNotContains(response, 'value="Approve"')
-        self.assertNotContains(response, 'value="Decline"')
-        self.assertNotContains(response, 'value="Returned"')
+        self.assertNotButton(response, 'Revoke')
+        self.assertButton(response, 'Pending')
+        self.assertNotButton(response, 'Approve')
+        self.assertNotButton(response, 'Decline')
+        self.assertNotButton(response, 'Returned')
 
     def test_buttons_as_depot_manager_approved(self):
         self.depot.manager_users.add(self.user)
         rental = self.create_rental(Rental.STATE_APPROVED)
         response = self.as_user.get('/rentals/%s/' % rental.uuid)
-        self.assertContains(response, 'value="Revoke"')
-        self.assertContains(response, 'value="Pending"')
-        self.assertNotContains(response, 'value="Approve"')
-        self.assertContains(response, 'value="Decline"')
-        self.assertContains(response, 'value="Returned"')
+        self.assertButton(response, 'Revoke')
+        self.assertButton(response, 'Pending')
+        self.assertNotButton(response, 'Approve')
+        self.assertButton(response, 'Decline')
+        self.assertButton(response, 'Returned')
 
     def test_buttons_as_depot_manager_declined(self):
         self.depot.manager_users.add(self.user)
         rental = self.create_rental(Rental.STATE_DECLINED)
         response = self.as_user.get('/rentals/%s/' % rental.uuid)
-        self.assertNotContains(response, 'value="Revoke"')
-        self.assertContains(response, 'value="Pending"')
-        self.assertContains(response, 'value="Approve"')
-        self.assertNotContains(response, 'value="Decline"')
-        self.assertNotContains(response, 'value="Returned"')
+        self.assertNotButton(response, 'Revoke')
+        self.assertButton(response, 'Pending')
+        self.assertButton(response, 'Approve')
+        self.assertNotButton(response, 'Decline')
+        self.assertNotButton(response, 'Returned')
 
     def test_buttons_as_depot_manager_returned(self):
         self.depot.manager_users.add(self.user)
         rental = self.create_rental(Rental.STATE_RETURNED)
         response = self.as_user.get('/rentals/%s/' % rental.uuid)
-        self.assertNotContains(response, 'value="Revoke"')
-        self.assertNotContains(response, 'value="Pending"')
-        self.assertContains(response, 'value="Approve"')
-        self.assertNotContains(response, 'value="Decline"')
-        self.assertNotContains(response, 'value="Returned"')
+        self.assertNotButton(response, 'Revoke')
+        self.assertNotButton(response, 'Pending')
+        self.assertButton(response, 'Approve')
+        self.assertNotButton(response, 'Decline')
+        self.assertNotButton(response, 'Returned')

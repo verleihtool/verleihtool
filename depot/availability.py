@@ -1,3 +1,28 @@
+from rental.models import Rental
+
+
+def get_item_availability_intervals(start_date, return_date, depot_id, item_list):
+    """
+    Calculate availability for each item in item_list
+
+    :author: Leo Tappe
+    """
+
+    rentals = Rental.objects.filter(
+        start_date__lt=return_date,
+        return_date__gt=start_date,
+        depot_id=depot_id,
+        state=Rental.STATE_APPROVED
+    )
+    item_availability_intervals = []
+
+    for item in item_list:
+        intervals = get_availability_intervals(
+            start_date, return_date, item, rentals
+        )
+        item_availability_intervals.append((item, intervals))
+
+    return item_availability_intervals
 
 
 def get_availability_intervals(start, end, item, rentals):
@@ -5,10 +30,12 @@ def get_availability_intervals(start, end, item, rentals):
     Split the given time frame into a sequence of intervals
     with the corresponding amount of available elements.
 
+    :author: Leo Tappe
+
     :param start: the beginning of the time frame
     :param end: the end of the time frame
     :param item: the item that you want to rent
-    :param rentals: a list of all rentals
+    :param rentals: a list of all rentals to consider
     :return: a list of lists of the form [from, to, num_available]
     """
 
@@ -48,16 +75,12 @@ def get_availability_intervals(start, end, item, rentals):
     return intervals
 
 
-def get_maximum_availability(intervals):
+def get_minimum_availability(intervals):
     """
-    Get the maximum quantity that is available in every interval
+    Get the minimum availability across all intervals
 
-    :param intervals: the intervals for which availability has been calculated
-    :return: the minimum num_available value across all intervals
+    :author: Leo Tappe
     """
 
-    min = intervals[0][2]
-    for interval in intervals[1:]:
-        if interval[2] < min:
-            min = interval[2]
-    return min
+    min_interval = min(intervals, key=lambda x: x[2])
+    return min_interval[2]

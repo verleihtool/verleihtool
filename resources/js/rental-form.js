@@ -44,25 +44,3 @@ $('#checkout-modal').on('show.bs.modal', () => {
         }
     })
 })
-
-// show calendar prompt
-$('#start_date_picker').datetimepicker({
-    format: 'YYYY-MM-DD HH:mm',
-    stepping: 5,
-    allowInputToggle: true
-})
-
-$('#end_date_picker').datetimepicker({
-    format: 'YYYY-MM-DD HH:mm',
-    stepping: 5,
-    allowInputToggle: true,
-    useCurrent: false
-})
-
-$('#start_date_picker').on('dp.change', (e) => {
-    $('#end_date_picker').data('DateTimePicker').minDate(e.date)
-});
-
-$('#end_date_picker').on('dp.change', (e) => {
-    $('#start_date_picker').data('DateTimePicker').maxDate(e.date)
-});
