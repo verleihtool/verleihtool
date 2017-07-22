@@ -46,22 +46,14 @@ class LoginTestCase(ClientTestCase):
 
     def test_logged_out_displays_login_and_not_logout(self):
         response = self.as_guest.get('/')
-        self.assertContains(
-            response,
-            'Login'
-        )
-        self.assertNotContains(
-            response,
-            'Logout'
-        )
+        self.assertContains(response, 'Login')
+        self.assertNotContains(response, 'Logout')
 
     def test_logged_in_displays_logout_and_not_login(self):
         response = self.as_user.get('/')
-        self.assertContains(
-            response,
-            'Logout'
-        )
-        self.assertNotContains(
-            response,
-            'Login'
-        )
+        self.assertContains(response, 'Logout')
+        self.assertNotContains(response, 'Login')
+
+    def test_logged_in_displays_user_name(self):
+        response = self.as_user.get('/')
+        self.assertContains(response, 'Ursula User')
