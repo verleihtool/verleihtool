@@ -1,5 +1,9 @@
 # Verleihtool
 
+[![Build Status](https://travis-ci.org/verleihtool/verleihtool.svg?branch=master)](https://travis-ci.org/verleihtool/verleihtool)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/verleihtool/verleihtool/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/verleihtool/verleihtool/?branch=master)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
+
 The **Verleihtool** helps with the administration of public depots and allows
 users to send rental requests for items in this depots. It also supports to
 assign managers for each depot and group them into several organizations.
