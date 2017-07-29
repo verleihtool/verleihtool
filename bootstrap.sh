@@ -3,7 +3,8 @@
 echo "Bootstrapping Django Vagrant machine..."
 sudo apt-get update
 sudo apt-get install -y vim git make build-essential libssl-dev zlib1g-dev libbz2-dev \
-libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils
+                        libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev \
+                        libncursesw5-dev xz-utils
 
 # Install NodeJS
 
@@ -43,32 +44,30 @@ which pip
 python -V
 pip -V
 
-echo "Installing Django"
-pip install django
+# Link vagrant directory to home
 
-python -m django --version
-
-echo "Installing html2text"
-pip install html2text
-html2text --version
-
-echo "Installing Flake8"
-pip install flake8
-
-flake8 --version
+echo "Create symbolic link to the repository"
+ln -sfn /vagrant /home/vagrant/verleihtool
 
 # Create helper scripts
 
-cat > /home/vagrant/startServer.sh <<- EOF
+echo "Create helper scripts"
+cat > /home/vagrant/server.sh <<- EOF
+echo "Server listening at http://127.0.0.1:1337/"
 python /vagrant/manage.py runserver [::]:8000
 EOF
 
-cat > /home/vagrant/lint.sh <<- EOF
-pylint --load-plugins pylint_django \
-/vagrant/verleihtool \
-/vagrant/depot \
-/vagrant/rental
+cat > /home/vagrant/test.sh <<- EOF
+set -e
+cd /vagrant
+
+echo "-- Running linter flake8"
+flake8
+echo "Linter succeeded"
+
+echo
+echo "-- Running tests"
+python manage.py test
 EOF
 
-chmod u+x /home/vagrant/startServer.sh
-chmod u+x /home/vagrant/lint.sh
+chmod u+x /home/vagrant/server.sh /home/vagrant/test.sh
