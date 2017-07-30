@@ -1,6 +1,14 @@
+// full height for footer
+html {
+    position: relative;
+    min-height: 100%;
+}
+
 // add some distance from the header
 body {
-  padding-top: 100px;
+    padding-top: 100px;
+    /* Margin bottom by footer height */
+    margin-bottom: 60px;
 }
 
 // override bootstraps max-height: 200px on small screens
@@ -17,6 +25,25 @@ body {
 // hide the username and password labels in the dropdown
 .login-form label {
     display: none;
+}
+
+// sticky footer
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    /* Set the fixed height of the footer here */
+    height: 60px;
+    background-color: $gray-lighter;
+}
+
+.footer p {
+    text-align: center;
+}
+
+.footer a {
+    margin: 20px 20px 0 20px;
+    display: inline-block;
 }
 
 // don't let the user resize textarea inputs
