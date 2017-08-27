@@ -67,6 +67,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'verleihtool.templates.context_processors.template_settings',
             ],
             'libraries': {
                 'tags': 'verleihtool.templates.tags'
@@ -138,6 +139,11 @@ else:
 # Login
 
 LOGIN_REDIRECT_URL = '/'
+
+# Privacy and imprint
+PRIVACY_URL = '/'
+IMPRINT_URL = '/'
+GITHUB_URL = 'https://github.com/verleihtool/verleihtool/'
 
 # E-Mail preferences
 # Write Emails to std output instead of sending for development purposes
