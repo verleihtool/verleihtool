@@ -66,7 +66,7 @@ class DepotAdmin(admin.ModelAdmin):
 
     def has_add_permission(self, request):
         # Only via the organization's inline admin interface
-        return request.user.organization_set.exists()
+        return request.user.is_superuser or request.user.organization_set.exists()
 
     def has_change_permission(self, request, obj=None):
         if not obj:
@@ -97,7 +97,7 @@ class DepotAdmin(admin.ModelAdmin):
         form = super().get_form(request, obj=obj, **kwargs)
 
         # Limit organization selection to the ones the current user is managing
-        if 'organization' in form.base_fields:
+        if not request.user.is_superuser and 'organization' in form.base_fields:
             form.base_fields['organization'].queryset = request.user.organization_set
 
         return form
