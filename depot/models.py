@@ -16,8 +16,8 @@ class Organization(models.Model):
     """
 
     name = models.CharField(max_length=256)
-    groups = models.ManyToManyField(Group)
-    managers = models.ManyToManyField(User)
+    groups = models.ManyToManyField(Group, blank=True)
+    managers = models.ManyToManyField(User, blank=True)
 
     def managed_by(self, user):
         """
@@ -42,7 +42,7 @@ class Organization(models.Model):
         return self.depot_set.filter(active=True)
 
     def __str__(self):
-        return 'Organization %s' % self.name
+        return self.name
 
 
 class Depot(models.Model):
@@ -99,7 +99,7 @@ class Depot(models.Model):
         )
 
     def __str__(self):
-        return 'Depot %s' % self.name
+        return self.name
 
 
 class Item(models.Model):
@@ -137,5 +137,4 @@ class Item(models.Model):
         )
 
     def __str__(self):
-        return ('%s unit(s) of %s (visib.: %s) in %s'
-                % (self.quantity, self.name, self.visibility, self.location))
+        return self.name
