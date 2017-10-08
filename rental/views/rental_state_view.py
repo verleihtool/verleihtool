@@ -20,6 +20,7 @@ class RentalStateView(View):
 
         data = request.POST
         state = data.get('state')
+        message = data.get('message')
 
         if state not in allowed_transitions(managed_by_user, rental.state):
             return HttpResponseForbidden('Invalid state transition')

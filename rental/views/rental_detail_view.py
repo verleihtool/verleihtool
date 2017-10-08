@@ -19,7 +19,7 @@ class RentalDetailView(View):
         rental = get_object_or_404(Rental, pk=rental_uuid)
         managed_by_user = rental.depot.managed_by(request.user)
 
-        buttons = allowed_transitions(managed_by_user, rental.state)
+        states = allowed_transitions(managed_by_user, rental.state)
 
         alert_classes = {
             Rental.STATE_PENDING: 'info',
@@ -44,7 +44,7 @@ class RentalDetailView(View):
         return render(request, 'rental/detail.html', {
             'rental': rental,
             'managed_by_user': managed_by_user,
-            'buttons': buttons,
+            'states': states,
             'alert_classes': alert_classes,
             'btn_texts': btn_texts,
             'btn_classes': btn_classes,
