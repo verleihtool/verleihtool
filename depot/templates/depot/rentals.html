@@ -25,26 +25,30 @@
         </h1>
     </div>
 
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Start Date</th>
-                <th>Return Date</th>
-                <th>State</th>
-                <th>&nbsp;</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for rental in rentals %}
+    <div class="panel panel-default">
+        <table class="table table-hover table-clickable">
+            <thead>
                 <tr>
-                    <td>{{ rental.firstname }} {{ rental.lastname }}</td>
-                    <td>{{ rental.start_date }}</td>
-                    <td>{{ rental.return_date }}</td>
-                    <td><span class="{{ state_labels|key:rental.state }}">{% rental_state rental.state %}</span></td>
-                    <td><a href="{% url 'rental:detail' rental.uuid %}" class="btn btn-default" role="button">Detail</a>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Number of items</th>
+                    <th>Start date</th>
+                    <th>Return date</th>
+                    <th>State</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for rental in rentals %}
+                    <tr class="row-clickable" data-href="{% url 'rental:detail' rental.uuid %}">
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ rental.firstname }} {{ rental.lastname }}</td>
+                        <td>{{ rental.itemrental_set.all.count }}
+                        <td>{{ rental.start_date }}</td>
+                        <td>{{ rental.return_date }}</td>
+                        <td><span class="{{ state_labels|key:rental.state }}">{% rental_state rental.state %}</span></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}

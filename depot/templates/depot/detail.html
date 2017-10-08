@@ -33,31 +33,35 @@
         </h1>
     </div>
 
-    <div class="alert alert-info">
+    <p>
         This depot is managed by {% concat_with_and depot.managers|full_names empty='no one apparently' %}.
-    </div>
+    </p>
 
-    <table class="table">
-        <tr>
-            <th>Name</th>
-            <th>Quantity</th>
-            <th>Location</th>
-            {% if show_visibility %}
-                <th>Visibility</th>
-            {% endif %}
-        </tr>
-
-        {% for item in item_list %}
+    <div class="panel panel-default">
+        <table class="table">
             <tr>
-                <td>{{ item.name }}</td>
-                <td>{{ item.quantity }}</td>
-                <td>{{ item.location }}</td>
+                <th>#</th>
+                <th>Name</th>
+                <th>Quantity</th>
+                <th>Location</th>
                 {% if show_visibility %}
-                    <td>{% item_visibility item.visibility %}</td>
+                    <th>Visibility</th>
                 {% endif %}
             </tr>
-        {% endfor %}
-    </table>
+
+            {% for item in item_list %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.location }}</td>
+                    {% if show_visibility %}
+                        <td>{% item_visibility item.visibility %}</td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
 
     <button type="button" class="btn btn-primary"
             data-toggle="modal" data-target="#date-modal">

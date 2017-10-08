@@ -1,0 +1,4 @@
+// make clickable rows behave like links
+table.table-clickable tr.row-clickable {
+    cursor: pointer;
+}
