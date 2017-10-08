@@ -40,9 +40,11 @@ def create(request):
             rental = create_rental(user, data)
             create_items(rental, data)
 
-            send_confirmation_mail(request, rental)
+        # After transaction send a confirmation mail to the user
+        send_confirmation_mail(request, rental)
 
-            return redirect('rental:detail', rental_uuid=rental.uuid)
+        # Finally redirect the user to the rental page
+        return redirect('rental:detail', rental_uuid=rental.uuid)
     except ValidationError as e:
         # Store the errors and the submitted data in the current session
         request.session['errors'] = e.message_dict
