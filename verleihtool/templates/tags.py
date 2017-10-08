@@ -1,6 +1,5 @@
 import json
 from django import template
-from django.http import request
 from depot.models import Item
 from rental.models import Rental
 

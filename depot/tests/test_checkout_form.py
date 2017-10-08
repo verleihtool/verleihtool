@@ -1,4 +1,3 @@
-from django.contrib.auth.models import User
 from depot.models import Depot, Organization
 from verleihtool.test import ClientTestCase
 

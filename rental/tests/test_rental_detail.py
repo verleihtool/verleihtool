@@ -1,6 +1,6 @@
 from datetime import datetime
 from verleihtool.test import ClientTestCase
-from depot.models import Depot, Item, Organization
+from depot.models import Depot, Organization
 from rental.models import Rental
 
 
