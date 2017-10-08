@@ -146,8 +146,8 @@ IMPRINT_URL = '/'
 GITHUB_URL = 'https://github.com/verleihtool/verleihtool/'
 
 # E-Mail preferences
-# Write Emails to std output instead of sending for development purposes
 
+# Write Emails to std output instead of sending for development purposes
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-EMAIL_SUBJECT_PREFIX = '[verleihtool] '
-DEFAULT_FROM_EMAIL = 'verleih@tool.de'
+DEFAULT_FROM_EMAIL = 'verleih@tool.com'
+CC_EMAIL = []

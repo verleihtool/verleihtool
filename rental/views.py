@@ -1,8 +1,8 @@
-import re
+import markdown
 import urllib
-import html2text
+from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.core.mail import send_mail
+from django.core.mail import EmailMultiAlternatives
 from django.db import transaction
 from django.http import HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
@@ -148,7 +148,7 @@ def create_items(rental, data):
 
     if not item_quantities:
         raise ValidationError({
-            'items': 'The rental cannot be submitted without any items.'
+            'item_quantities': 'The rental cannot be submitted without any items.'
         })
 
     item_list = Item.objects.filter(id__in=item_quantities.keys())
@@ -186,26 +186,19 @@ def create_item_rental(rental, item, quantity, available):
 
 
 def send_confirmation_mail(request, rental):
-    pattern_obj = re.compile("/(create)/")
+    subject = ('[Verleihtool] Your rental request, %s %s' %
+               (rental.firstname, rental.lastname))
+    message = render_to_string('rental/mails/confirmation.md', {
+        'rental': rental
+    }, request)
 
-    mailcontext = {
-        'firstname': rental.firstname,
-        'lastname': rental.lastname,
-        'start_date': rental.start_date,
-        'return_date': rental.return_date,
-        'uuid': rental.uuid,
-        'itemrental_list': rental.itemrental_set.all(),
-        'absoluteuri': pattern_obj.sub("/", request.build_absolute_uri())
-    }
-
-    html_content = render_to_string('rental_confirmation_email.html', mailcontext)
-    plain_txt_mail = html2text.html2text(html_content)
-
-    send_mail(
-        'Your rental request, %s %s' % (rental.lastname, rental.firstname),
-        plain_txt_mail,
-        'verleih@tool.de',
-        [rental.email],
-        html_message=html_content,
-        fail_silently=True,
+    email = EmailMultiAlternatives(
+        subject=subject,
+        body=message,
+        to=[rental.email],
+        cc=settings.CC_EMAIL,
     )
+
+    email.attach_alternative(markdown.markdown(message), 'text/html')
+
+    email.send()
