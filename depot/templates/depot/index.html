@@ -40,7 +40,11 @@
                             </h3>
                         </div>
                         <div class="panel-body">
-                            This depot contains {{ depot.public_items.count }} items.
+                            {% if depot.description %}
+                                {{ depot.description }}
+                            {% else %}
+                                <i>No description provided.</i>
+                            {% endif %}
                         </div>
                     </div>
                 </div>

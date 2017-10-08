@@ -15,7 +15,7 @@ class Organization(models.Model):
     :author: Benedikt Seidl
     """
 
-    name = models.CharField(max_length=256)
+    name = models.CharField(max_length=32)
     groups = models.ManyToManyField(Group, blank=True)
     managers = models.ManyToManyField(User, blank=True)
 
@@ -53,7 +53,8 @@ class Depot(models.Model):
     :author: Benedikt Seidl
     """
 
-    name = models.CharField(max_length=256)
+    name = models.CharField(max_length=32)
+    description = models.CharField(max_length=256, blank=True)
     organization = models.ForeignKey(Organization)
     manager_users = models.ManyToManyField(User, blank=True)
     manager_groups = models.ManyToManyField(Group, blank=True)
@@ -132,7 +133,7 @@ class Item(models.Model):
         (VISIBILITY_DELETED, 'deleted'),
     )
 
-    name = models.CharField(max_length=256)
+    name = models.CharField(max_length=32)
     quantity = models.PositiveSmallIntegerField()
     visibility = models.CharField(max_length=1, choices=VISIBILITY_LEVELS)
     depot = models.ForeignKey(Depot, on_delete=models.CASCADE)
