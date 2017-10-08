@@ -1,4 +1,5 @@
 import uuid
+from datetime import datetime
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
@@ -54,6 +55,11 @@ class Rental(models.Model):
         if self.start_date > self.return_date:
             raise ValidationError({
                 'start_date': 'The start date must be before the return date.'
+            })
+
+        if self.start_date < datetime.now() and self.state == self.STATE_PENDING:
+            raise ValidationError({
+                'start_date': 'The start date must be in the future for new rentals.'
             })
 
     def __str__(self):
