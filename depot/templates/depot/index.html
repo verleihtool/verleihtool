@@ -22,26 +22,22 @@
             {% endif %}
         </h2>
 
-        <div class="alert alert-info">
+        <p>
             This organization is managed by {% concat_with_and organization.model.managers.all|full_names empty='no one apparently' %}.
-        </div>
+        </p>
 
         <div class="row">
             {% for depot in organization.depots %}
                 <div class="col-md-4 col-sm-6">
-                    <div class="panel panel-default">
+                    <div class="panel panel-primary">
                         <div class="panel-heading">
-                            <a href="{% url 'depot:detail' depot.id %}">
-                                <h3 class="panel-title">
-                                    {{ depot.name }}
+                            <h3 class="panel-title">
+                                <a href="{% url 'depot:detail' depot.id %}">{{ depot.name }}</a>
 
-                                    <span class="badge">{{ depot.public_items.count }} items</span>
+                                <span class="badge">{{ depot.public_items.count }} items</span>
 
-                                    {% if not depot.active %}
-                                        <span class="label label-default">inactive</td>
-                                    {% endif %}
-                                </h3>
-                            </a>
+                                <span class="glyphicon glyphicon-list-alt pull-right" aria-hidden="true"></span>
+                            </h3>
                         </div>
                         <div class="panel-body">
                             This depot contains {{ depot.public_items.count }} items.

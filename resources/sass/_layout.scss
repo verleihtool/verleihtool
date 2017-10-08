@@ -11,6 +11,11 @@ body {
     margin-bottom: 60px;
 }
 
+// increase margin around paragraphs
+p {
+    margin: 20px 0 30px;
+}
+
 // override bootstraps max-height: 200px on small screens
 .navbar-fixed-top .navbar-collapse {
     max-height: none;
