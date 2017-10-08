@@ -20,7 +20,11 @@ class RentalStateView(View):
 
         data = request.POST
         state = data.get('state')
+        old_state = data.get('old_state')
         message = data.get('message')
+
+        if old_state != rental.state:
+            return HttpResponseForbidden('The state of the rental request has changed')
 
         if state not in allowed_transitions(managed_by_user, rental.state):
             return HttpResponseForbidden('Invalid state transition')

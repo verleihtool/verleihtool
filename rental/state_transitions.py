@@ -18,7 +18,6 @@ def allowed_transitions(managed_by_user, current_state):
 # Allowed state transitions for managers of the connected depot
 STATE_TRANSITIONS_MANAGER = {
     Rental.STATE_PENDING: [
-        Rental.STATE_REVOKED,
         Rental.STATE_APPROVED,
         Rental.STATE_DECLINED,
     ],
@@ -27,7 +26,6 @@ STATE_TRANSITIONS_MANAGER = {
     ],
     Rental.STATE_APPROVED: [
         Rental.STATE_PENDING,
-        Rental.STATE_REVOKED,
         Rental.STATE_DECLINED,
         Rental.STATE_RETURNED,
     ],
