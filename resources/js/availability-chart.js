@@ -3,14 +3,15 @@ let Chart = require('chart.js')
 let availabilityChart = null
 
 $('#availability-modal').on('show.bs.modal', (ev) => {
-    let name = $(ev.relatedTarget).parents('.rental-item').data('name')
+    let name = $(ev.relatedTarget).data('name')
 
     $('#availability-item').text(name)
 })
 
 $('#availability-modal').on('shown.bs.modal', (ev) => {
     let $chart = $('#availability-chart');
-    let intervals = $(ev.relatedTarget).parents('.rental-item').data('intervals')
+    let name = $(ev.relatedTarget).data('name')
+    let intervals = $(ev.relatedTarget).data('intervals')
     let maxAvailability = intervals.reduce(
         (val, acc) => val.y > acc.y ? val.y : acc.y
     )
@@ -19,7 +20,7 @@ $('#availability-modal').on('shown.bs.modal', (ev) => {
         type: 'line',
         data: {
             datasets: [{
-                label: 'Availability',
+                label: 'Availability of ' + name,
                 data: intervals,
                 backgroundColor: 'rgba(51, 122, 183, 0.4)',
                 borderColor: 'rgba(46, 109, 164, 1)',
