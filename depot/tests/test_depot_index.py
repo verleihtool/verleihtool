@@ -170,4 +170,4 @@ class DepotIndexTestCase(ClientTestCase):
         create_depot('My depot', organization=organization)
         response = self.as_guest.get('/depots/')
         self.assertSuccess(response, 'depot/index.html')
-        self.assertContains(response, 'This organization is managed by itself.')
+        self.assertContains(response, 'This organization is managed by no one apparently.')
