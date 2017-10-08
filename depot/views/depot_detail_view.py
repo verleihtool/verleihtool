@@ -20,7 +20,7 @@ class DepotDetailView(View):
         return render(request, 'depot/detail.html', {
             'depot': depot,
             'item_list': helpers.get_item_list(depot, request.user),
-            'show_visibility': helpers.show_private_items(depot, request.user),
+            'show_visibility': depot.show_private_items(request.user),
             'managed_by_user': depot.managed_by(request.user),
             'start_date': datetime.now() + timedelta(days=1),
             'return_date': datetime.now() + timedelta(days=4)

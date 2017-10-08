@@ -22,10 +22,6 @@ def get_depot_if_allowed(depot_id, user):
     return depot
 
 
-def show_private_items(depot, user):
-    return user.is_superuser or depot.organization.is_member(user)
-
-
 def get_item_list(depot, user):
     """
     Return the list of items the user is allowed to see in this depot
@@ -33,7 +29,7 @@ def get_item_list(depot, user):
     :author: Benedikt Seidl
     """
 
-    if show_private_items(depot, user):
+    if depot.show_private_items(user):
         return depot.active_items.all()
     else:
         return depot.public_items.all()

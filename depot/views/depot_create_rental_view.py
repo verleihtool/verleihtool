@@ -34,7 +34,7 @@ class DepotCreateRentalView(View):
 
         return render(request, 'depot/create-rental.html', {
             'depot': depot,
-            'show_visibility': helpers.show_private_items(depot, request.user),
+            'show_visibility': depot.show_private_items(request.user),
             'availability_data': availability_data,
             'errors': errors,
             'data': data,

@@ -70,6 +70,13 @@ class Depot(models.Model):
                 self.manager_users.filter(id=user.id).exists() or
                 self.manager_groups.filter(id__in=user.groups.all()).exists())
 
+    def show_private_items(self, user):
+        """
+        Private items can be seen by superusers and organization members.
+        """
+
+        return user.is_superuser or self.organization.is_member(user)
+
     @property
     def managers(self):
         """
