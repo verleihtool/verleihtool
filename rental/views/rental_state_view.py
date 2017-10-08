@@ -21,7 +21,7 @@ class RentalStateView(View):
         data = request.POST
         state = data.get('state')
         old_state = data.get('old_state')
-        message = data.get('message')
+        # message = data.get('message')
 
         if old_state != rental.state:
             return HttpResponseForbidden('The state of the rental request has changed')

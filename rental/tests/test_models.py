@@ -8,46 +8,51 @@ from django.contrib.auth.models import Group, User
 
 class RentalTestCase(TestCase):
 
-    def test_clean__valid_rental(self):
-        rental = Rental(
-            depot=Depot(),
-            start_date=datetime.now() + timedelta(days=1),
-            return_date=datetime.now() + timedelta(days=3)
+    def create_rental(self, start_delta, return_delta, active=True, state=Rental.STATE_PENDING):
+        return Rental(
+            depot=Depot(active=active),
+            start_date=datetime.now() + timedelta(days=start_delta),
+            return_date=datetime.now() + timedelta(days=return_delta),
+            state=state
         )
+
+    def test_clean__valid_rental(self):
+        rental = self.create_rental(1, 3)
         rental.clean()
 
     def test_clean__same_dates(self):
-        rental = Rental(
-            depot=Depot(),
-            start_date=datetime.now() + timedelta(days=1),
-            return_date=datetime.now() + timedelta(days=1)
-        )
+        rental = self.create_rental(1, 1)
         rental.clean()
 
     def test_clean__return_date_before_start_date(self):
-        rental = Rental(
-            depot=Depot(),
-            start_date=datetime.now() + timedelta(days=3),
-            return_date=datetime.now() + timedelta(days=1)
-        )
+        rental = self.create_rental(3, 1)
         with self.assertRaises(ValidationError):
             rental.clean()
 
     def test_clean__archived_depot(self):
-        rental = Rental(
-            depot=Depot(active=False),
-            start_date=datetime.now() + timedelta(days=1),
-            return_date=datetime.now() + timedelta(days=3)
-        )
+        rental = self.create_rental(1, 3, active=False)
         with self.assertRaises(ValidationError):
             rental.clean()
 
-    def test_clean__past_start_date(self):
-        rental = Rental(
-            depot=Depot(),
-            start_date=datetime.now() + timedelta(days=-1),
-            return_date=datetime.now() + timedelta(days=3)
-        )
+    def test_clean__pending_past_start_date(self):
+        rental = self.create_rental(-1, 3, state=Rental.STATE_PENDING)
+        with self.assertRaises(ValidationError):
+            rental.clean()
+
+    def test_clean__approved_past_start_date(self):
+        rental = self.create_rental(-1, 3, state=Rental.STATE_APPROVED)
+        rental.clean()
+
+    def test_clean__declined_past_start_date(self):
+        rental = self.create_rental(-1, 3, state=Rental.STATE_DECLINED)
+        rental.clean()
+
+    def test_clean__returned_past_start_date(self):
+        rental = self.create_rental(-1, 3, state=Rental.STATE_RETURNED)
+        rental.clean()
+
+    def test_clean__revoked_past_start_date(self):
+        rental = self.create_rental(-1, 3, state=Rental.STATE_REVOKED)
         rental.clean()
 
     def test_str(self):

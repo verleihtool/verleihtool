@@ -1,4 +1,5 @@
 import re
+from datetime import datetime, timedelta
 from depot.models import Depot, Item, Organization
 from django.core import mail
 from verleihtool.test import ClientTestCase
@@ -23,14 +24,17 @@ class RentalCreateTestCase(ClientTestCase):
         )
 
     def test_mail_sent(self):
+        start_date = datetime.now() + timedelta(days=1)
+        return_date = datetime.now() + timedelta(days=3)
+
         response = self.as_guest.post('/rentals/create/', {
             'firstname': 'Guest',
             'lastname': 'User',
             'depot_id': self.depot.id,
             'email': 'guest@user.com',
             'purpose': 'None',
-            'start_date': '2017-10-07',
-            'return_date': '2017-10-10',
+            'start_date': start_date.strftime('%Y-%m-%d %H:%M'),
+            'return_date': return_date.strftime('%Y-%m-%d %H:%M'),
             'item-%d-quantity' % self.item.id: 1
         })
 
