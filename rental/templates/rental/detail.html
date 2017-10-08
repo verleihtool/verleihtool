@@ -27,6 +27,13 @@
     <div class="page-header">
         <h1>
             Rental <small>by {{ rental.firstname }} {{ rental.lastname }}</small>
+
+            {% if managed_by_user %}
+                <a href="{% url 'admin:rental_rental_change' rental.uuid %}"
+                        class="btn btn-default" target="_blank">
+                    Manage
+                </a>
+            {% endif %}
         </h1>
     </div>
 
