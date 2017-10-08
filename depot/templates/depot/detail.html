@@ -38,7 +38,7 @@
     </p>
 
     <div class="panel panel-default">
-        <table class="table">
+        <table class="table table-hover table-clickable">
             <tr>
                 <th>#</th>
                 <th>Name</th>
@@ -49,8 +49,9 @@
                 {% endif %}
             </tr>
 
-            {% for item in item_list %}
-                <tr>
+            {% for item, intervals, availability in availability_data %}
+                <tr class="row-clickable" data-toggle="modal" data-target="#availability-modal"
+                        data-name="{{ item.name }}" data-intervals="{{ intervals|tojson }}">
                     <td>{{ forloop.counter }}</td>
                     <td>{{ item.name }}</td>
                     <td>{{ item.quantity }}</td>
@@ -69,4 +70,5 @@
     </button>
 
     {% include 'depot/modals/date-modal.html' %}
+    {% include 'depot/modals/availability-modal.html' %}
 {% endblock %}
