@@ -32,7 +32,7 @@
     </h1>
 
     <div class="alert alert-info">
-        This depot is managed by {% concat_with_and depot.managers|full_names %}.
+        This depot is managed by {% concat_with_and depot.managers|full_names empty='itself' %}.
     </div>
 
     <table class="table">

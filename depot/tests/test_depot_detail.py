@@ -150,3 +150,8 @@ class DepotDetailTestCase(ClientTestCase):
         response = self.as_guest.get('/depots/%d/' % self.depot.id)
         self.assertSuccess(response, 'depot/detail.html')
         self.assertContains(response, 'This depot is managed by Ursula User.')
+
+    def test_no_managers(self):
+        response = self.as_guest.get('/depots/%d/' % self.depot.id)
+        self.assertSuccess(response, 'depot/detail.html')
+        self.assertContains(response, 'This depot is managed by itself.')

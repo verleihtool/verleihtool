@@ -23,7 +23,7 @@
         </h2>
 
         <div class="alert alert-info">
-            This organization is managed by {% concat_with_and organization.model.managers.all|full_names %}.
+            This organization is managed by {% concat_with_and organization.model.managers.all|full_names empty='itself' %}.
         </div>
 
         <table class="table">

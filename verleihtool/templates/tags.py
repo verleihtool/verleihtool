@@ -39,7 +39,7 @@ def item_visibility(visibility):
 @register.simple_tag
 def rental_state(state):
     """
-    Turn the geiven state into a readable string.
+    Turn the given state into a readable string.
 
     :author: Florian Stamer
     """
@@ -47,7 +47,7 @@ def rental_state(state):
 
 
 @register.simple_tag
-def concat_with_and(list, final='and'):
+def concat_with_and(list, final='and', empty=''):
     """
     Concatenate the given list to a string separated with commas
     and final concatenator (default "and")
@@ -56,7 +56,7 @@ def concat_with_and(list, final='and'):
     """
 
     if not list:
-        return ''
+        return empty
 
     l = len(list)
     if l == 1:
