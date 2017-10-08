@@ -16,20 +16,22 @@
         </li>
     </ol>
 
-    <h1>
-        {{ depot.name }} <small>by {{ depot.organization.name }}</small>
+    <div class="page-header">
+        <h1>
+            {{ depot.name }} <small>by {{ depot.organization.name }}</small>
 
-        {% if managed_by_user %}
-            <a href="{% url 'admin:depot_depot_change' depot.id %}"
-                    class="btn btn-default" target="_blank">
-                Manage
-            </a>
-            <a href="{% url 'depot:rentals' depot.id %}"
-                    class="btn btn-default">
-                Rentals
-            </a>
-        {% endif %}
-    </h1>
+            {% if managed_by_user %}
+                <a href="{% url 'admin:depot_depot_change' depot.id %}"
+                        class="btn btn-default" target="_blank">
+                    Manage
+                </a>
+                <a href="{% url 'depot:rentals' depot.id %}"
+                        class="btn btn-default">
+                    Rentals
+                </a>
+            {% endif %}
+        </h1>
+    </div>
 
     <div class="alert alert-info">
         This depot is managed by {% concat_with_and depot.managers|full_names empty='itself' %}.
