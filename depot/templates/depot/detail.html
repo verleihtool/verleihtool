@@ -60,7 +60,18 @@
             {% for item in item_list %}
                 <tr>
                     <td>{{ forloop.counter }}</td>
-                    <td>{{ item.name }}</td>
+                    <td>
+                        {% if labels|key:item.wikidata_item %}
+                            {{ labels|key:item.wikidata_item }}
+
+                            <a href="{% wikidata_url item.wikidata_item %}">
+                                <span class="glyphicon glyphicon-barcode" aria-hidden="true"
+                                    data-toggle="tooltip" data-placement="right" title="Label from Wikidata"></span>
+                            </a>
+                        {% else %}
+                            {{ item.name }}
+                        {% endif %}
+                    </td>
                     <td>{{ item.quantity }}</td>
                     <td>{{ item.location }}</td>
                     {% if show_visibility %}
