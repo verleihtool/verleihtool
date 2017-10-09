@@ -95,14 +95,16 @@
                 </tr>
             {% endfor %}
         </table>
-    </div>
 
-    {% for state in states %}
-        <button type="button" class="btn btn-{{ bootstrap_classes|key:state }}"
-                data-toggle="modal" data-target="#feedback-{{ state }}-modal">
-            {{ btn_texts|key:state }}
-        </button>
-    {% endfor %}
+        <div class="panel-footer">
+            {% for state in states %}
+                <button type="button" class="btn btn-{{ bootstrap_classes|key:state }}"
+                        data-toggle="modal" data-target="#feedback-{{ state }}-modal">
+                    {{ btn_texts|key:state }}
+                </button>
+            {% endfor %}
+        </div>
+    </div>
 
     {% for state in states %}
         {% include 'rental/modals/feedback-modal.html' %}

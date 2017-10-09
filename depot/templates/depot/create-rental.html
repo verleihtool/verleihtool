@@ -99,18 +99,20 @@
                 </tr>
             {% endfor %}
         </table>
+
+        <div class="panel-footer">
+            <button type="button" class="btn btn-primary" id="checkout-button"
+                    data-toggle="modal" data-target="#checkout-modal"
+                    {% if not errors %} disabled {% endif %}>
+                Checkout
+            </button>
+
+            <button type="button" class="btn btn-default"
+                    data-toggle="modal" data-target="#date-modal">
+                Change time frame
+            </button>
+        </div>
     </div>
-
-    <button type="button" class="btn btn-primary" id="checkout-button"
-            data-toggle="modal" data-target="#checkout-modal"
-            {% if not errors %} disabled {% endif %}>
-        Checkout
-    </button>
-
-    <button type="button" class="btn btn-default"
-            data-toggle="modal" data-target="#date-modal">
-        Change time frame
-    </button>
 
     {% include 'depot/modals/checkout-modal.html' %}
     {% include 'depot/modals/date-modal.html' %}

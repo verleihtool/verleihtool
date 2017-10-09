@@ -38,6 +38,14 @@
     </p>
 
     <div class="panel panel-default">
+        <div class="panel-body">
+            {% if depot.description %}
+                {{ depot.description }}
+            {% else %}
+                <i>No description provided.</i>
+            {% endif %}
+        </div>
+
         <table class="table">
             <tr>
                 <th>#</th>
@@ -59,14 +67,20 @@
                         <td>{% item_visibility item.visibility %}</td>
                     {% endif %}
                 </tr>
+            {% empty %}
+                <tr>
+                    <td class="text-center" colspan="99"><i>No items available</i></td>
+                </tr>
             {% endfor %}
         </table>
-    </div>
 
-    <button type="button" class="btn btn-primary"
-            data-toggle="modal" data-target="#date-modal">
-        Request rental
-    </button>
+        <div class="panel-footer">
+            <button type="button" class="btn btn-primary"
+                    data-toggle="modal" data-target="#date-modal">
+                Request rental
+            </button>
+        </div>
+    </div>
 
     {% include 'depot/modals/date-modal.html' %}
 {% endblock %}
