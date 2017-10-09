@@ -1,6 +1,7 @@
-from depot import availability, helpers
+from depot import helpers
 from django.shortcuts import render
 from django.views import View
+from rental.availability import Availability
 
 
 class DepotCreateRentalView(View):
@@ -17,9 +18,10 @@ class DepotCreateRentalView(View):
         start_date, return_date = helpers.get_start_return_date(request.GET)
 
         item_list = helpers.get_item_list(depot, request.user)
-        item_availability_intervals = availability.get_item_availability_intervals(
-            start_date, return_date, depot_id, item_list
-        )
+
+        availability = Availability(start_date, return_date, depot_id)
+
+        item_availability_intervals = availability.get_availability_intervals_list(item_list)
 
         availability_data = []
         for item, intervals in item_availability_intervals:

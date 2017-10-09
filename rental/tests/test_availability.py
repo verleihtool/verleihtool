@@ -1,11 +1,11 @@
 from verleihtool.test import ClientTestCase
 from depot.models import Depot, Item, Organization
 from rental.models import Rental, ItemRental
-from depot.availability import get_availability_intervals
+from rental.availability import Availability
 from datetime import datetime, timedelta
 
 
-class AvailabilityAlgoTestCase(ClientTestCase):
+class AvailabilityTestCase(ClientTestCase):
 
     def setUp(self):
         super().setUp()
@@ -27,7 +27,8 @@ class AvailabilityAlgoTestCase(ClientTestCase):
         rental = Rental.objects.create(
             depot=self.depot,
             start_date=start,
-            return_date=end
+            return_date=end,
+            state=Rental.STATE_APPROVED
         )
         ItemRental.objects.create(
             rental=rental,
@@ -40,7 +41,8 @@ class AvailabilityAlgoTestCase(ClientTestCase):
         rental = Rental.objects.create(
             depot=self.depot,
             start_date=start,
-            return_date=end
+            return_date=end,
+            state=Rental.STATE_APPROVED
         )
         item = Item.objects.create(
             name='irrelevant item',
@@ -58,10 +60,12 @@ class AvailabilityAlgoTestCase(ClientTestCase):
     def test_no_overlap(self):
         start = self.end + timedelta(days=1)
         end = self.end + timedelta(days=2)
-        rental = self.create_conflicting_rental(start, end, 3)
-        rentals = [rental]
-        intervals = get_availability_intervals(
-            self.start, self.end, self.item, rentals)
+        self.create_conflicting_rental(start, end, 3)
+
+        availability = Availability(self.start, self.end, self.depot.id)
+        self.assertEqual([], list(availability.rentals))
+
+        intervals = availability.get_availability_intervals(self.item)
         expected = [[self.start, self.end, 10]]
         self.assertEqual(intervals, expected)
 
@@ -69,21 +73,23 @@ class AvailabilityAlgoTestCase(ClientTestCase):
         start = self.start + timedelta(days=1)
         end = self.end + timedelta(days=-1)
         rental = self.create_non_conflicting_rental(start, end)
-        rentals = [rental]
-        intervals = get_availability_intervals(
-            self.start, self.end, self.item, rentals)
-        expected = [
-            [self.start, self.end, 10]
-        ]
+
+        availability = Availability(self.start, self.end, self.depot.id)
+        self.assertEqual([rental], list(availability.rentals))
+
+        intervals = availability.get_availability_intervals(self.item)
+        expected = [[self.start, self.end, 10]]
         self.assertEqual(intervals, expected)
 
     def test_completely_enclosing(self):
         start = self.start + timedelta(days=-1)
         end = self.end + timedelta(days=1)
         rental = self.create_conflicting_rental(start, end, 3)
-        rentals = [rental]
-        intervals = get_availability_intervals(
-            self.start, self.end, self.item, rentals)
+
+        availability = Availability(self.start, self.end, self.depot.id)
+        self.assertEqual([rental], list(availability.rentals))
+
+        intervals = availability.get_availability_intervals(self.item)
         expected = [[self.start, self.end, 7]]
         self.assertEqual(intervals, expected)
 
@@ -91,9 +97,11 @@ class AvailabilityAlgoTestCase(ClientTestCase):
         start = self.start + timedelta(days=1)
         end = self.end + timedelta(days=-1)
         rental = self.create_conflicting_rental(start, end, 3)
-        rentals = [rental]
-        intervals = get_availability_intervals(
-            self.start, self.end, self.item, rentals)
+
+        availability = Availability(self.start, self.end, self.depot.id)
+        self.assertEqual([rental], list(availability.rentals))
+
+        intervals = availability.get_availability_intervals(self.item)
         expected = [
             [self.start, start, 10],
             [start, end, 7],
@@ -105,9 +113,11 @@ class AvailabilityAlgoTestCase(ClientTestCase):
         start = self.start + timedelta(days=-1)
         end = self.start + timedelta(days=1)
         rental = self.create_conflicting_rental(start, end, 3)
-        rentals = [rental]
-        intervals = get_availability_intervals(
-            self.start, self.end, self.item, rentals)
+
+        availability = Availability(self.start, self.end, self.depot.id)
+        self.assertEqual([rental], list(availability.rentals))
+
+        intervals = availability.get_availability_intervals(self.item)
         expected = [
             [self.start, end, 7],
             [end, self.end, 10]
@@ -118,12 +128,15 @@ class AvailabilityAlgoTestCase(ClientTestCase):
         left_start = self.start + timedelta(days=-1)
         left_end = self.start + timedelta(days=1)
         left_rental = self.create_conflicting_rental(left_start, left_end, 3)
+
         right_start = self.end + timedelta(days=-1)
         right_end = self.end + timedelta(days=1)
         right_rental = self.create_conflicting_rental(right_start, right_end, 3)
-        rentals = [left_rental, right_rental]
-        intervals = get_availability_intervals(
-            self.start, self.end, self.item, rentals)
+
+        availability = Availability(self.start, self.end, self.depot.id)
+        self.assertEqual([left_rental, right_rental], list(availability.rentals))
+
+        intervals = availability.get_availability_intervals(self.item)
         expected = [
             [self.start, left_end, 7],
             [left_end, right_start, 10],
@@ -135,12 +148,15 @@ class AvailabilityAlgoTestCase(ClientTestCase):
         left_start = self.start + timedelta(days=-1)
         left_end = self.end + timedelta(days=-1)
         left_rental = self.create_conflicting_rental(left_start, left_end, 3)
+
         right_start = self.start + timedelta(days=1)
         right_end = self.end + timedelta(days=1)
         right_rental = self.create_conflicting_rental(right_start, right_end, 3)
-        rentals = [left_rental, right_rental]
-        intervals = get_availability_intervals(
-            self.start, self.end, self.item, rentals)
+
+        availability = Availability(self.start, self.end, self.depot.id)
+        self.assertEqual([left_rental, right_rental], list(availability.rentals))
+
+        intervals = availability.get_availability_intervals(self.item)
         expected = [
             [self.start, right_start, 7],
             [right_start, left_end, 4],
@@ -152,15 +168,15 @@ class AvailabilityAlgoTestCase(ClientTestCase):
         enclosed_start = self.start + timedelta(days=1)
         enclosed_end = self.end + timedelta(days=-1)
         enclosed_rental = self.create_conflicting_rental(enclosed_start, enclosed_end, 3)
+
         enclosing_start = self.start + timedelta(days=-1)
         enclosing_end = self.end + timedelta(days=1)
         enclosing_rental = self.create_conflicting_rental(enclosing_start, enclosing_end, 3)
-        rentals = [
-            enclosed_rental,
-            enclosing_rental,
-        ]
-        intervals = get_availability_intervals(
-            self.start, self.end, self.item, rentals)
+
+        availability = Availability(self.start, self.end, self.depot.id)
+        self.assertEqual([enclosed_rental, enclosing_rental], list(availability.rentals))
+
+        intervals = availability.get_availability_intervals(self.item)
         expected = [
             [self.start, enclosed_start, 7],
             [enclosed_start, enclosed_end, 4],
@@ -171,21 +187,21 @@ class AvailabilityAlgoTestCase(ClientTestCase):
     def test_start_exactly_on_end_of_rental(self):
         start = self.start + timedelta(days=-1)
         end = self.start
-        rental = self.create_conflicting_rental(start, end, 3)
-        rentals = [rental]
-        intervals = get_availability_intervals(
-            self.start, self.end, self.item, rentals)
-        expected = [
-            [self.start, self.end, 10]
-        ]
+        self.create_conflicting_rental(start, end, 3)
+
+        availability = Availability(self.start, self.end, self.depot.id)
+        self.assertEqual([], list(availability.rentals))
+
+        intervals = availability.get_availability_intervals(self.item)
+        expected = [[self.start, self.end, 10]]
         self.assertEqual(intervals, expected)
 
     def test_exactly_matching_rental_time_frame(self):
         rental = self.create_conflicting_rental(self.start, self.end, 3)
-        rentals = [rental]
-        intervals = get_availability_intervals(
-            self.start, self.end, self.item, rentals)
-        expected = [
-            [self.start, self.end, 7]
-        ]
+
+        availability = Availability(self.start, self.end, self.depot.id)
+        self.assertEqual([rental], list(availability.rentals))
+
+        intervals = availability.get_availability_intervals(self.item)
+        expected = [[self.start, self.end, 7]]
         self.assertEqual(intervals, expected)
