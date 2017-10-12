@@ -1,4 +1,5 @@
-from depot import helpers
+from datetime import datetime, timedelta
+from depot.helpers import get_depot_if_allowed, extract_item_quantities
 from django.shortcuts import render
 from django.views import View
 from rental.availability import Availability
@@ -12,12 +13,12 @@ class DepotCreateRentalView(View):
     """
 
     def get(self, request, depot_id):
-        depot = helpers.get_depot_if_allowed(depot_id, request.user)
+        depot = get_depot_if_allowed(depot_id, request.user)
 
         # configure time frame
-        start_date, return_date = helpers.get_start_return_date(request.GET)
+        start_date, return_date = self.get_start_return_date(request.GET)
 
-        item_list = helpers.get_item_list(depot, request.user)
+        item_list = depot.visible_items(request.user)
 
         availability = Availability(start_date, return_date, depot_id)
 
@@ -27,7 +28,7 @@ class DepotCreateRentalView(View):
         for item, intervals in item_availability_intervals:
             availability_data.append((
                 item,
-                helpers.get_chart_data(intervals),
+                self.get_chart_data(intervals),
                 availability.get_minimum_availability(intervals)
             ))
 
@@ -40,9 +41,47 @@ class DepotCreateRentalView(View):
             'availability_data': availability_data,
             'errors': errors,
             'data': data,
-            'item_quantities': helpers.extract_item_quantities(data),
+            'item_quantities': extract_item_quantities(data),
             'start_date': start_date,
             'return_date': return_date,
             'start_date_formatted': start_date.strftime('%Y-%m-%d %H:%M'),
             'return_date_formatted': return_date.strftime('%Y-%m-%d %H:%M')
         })
+
+    def get_start_return_date(self, data):
+        """
+        Return the start and return dates from the request
+
+        If required data is missing or invalid, default values are returned.
+        """
+
+        try:
+            start_date = datetime.strptime(data.get('start_date'), '%Y-%m-%d %H:%M')
+        except:
+            start_date = datetime.now() + timedelta(days=1)
+
+        try:
+            return_date = datetime.strptime(data.get('return_date'), '%Y-%m-%d %H:%M')
+        except:
+            return_date = start_date + timedelta(days=3)
+
+        return (start_date, max(start_date, return_date))
+
+    def get_chart_data(self, intervals):
+        """
+        Generate the data the JavaScript can render
+        """
+
+        data = []
+
+        for begin, end, availability in intervals:
+            data.append({
+                "x": begin.isoformat(),
+                "y": availability
+            })
+            data.append({
+                "x": end.isoformat(),
+                "y": availability
+            })
+
+        return data

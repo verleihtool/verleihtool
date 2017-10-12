@@ -78,6 +78,16 @@ class Depot(models.Model):
 
         return user.is_superuser or self.organization.is_member(user)
 
+    def visible_items(self, user):
+        """
+        Return the list of items the user is allowed to see in this depot.
+        """
+
+        if self.show_private_items(user):
+            return self.active_items.all()
+        else:
+            return self.public_items.all()
+
     @property
     def managers(self):
         """

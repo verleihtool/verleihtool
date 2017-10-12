@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from depot import helpers
+from depot.helpers import get_depot_if_allowed
 from django.shortcuts import render
 from django.views import View
 
@@ -15,11 +15,11 @@ class DepotDetailView(View):
     """
 
     def get(self, request, depot_id):
-        depot = helpers.get_depot_if_allowed(depot_id, request.user)
+        depot = get_depot_if_allowed(depot_id, request.user)
 
         return render(request, 'depot/detail.html', {
             'depot': depot,
-            'item_list': helpers.get_item_list(depot, request.user),
+            'item_list': depot.visible_items(request.user),
             'show_visibility': depot.show_private_items(request.user),
             'managed_by_user': depot.managed_by(request.user),
             'start_date': datetime.now() + timedelta(days=1),

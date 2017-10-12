@@ -7,7 +7,7 @@ from django.db import transaction
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
 from django.views import View
-from depot import helpers
+from depot.helpers import extract_item_quantities
 from depot.models import Item
 from rental.availability import Availability
 from rental.models import Rental, ItemRental
@@ -71,7 +71,7 @@ class RentalCreateView(View):
     def create_items(self, rental, data):
         errors = {}
 
-        item_quantities = helpers.extract_item_quantities(data)
+        item_quantities = extract_item_quantities(data)
 
         if not item_quantities:
             raise ValidationError({
