@@ -85,16 +85,16 @@
                                 <td>{% item_visibility item.visibility %}</td>
                             {% endif %}
                             <td class="rental-item-selected">
-                                <div class="input-group number">
+                                <div class="input-group number-input">
                                     <input type="text" class="form-control"
                                             value="{% firstof item_quantities|key:item.id '0' %}"
                                             data-name="item-{{ item.id }}-quantity"
                                             data-min="0" data-max="{{ availability }}">
                                     <div class="input-group-btn">
-                                        <button type="button" class="btn btn-default number-up">
+                                        <button type="button" class="btn btn-default number-input-up">
                                             <span class="glyphicon glyphicon-chevron-up"></span>
                                         </button>
-                                        <button type="button" class="btn btn-default number-down">
+                                        <button type="button" class="btn btn-default number-input-down">
                                             <span class="glyphicon glyphicon-chevron-down"></span>
                                         </button>
                                     </div>
