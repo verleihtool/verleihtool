@@ -38,10 +38,11 @@
                         <th>State</th>
                     </tr>
                 </thead>
+
                 <tbody>
                     {% for rental in rentals %}
                         <tr class="row-clickable" data-href="{% url 'rental:detail' rental.uuid %}">
-                            <td>{{ forloop.counter }}</td>
+                            <th scope="row">{{ forloop.counter }}</th>
                             <td>{{ rental.firstname }} {{ rental.lastname }}</td>
                             <td>{{ rental.itemrental_set.all.count }}
                             <td>{{ rental.start_date }}</td>
