@@ -20,7 +20,11 @@ class DepotCreateRentalView(View):
 
         item_list = depot.visible_items(request.user)
 
-        availability = Availability(start_date, return_date, depot_id)
+        availability = Availability(
+            datetime.combine(start_date.date() - timedelta(days=1), datetime.min.time()),
+            datetime.combine(return_date.date() + timedelta(days=1), datetime.min.time()),
+            depot_id
+        )
 
         item_availability_intervals = availability.get_availability_intervals_list(item_list)
 
