@@ -45,7 +45,11 @@
                         <td>{{ rental.itemrental_set.all.count }}
                         <td>{{ rental.start_date }}</td>
                         <td>{{ rental.return_date }}</td>
-                        <td><span class="{{ state_labels|key:rental.state }}">{% rental_state rental.state %}</span></td>
+                        <td>
+                            <span class="label label-{% rental_state_class rental.state %}">
+                                {% rental_state rental.state %}
+                            </span>
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>

@@ -21,14 +21,6 @@ class RentalDetailView(View):
 
         states = allowed_transitions(managed_by_user, rental.state)
 
-        bootstrap_classes = {
-            Rental.STATE_PENDING: 'warning',
-            Rental.STATE_REVOKED: 'danger',
-            Rental.STATE_APPROVED: 'success',
-            Rental.STATE_DECLINED: 'danger',
-            Rental.STATE_RETURNED: 'info',
-        }
-
         btn_texts = {
             Rental.STATE_PENDING: 'Reset',
             Rental.STATE_REVOKED: 'Revoke',
@@ -41,6 +33,5 @@ class RentalDetailView(View):
             'rental': rental,
             'managed_by_user': managed_by_user,
             'states': states,
-            'bootstrap_classes': bootstrap_classes,
             'btn_texts': btn_texts,
         })

@@ -47,6 +47,25 @@ def rental_state(state):
 
 
 @register.simple_tag
+def rental_state_class(state):
+    """
+    Provide a bootstrap contextual class for each rental state.
+
+    :author: Benedikt Seidl
+    """
+
+    bootstrap_classes = {
+        Rental.STATE_PENDING: 'warning',
+        Rental.STATE_REVOKED: 'danger',
+        Rental.STATE_APPROVED: 'success',
+        Rental.STATE_DECLINED: 'danger',
+        Rental.STATE_RETURNED: 'info',
+    }
+
+    return bootstrap_classes[state]
+
+
+@register.simple_tag
 def concat_with_and(list, final='and', empty=''):
     """
     Concatenate the given list to a string separated with commas
