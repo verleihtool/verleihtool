@@ -52,24 +52,29 @@
         </h1>
     </div>
 
+    <p>
+        Create a new rental
+        <a href="#date-modal" data-toggle="modal">
+            from {{ start_date }} to {{ return_date }}
+        </a>
+    </p>
+
     <div class="panel panel-default">
         <div class="panel-body">
-            Create a new rental
-            <a href="#date-modal" data-toggle="modal">
-                from {{ start_date }} to {{ return_date }}
-            </a>
+            Hint: You can click on the number of available items
+            to get a detailed view of its availability over time.
         </div>
 
         <div class="table-responsive">
-            <table class="table table-hover table-clickable">
+            <table class="table">
                 <thead>
                     <tr>
                         <th>#</th>
                         <th>Name</th>
-                        <th>Available</th>
+                        <th class="text-center">Available</th>
                         <th>Location</th>
                         {% if show_visibility %}
-                            <th>Visibility</th>
+                            <th class="text-center">Visibility</th>
                         {% endif %}
                         <th>Selected</th>
                     </tr>
@@ -77,14 +82,35 @@
 
                 <tbody>
                     {% for item, intervals, availability in availability_data %}
-                        <tr class="rental-item row-clickable" data-toggle="modal" data-target="#availability-modal"
-                                data-name="{{ item.name }}" data-intervals="{{ intervals|tojson }}">
-                            <th scope="row">{{ forloop.counter }}</th>
-                            <td class="rental-item-name">{{ item.name }}</td>
-                            <td class="rental-item-availability">{{ availability }}</td>
-                            <td class="rental-item-location">{{ item.location }}</td>
+                        <tr class="rental-item">
+                            <th scope="row">
+                                {{ forloop.counter }}
+                            </th>
+                            <td class="rental-item-name">
+                                {{ item.name }}
+                            </td>
+                            <td class="rental-item-availability text-center">
+                                <a class="badge"
+                                        data-toggle="modal"
+                                        data-target="#availability-modal"
+                                        data-name="{{ item.name }}"
+                                        data-intervals="{{ intervals|tojson }}">
+                                    {{ availability }}
+                                </a>
+                            </td>
+                            <td class="rental-item-location">
+                                {{ item.location }}
+                            </td>
                             {% if show_visibility %}
-                                <td>{% item_visibility item.visibility %}</td>
+                                <td class="text-center">
+                                    <span class="glyphicon glyphicon-{% item_visibility_glyphicon item.visibility %}"
+                                            aria-hidden="true"
+                                            data-toggle="tooltip"
+                                            data-placement="right"
+                                            title="{% item_visibility item.visibility %}">
+                                    </span>
+                                    <span class="sr-only">{% item_visibility item.visibility %}</span>
+                                </td>
                             {% endif %}
                             <td class="rental-item-selected">
                                 <div class="input-group number-input">

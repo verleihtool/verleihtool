@@ -72,7 +72,9 @@
                             <td class="text-center">
                                 <span class="badge">{{ item.quantity }}</span>
                             </td>
-                            <td>{{ item.location }}</td>
+                            <td>
+                                {{ item.location }}
+                            </td>
                             {% if show_visibility %}
                                 <td class="text-center">
                                     <span class="glyphicon glyphicon-{% item_visibility_glyphicon item.visibility %}"
