@@ -52,6 +52,7 @@ def item_visibility_glyphicon(visibility):
 
     return glyphicons[visibility]
 
+
 @register.simple_tag
 def rental_state(state):
     """
