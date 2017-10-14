@@ -1,5 +1,6 @@
 import json
 from django import template
+from django.core.urlresolvers import translate_url
 from depot.models import Item
 from rental.models import Rental
 
@@ -23,6 +24,13 @@ def current_app(context, app_name, content):
 @register.simple_tag(takes_context=True)
 def base_url(context):
     return context['request'].build_absolute_uri('')
+
+
+@register.simple_tag(takes_context=True)
+def change_lang(context, lang):
+    path = context['request'].path
+
+    return translate_url(path, lang)
 
 
 @register.simple_tag

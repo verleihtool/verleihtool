@@ -1,13 +1,15 @@
 {% extends 'layout.html' %}
 
+{% load i18n %}
+
 {% block container %}
     <div class="jumbotron">
         <div class="container">
-            <h1>Welcome to the Verleihtool!</h1>
-            <p>See which items are available for rental and submit a request for them.</p>
+            <h1>{% trans 'Welcome to the Verleihtool!' %}</h1>
+            <p>{% trans 'See which items are available for rental and submit a request for them.' %}</p>
             <p>
                 <a class="btn btn-primary btn-lg" href="{% url 'depot:index' %}" role="button">
-                    Explore the depots
+                    {% trans 'Explore the depots' %}
                 </a>
             </p>
         </div>

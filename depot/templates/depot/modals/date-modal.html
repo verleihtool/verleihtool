@@ -1,23 +1,25 @@
+{% load i18n %}
+
 <div class="modal fade" id="date-modal" tabindex="-1"
         role="dialog" aria-labelledby="date-title">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <form id="checkout-form" method="get" action="{% url 'depot:create_rental' depot.id %}">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="{% trans 'Close' %}">
                         <span aria-hidden="true">&times;</span>
                     </button>
-                    <h4 class="modal-title" id="date-title">Pick a time frame</h4>
+                    <h4 class="modal-title" id="date-title">{% trans 'Pick a time frame' %}</h4>
                 </div>
                 <div class="modal-body">
                     {% include 'depot/modals/date-form.html' %}
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary pull-left">
-                        Select
+                        {% trans 'Select' %}
                     </button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">
-                        Close
+                        {% trans 'Close' %}
                     </button>
                 </div>
             </form>

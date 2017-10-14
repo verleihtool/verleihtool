@@ -1,5 +1,6 @@
-from django.db import models
 from django.contrib.auth.models import Group, User
+from django.db import models
+from django.utils.translation import ugettext_lazy as _
 
 
 class Organization(models.Model):
@@ -138,9 +139,9 @@ class Item(models.Model):
     VISIBILITY_PRIVATE = '2'
     VISIBILITY_DELETED = '3'
     VISIBILITY_LEVELS = (
-        (VISIBILITY_PUBLIC, 'public'),
-        (VISIBILITY_PRIVATE, 'private'),
-        (VISIBILITY_DELETED, 'deleted'),
+        (VISIBILITY_PUBLIC, _('public')),
+        (VISIBILITY_PRIVATE, _('private')),
+        (VISIBILITY_DELETED, _('deleted')),
     )
 
     name = models.CharField(max_length=32)

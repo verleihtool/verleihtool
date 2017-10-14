@@ -1,22 +1,23 @@
 {% extends 'layout.html' %}
 
 {% load tags %}
+{% load i18n %}
 
 {% block title %}
-    Rental
+    {% trans 'Rental' %}
 {% endblock %}
 
 {% block content %}
     <ol class="breadcrumb">
         <li>
-            <a href="{% url 'depot:index' %}">Depots</a>
+            <a href="{% url 'depot:index' %}">{% trans 'Depots' %}</a>
         </li>
         <li>
             <a href="{% url 'depot:detail' rental.depot.id %}">{{ rental.depot.name }}</a>
         </li>
         {% if managed_by_user %}
             <li>
-                <a href="{% url 'depot:rentals' rental.depot.id %}">Rentals</a>
+                <a href="{% url 'depot:rentals' rental.depot.id %}">{% trans 'Rentals' %}</a>
             </li>
         {% endif %}
         <li class="active">
@@ -26,12 +27,14 @@
 
     <div class="page-header">
         <h1>
-            Rental <small>by {{ rental.firstname }} {{ rental.lastname }}</small>
+            {% blocktrans trimmed with first_name=rental.firstname last_name=rental.lastname %}
+                Rental <small>by {{ first_name }} {{ last_name }}</small>
+            {% endblocktrans %}
 
             {% if managed_by_user %}
                 <a href="{% url 'admin:rental_rental_change' rental.uuid %}"
                         class="btn btn-default" target="_blank">
-                    Manage
+                    {% trans 'Manage' %}
                 </a>
             {% endif %}
         </h1>
@@ -40,38 +43,38 @@
     <div class="panel panel-{% rental_state_class rental.state %}">
         <div class="panel-heading">
             <h2 class="panel-title">
-                Details
+                {% trans 'Details' %}
             </h2>
         </div>
         <div class="panel-body">
             <dl class="dl-horizontal">
-                <dt>Status</dt>
+                <dt>{% trans 'Status' %}</dt>
                 <dd>
                     <span class="label label-{% rental_state_class rental.state %}">
                         {% rental_state rental.state %}
                     </span>
                 </dd>
 
-                <dt>Name</dt>
+                <dt>{% trans 'Name' %}</dt>
                 <dd>{{ rental.firstname }} {{ rental.lastname }}</dd>
 
-                <dt>Email</dt>
+                <dt>{% trans 'Email' %}</dt>
                 <dd>
                     <a href="mailto:{{ rental.email }}">{{ rental.email }}</a>
                 </dd>
 
                 {% if rental.user %}
-                    <dt>User</dt>
-                    <dd>{{ rental.user }}
+                    <dt>{% trans 'User' %}</dt>
+                    <dd>{{ rental.user }}</dd>
                 {% endif %}
 
-                <dt>Purpose</dt>
+                <dt>{% trans 'Purpose' %}</dt>
                 <dd>{{ rental.purpose }}</dd>
 
-                <dt>Start date</dt>
+                <dt>{% trans 'Start date' %}</dt>
                 <dd>{{ rental.start_date }}</dd>
 
-                <dt>Return date</dt>
+                <dt>{% trans 'Return date' %}</dt>
                 <dd>{{ rental.return_date }}</dd>
             </dl>
         </div>
@@ -81,10 +84,10 @@
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Name</th>
-                        <th>Quantity</th>
-                        <th>Returned</th>
-                        <th>Location</th>
+                        <th>{% trans 'Name' %}</th>
+                        <th>{% trans 'Quantity' %}</th>
+                        <th>{% trans 'Returned' %}</th>
+                        <th>{% trans 'Location' %}</th>
                     </tr>
                 </thead>
 

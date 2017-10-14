@@ -1,6 +1,8 @@
+{% load i18n %}
+
 <div class="row">
     <div class="form-group col-md-6">
-        <label for="start_date">Start date</label>
+        <label for="start_date">{% trans 'Start date' %}</label>
         <div class="input-group date" id="start_date_picker">
             <input type="text" class="form-control"
                     id="start_date" name="start_date"
@@ -11,7 +13,7 @@
         </div>
     </div>
     <div class="form-group col-md-6">
-        <label for="return_date">Return date</label>
+        <label for="return_date">{% trans 'Return date' %}</label>
         <div class="input-group date" id="return_date_picker">
             <input type="text" class="form-control"
                     id="return_date" name="return_date"
@@ -25,7 +27,9 @@
 
 {% if request.resolver_match.url_name == 'create_rental' %}
     <div class="alert alert-warning">
-        Changing the dates will reset all selected items because the availability
-        of these items may be different in the new time frame.
+        {% blocktrans trimmed %}
+            Changing the dates will reset all selected items because the availability
+            of these items may be different in the new time frame.
+        {% endblocktrans %}
     </div>
 {% endif %}

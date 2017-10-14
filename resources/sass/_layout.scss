@@ -54,12 +54,10 @@ a.block-link {
     background-color: $gray-lighter;
 }
 
-.footer p {
-    margin: 0 0 10px;
-    text-align: center;
+.footer .link-list a {
+    margin-right: 40px;
 }
 
-.footer a {
-    margin: 20px 20px 0 20px;
-    display: inline-block;
+.footer .language-picker {
+    margin: 12px;
 }

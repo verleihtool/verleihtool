@@ -1,4 +1,5 @@
 {% load tags %}
+{% load i18n %}
 
 <div class="modal fade" id="feedback-{{ state }}-modal" tabindex="-1"
         role="dialog" aria-labelledby="feedback-title">
@@ -11,11 +12,12 @@
                 <input type="hidden" name="old_state" value="{{ rental.state }}">
 
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="{% trans 'Close' %}">
                         <span aria-hidden="true">&times;</span>
                     </button>
                     <h4 class="modal-title" id="feedback-title">
-                        Mark this rental request as
+                        {# TODO make label a parameter (requires new label tag and filters) #}
+                        {% trans 'Mark this rental request as' %}
                         <span class="label label-{% rental_state_class state %}">
                             {% rental_state state %}
                         </span>
@@ -29,7 +31,7 @@
                         {{ btn_texts|key:state }}
                     </button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">
-                        Close
+                        {% trans 'Close' %}
                     </button>
                 </div>
             </form>

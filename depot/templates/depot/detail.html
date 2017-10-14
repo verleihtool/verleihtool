@@ -1,15 +1,18 @@
 {% extends 'layout.html' %}
 
 {% load tags %}
+{% load i18n %}
 
 {% block title %}
-    {{ depot.name }} by {{ depot.organization.name }}
+    {% blocktrans trimmed with depot_name=depot.name organization_name=depot.organization.name %}
+        {{ depot_name }} by {{ organization_name }}
+    {% endblocktrans %}
 {% endblock %}
 
 {% block content %}
     <ol class="breadcrumb">
         <li>
-            <a href="{% url 'depot:index' %}">Depots</a>
+            <a href="{% url 'depot:index' %}">{% trans 'Depots' %}</a>
         </li>
         <li class="active">
             <span>{{ depot.name }}</span>
@@ -18,23 +21,28 @@
 
     <div class="page-header">
         <h1>
-            {{ depot.name }} <small>by {{ depot.organization.name }}</small>
+            {% blocktrans trimmed with depot_name=depot.name organization_name=depot.organization.name %}
+                {{ depot_name }} <small>by {{ organization_name }}</small>
+            {% endblocktrans %}
 
             {% if managed_by_user %}
                 <a href="{% url 'admin:depot_depot_change' depot.id %}"
                         class="btn btn-default" target="_blank">
-                    Manage
+                    {% trans 'Manage' %}
                 </a>
                 <a href="{% url 'depot:rentals' depot.id %}"
                         class="btn btn-default">
-                    Rentals
+                    {% trans 'Rentals' %}
                 </a>
             {% endif %}
         </h1>
     </div>
 
     <p>
-        This depot is managed by {% concat_with_and depot.managers|full_names empty='no one apparently' %}.
+        {% concat_with_and depot.managers|full_names empty=_('no one apparently') as managers %}
+        {% blocktrans trimmed %}
+            This depot is managed by {{ managers }}.
+        {% endblocktrans %}
     </p>
 
     <div class="panel panel-default">
@@ -42,7 +50,7 @@
             {% if depot.description %}
                 {{ depot.description }}
             {% else %}
-                <i>No description provided.</i>
+                <i>{% trans 'No description provided' %}</i>
             {% endif %}
         </div>
 
@@ -51,11 +59,11 @@
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Name</th>
-                        <th class="text-center">Quantity</th>
-                        <th>Location</th>
+                        <th>{% trans 'Name' %}</th>
+                        <th class="text-center">{% trans 'Quantity' %}</th>
+                        <th>{% trans 'Location' %}</th>
                         {% if show_visibility %}
-                            <th class="text-center">Visibility</th>
+                            <th class="text-center">{% trans 'Visibility' %}</th>
                         {% endif %}
                     </tr>
                 </thead>
@@ -90,7 +98,7 @@
                     {% empty %}
                         <tr>
                             <td class="text-center" colspan="99">
-                                <i>No items available</i>
+                                <i>{% trans 'No items available' %}</i>
                             </td>
                         </tr>
                     {% endfor %}
@@ -102,7 +110,7 @@
             <button type="button" class="btn btn-primary"
                     data-toggle="modal" data-target="#date-modal"
                     {% if not item_list %} disabled {% endif %}>
-                Request rental
+                {% trans 'Request rental' %}
             </button>
         </div>
     </div>
