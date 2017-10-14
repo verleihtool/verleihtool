@@ -60,45 +60,51 @@
             </a>
         </div>
 
-        <table class="table table-hover table-clickable">
-            <tr>
-                <th>Name</th>
-                <th>Available</th>
-                <th>Location</th>
-                {% if show_visibility %}
-                    <th>Visibility</th>
-                {% endif %}
-                <th>Selected</th>
-            </tr>
+        <div class="table-responsive">
+            <table class="table table-hover table-clickable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Available</th>
+                        <th>Location</th>
+                        {% if show_visibility %}
+                            <th>Visibility</th>
+                        {% endif %}
+                        <th>Selected</th>
+                    </tr>
+                </thead>
 
-            {% for item, intervals, availability in availability_data %}
-                <tr class="rental-item row-clickable" data-toggle="modal" data-target="#availability-modal"
-                        data-name="{{ item.name }}" data-intervals="{{ intervals|tojson }}">
-                    <td class="rental-item-name">{{ item.name }}</td>
-                    <td class="rental-item-availability">{{ availability }}</td>
-                    <td class="rental-item-location">{{ item.location }}</td>
-                    {% if show_visibility %}
-                        <td>{% item_visibility item.visibility %}</td>
-                    {% endif %}
-                    <td class="rental-item-selected">
-                        <div class="input-group number">
-                            <input type="text" class="form-control"
-                                    value="{% firstof item_quantities|key:item.id '0' %}"
-                                    data-name="item-{{ item.id }}-quantity"
-                                    data-min="0" data-max="{{ availability }}">
-                            <div class="input-group-btn">
-                                <button type="button" class="btn btn-default number-up">
-                                    <span class="glyphicon glyphicon-chevron-up"></span>
-                                </button>
-                                <button type="button" class="btn btn-default number-down">
-                                    <span class="glyphicon glyphicon-chevron-down"></span>
-                                </button>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-            {% endfor %}
-        </table>
+                <tbody>
+                    {% for item, intervals, availability in availability_data %}
+                        <tr class="rental-item row-clickable" data-toggle="modal" data-target="#availability-modal"
+                                data-name="{{ item.name }}" data-intervals="{{ intervals|tojson }}">
+                            <td class="rental-item-name">{{ item.name }}</td>
+                            <td class="rental-item-availability">{{ availability }}</td>
+                            <td class="rental-item-location">{{ item.location }}</td>
+                            {% if show_visibility %}
+                                <td>{% item_visibility item.visibility %}</td>
+                            {% endif %}
+                            <td class="rental-item-selected">
+                                <div class="input-group number">
+                                    <input type="text" class="form-control"
+                                            value="{% firstof item_quantities|key:item.id '0' %}"
+                                            data-name="item-{{ item.id }}-quantity"
+                                            data-min="0" data-max="{{ availability }}">
+                                    <div class="input-group-btn">
+                                        <button type="button" class="btn btn-default number-up">
+                                            <span class="glyphicon glyphicon-chevron-up"></span>
+                                        </button>
+                                        <button type="button" class="btn btn-default number-down">
+                                            <span class="glyphicon glyphicon-chevron-down"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
         <div class="panel-footer">
             <button type="button" class="btn btn-primary" id="checkout-button"

@@ -46,33 +46,39 @@
             {% endif %}
         </div>
 
-        <table class="table">
-            <tr>
-                <th>#</th>
-                <th>Name</th>
-                <th>Quantity</th>
-                <th>Location</th>
-                {% if show_visibility %}
-                    <th>Visibility</th>
-                {% endif %}
-            </tr>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Quantity</th>
+                        <th>Location</th>
+                        {% if show_visibility %}
+                            <th>Visibility</th>
+                        {% endif %}
+                    </tr>
+                </thead>
 
-            {% for item in item_list %}
-                <tr>
-                    <td>{{ forloop.counter }}</td>
-                    <td>{{ item.name }}</td>
-                    <td>{{ item.quantity }}</td>
-                    <td>{{ item.location }}</td>
-                    {% if show_visibility %}
-                        <td>{% item_visibility item.visibility %}</td>
-                    {% endif %}
-                </tr>
-            {% empty %}
-                <tr>
-                    <td class="text-center" colspan="99"><i>No items available</i></td>
-                </tr>
-            {% endfor %}
-        </table>
+                <tbody>
+                    {% for item in item_list %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>{{ item.location }}</td>
+                            {% if show_visibility %}
+                                <td>{% item_visibility item.visibility %}</td>
+                            {% endif %}
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td class="text-center" colspan="99"><i>No items available</i></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
         <div class="panel-footer">
             <button type="button" class="btn btn-primary"
