@@ -18,7 +18,7 @@ class DepotDetailView(View):
     def get(self, request, depot_id):
         depot = get_depot_if_allowed(depot_id, request.user)
         item_list = depot.visible_items(request.user)
-        labels = wikidata.get_labels(item_list, lang='de')
+        labels = wikidata.get_labels(item_list, lang=request.LANGUAGE_CODE)
 
         return render(request, 'depot/detail.html', {
             'depot': depot,

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-14 20:02+0000\n"
+"POT-Creation-Date: 2017-10-14 20:19+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -147,11 +147,15 @@ msgstr "Keine Beschreibung verfügbar"
 msgid "Quantity"
 msgstr "Anzahl"
 
-#: depot/templates/depot/detail.html:101
+#: depot/templates/depot/detail.html:84 depot/templates/depot/detail.html:85
+msgid "Label from Wikidata"
+msgstr "Bezeichnung von Wikidata"
+
+#: depot/templates/depot/detail.html:112
 msgid "No items available"
 msgstr "Keine Gegenstände verfügbar"
 
-#: depot/templates/depot/detail.html:113
+#: depot/templates/depot/detail.html:124
 msgid "Request rental"
 msgstr "Verleihanfrage erstellen"
 
@@ -350,23 +354,23 @@ msgstr "Feedback für %(first_name)s %(last_name)s"
 msgid "Mark this rental request as"
 msgstr "Markiere diese Verleihanfrage als"
 
-#: rental/views/rental_detail_view.py:31
+#: rental/views/rental_detail_view.py:26
 msgid "Reset"
 msgstr "Zurücksetzen"
 
-#: rental/views/rental_detail_view.py:32
+#: rental/views/rental_detail_view.py:27
 msgid "Revoke"
 msgstr "Zurücknehmen"
 
-#: rental/views/rental_detail_view.py:33
+#: rental/views/rental_detail_view.py:28
 msgid "Approve"
 msgstr "Bestätigen"
 
-#: rental/views/rental_detail_view.py:34
+#: rental/views/rental_detail_view.py:29
 msgid "Decline"
 msgstr "Ablehnen"
 
-#: rental/views/rental_detail_view.py:35
+#: rental/views/rental_detail_view.py:30
 msgid "Finish"
 msgstr "Erledigen"
 
