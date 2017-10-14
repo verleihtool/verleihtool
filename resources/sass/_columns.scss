@@ -1,0 +1,11 @@
+.columns {
+    -moz-column-width: 300px;
+    -webkit-column-width: 300px;
+    column-width: 300px;
+}
+
+// prevent panels from splitting over columns
+.columns > .panel {
+    display: inline-block;
+    width: 100%;
+}

@@ -20,7 +20,7 @@ class RentalDetailTestCase(ClientTestCase):
             'Revoked': ('danger', 'Revoke'),
             'Approved': ('success', 'Approve'),
             'Declined': ('danger', 'Decline'),
-            'Returned': ('info', 'Close'),
+            'Returned': ('info', 'Finish'),
         }[action]
 
         button = ('<button type="submit" class="btn btn-%s pull-left">%s</button>'

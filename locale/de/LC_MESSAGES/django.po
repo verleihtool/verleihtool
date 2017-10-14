@@ -1,0 +1,407 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-10-14 20:02+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: depot/models.py:142
+msgid "public"
+msgstr "öffentlich"
+
+#: depot/models.py:143
+msgid "private"
+msgstr "privat"
+
+#: depot/models.py:144
+msgid "deleted"
+msgstr "gelöscht"
+
+#: depot/templates/depot/create-rental.html:7
+#, python-format
+msgid "New Rental for %(depot_name)s"
+msgstr "Neue Verleihanfrage für %(depot_name)s"
+
+#: depot/templates/depot/create-rental.html:15
+#: depot/templates/depot/detail.html:15 depot/templates/depot/rentals.html:13
+#: rental/templates/rental/detail.html:13 verleihtool/templates/layout.html:48
+msgid "Depots"
+msgstr "Lager"
+
+#: depot/templates/depot/create-rental.html:21
+msgid "New Rental"
+msgstr "Neue Verleihanfrage"
+
+#: depot/templates/depot/create-rental.html:27
+msgid "Please fix the errors below and in the checkout form."
+msgstr "Bitte behandle die Fehler unten und im Formular."
+
+#: depot/templates/depot/create-rental.html:51
+#, python-format
+msgid "New Rental <small>for %(depot_name)s</small>"
+msgstr "Neue Verleihanfrage <small>für %(depot_name)s</small>"
+
+#: depot/templates/depot/create-rental.html:58
+msgid "Create a new rental"
+msgstr "Erstelle eine neue Verleihanfrage"
+
+#: depot/templates/depot/create-rental.html:60
+#, python-format
+msgid "from %(start_date)s to %(return_date)s."
+msgstr "vom %(start_date)s bis zum %(return_date)s."
+
+#: depot/templates/depot/create-rental.html:68
+msgid ""
+"Hint: You can click on the number of available items to get a detailed view "
+"of its availability over time."
+msgstr ""
+"Tipp: Du kannst auf die Anzahl verfügbarer Gegenstände klicken, um eine "
+"detaillierte Ansicht der Verfügbarkeit über Zeit zu erhalten."
+
+#: depot/templates/depot/create-rental.html:79
+#: depot/templates/depot/detail.html:62
+#: depot/templates/depot/modals/checkout-form.html:83
+#: depot/templates/depot/rentals.html:37
+#: rental/templates/rental/detail.html:58
+#: rental/templates/rental/detail.html:87
+msgid "Name"
+msgstr "Name"
+
+#: depot/templates/depot/create-rental.html:80
+msgid "Available"
+msgstr "Verfügbar"
+
+#: depot/templates/depot/create-rental.html:81
+#: depot/templates/depot/detail.html:64
+#: depot/templates/depot/modals/checkout-form.html:84
+#: rental/templates/rental/detail.html:90
+msgid "Location"
+msgstr "Ort"
+
+#: depot/templates/depot/create-rental.html:83
+#: depot/templates/depot/detail.html:66
+msgid "Visibility"
+msgstr "Sichtbarkeit"
+
+#: depot/templates/depot/create-rental.html:85
+#: depot/templates/depot/modals/checkout-form.html:85
+msgid "Selected"
+msgstr "Ausgewählt"
+
+#: depot/templates/depot/create-rental.html:147
+#: depot/templates/depot/modals/checkout-modal.html:18
+msgid "Checkout"
+msgstr "Bestätigen"
+
+#: depot/templates/depot/create-rental.html:152
+msgid "Change time frame"
+msgstr "Zeitintervall ändern"
+
+#: depot/templates/depot/detail.html:7
+#, python-format
+msgid "%(depot_name)s by %(organization_name)s"
+msgstr "%(depot_name)s von %(organization_name)s"
+
+#: depot/templates/depot/detail.html:24
+#, python-format
+msgid "%(depot_name)s <small>by %(organization_name)s</small>"
+msgstr "%(depot_name)s <small>von %(organization_name)s</small>"
+
+#: depot/templates/depot/detail.html:31 depot/templates/depot/index.html:21
+#: rental/templates/rental/detail.html:37
+msgid "Manage"
+msgstr "Verwalten"
+
+#: depot/templates/depot/detail.html:35 depot/templates/depot/rentals.html:7
+#: depot/templates/depot/rentals.html:19
+#: rental/templates/rental/detail.html:20
+msgid "Rentals"
+msgstr "Verleihanfragen"
+
+#: depot/templates/depot/detail.html:42 depot/templates/depot/index.html:27
+msgid "no one apparently"
+msgstr "niemandem"
+
+#: depot/templates/depot/detail.html:43
+#, python-format
+msgid "This depot is managed by %(managers)s."
+msgstr "Dieses Lager wird von %(managers)s verwaltet."
+
+#: depot/templates/depot/detail.html:53 depot/templates/depot/index.html:55
+msgid "No description provided"
+msgstr "Keine Beschreibung verfügbar"
+
+#: depot/templates/depot/detail.html:63 rental/templates/rental/detail.html:88
+msgid "Quantity"
+msgstr "Anzahl"
+
+#: depot/templates/depot/detail.html:101
+msgid "No items available"
+msgstr "Keine Gegenstände verfügbar"
+
+#: depot/templates/depot/detail.html:113
+msgid "Request rental"
+msgstr "Verleihanfrage erstellen"
+
+#: depot/templates/depot/index.html:7 depot/templates/depot/index.html:12
+msgid "Depots by organization"
+msgstr "Lager nach Organisation"
+
+#: depot/templates/depot/index.html:28
+#, python-format
+msgid "This organization is managed by %(managers)s."
+msgstr "Diese Organisation wird von %(managers)s verwaltet."
+
+#: depot/templates/depot/index.html:41
+#, python-format
+msgid "%(counter)s item"
+msgid_plural "%(counter)s items"
+msgstr[0] "%(counter)s Gegenstand"
+msgstr[1] "%(counter)s Gegenstände"
+
+#: depot/templates/depot/index.html:63
+msgid "No depots available"
+msgstr "Keine Lager verfügbar"
+
+#: depot/templates/depot/modals/availability-modal.html:12
+#, python-format
+msgid "Availability <small>of %(item)s</small>"
+msgstr "Verfügbarkeit <small>von %(item)s</small>"
+
+#: depot/templates/depot/modals/availability-modal.html:22
+#: depot/templates/depot/modals/checkout-modal.html:15
+#: depot/templates/depot/modals/checkout-modal.html:28
+#: depot/templates/depot/modals/date-modal.html:9
+#: depot/templates/depot/modals/date-modal.html:22
+#: rental/templates/rental/modals/feedback-modal.html:15
+#: rental/templates/rental/modals/feedback-modal.html:34
+msgid "Close"
+msgstr "Schließen"
+
+#: depot/templates/depot/modals/checkout-form.html:5
+msgid "First Name"
+msgstr "Vorname"
+
+#: depot/templates/depot/modals/checkout-form.html:22
+msgid "Last Name"
+msgstr "Nachname"
+
+#: depot/templates/depot/modals/checkout-form.html:41
+msgid "Email address"
+msgstr "E-Mail Adresse"
+
+#: depot/templates/depot/modals/checkout-form.html:57
+#: rental/templates/rental/detail.html:71
+msgid "Purpose"
+msgstr "Verwendungszweck"
+
+#: depot/templates/depot/modals/checkout-form.html:75
+msgid "Summary"
+msgstr "Zusammenfassung"
+
+#: depot/templates/depot/modals/checkout-form.html:77
+#, python-format
+msgid "You are creating a new rental from %(start_date)s to %(return_date)s."
+msgstr ""
+"Du erstellst eine Verleihanfrage vom %(start_date)s bis zum %(return_date)s."
+
+#: depot/templates/depot/modals/checkout-modal.html:25
+msgid "Submit"
+msgstr "Senden"
+
+#: depot/templates/depot/modals/date-form.html:5
+#: depot/templates/depot/rentals.html:39
+#: rental/templates/rental/detail.html:74
+msgid "Start date"
+msgstr "Anfangsdatum"
+
+#: depot/templates/depot/modals/date-form.html:16
+#: depot/templates/depot/rentals.html:40
+#: rental/templates/rental/detail.html:77
+msgid "Return date"
+msgstr "Rückgabedatum"
+
+#: depot/templates/depot/modals/date-form.html:30
+msgid ""
+"Changing the dates will reset all selected items because the availability of "
+"these items may be different in the new time frame."
+msgstr ""
+"Durch das Ändern der Daten werden alle ausgewählten Gegenstände "
+"zurückgesetzt, da diese im neuen Zeitintervall nicht mehr verfügbar sein "
+"könnten."
+
+#: depot/templates/depot/modals/date-modal.html:12
+msgid "Pick a time frame"
+msgstr "Zeitintervall auswählen"
+
+#: depot/templates/depot/modals/date-modal.html:19
+msgid "Select"
+msgstr "Auswählen"
+
+#: depot/templates/depot/rentals.html:25
+#, python-format
+msgid "Rentals <small>for %(depot_name)s</small>"
+msgstr "Verleihanfragen <small>für %(depot_name)s</small>"
+
+#: depot/templates/depot/rentals.html:38
+msgid "Number of items"
+msgstr "Anzahl Gegenstände"
+
+#: depot/templates/depot/rentals.html:41
+msgid "State"
+msgstr "Status"
+
+#: login/templates/login/home.html:8
+msgid "Welcome to the Verleihtool!"
+msgstr "Willkommen zum Verleihtool!"
+
+#: login/templates/login/home.html:9
+msgid "See which items are available for rental and submit a request for them."
+msgstr ""
+"Erfahre welche Gegenstände zum Verleih verfügbar sind und sende eine Anfrage "
+"für sie."
+
+#: login/templates/login/home.html:12
+msgid "Explore the depots"
+msgstr "Entdecke die Lager"
+
+#: login/templates/login/login-form.html:7
+#: login/templates/login/login-form.html:9
+msgid "Username"
+msgstr "Benutzername"
+
+#: login/templates/login/login-form.html:14
+#: login/templates/login/login-form.html:16
+msgid "Password"
+msgstr "Passwort"
+
+#: login/templates/login/login-form.html:19 login/templates/login/login.html:6
+#: verleihtool/templates/layout.html:81
+msgid "Login"
+msgstr "Anmelden"
+
+#: rental/models.py:33
+msgid "pending"
+msgstr "ausstehend"
+
+#: rental/models.py:34
+msgid "approved"
+msgstr "bestätigt"
+
+#: rental/models.py:35
+msgid "declined"
+msgstr "abgelehnt"
+
+#: rental/models.py:36
+msgid "revoked"
+msgstr "zurückgenommen"
+
+#: rental/models.py:37
+msgid "returned"
+msgstr "zurückgegeben"
+
+#: rental/templates/rental/detail.html:7
+msgid "Rental"
+msgstr "Verleihanfrage"
+
+#: rental/templates/rental/detail.html:30
+#, python-format
+msgid "Rental <small>by %(first_name)s %(last_name)s</small>"
+msgstr "Verleihanfrage <small>von %(first_name)s %(last_name)s</small>"
+
+#: rental/templates/rental/detail.html:46
+msgid "Details"
+msgstr "Details"
+
+#: rental/templates/rental/detail.html:51
+msgid "Status"
+msgstr "Status"
+
+#: rental/templates/rental/detail.html:61
+msgid "Email"
+msgstr "E-Mail"
+
+#: rental/templates/rental/detail.html:67
+msgid "User"
+msgstr "Benutzer"
+
+#: rental/templates/rental/detail.html:89
+msgid "Returned"
+msgstr "Zurückgegeben"
+
+#: rental/templates/rental/modals/feedback-form.html:5
+#, python-format
+msgid "Feedback for %(first_name)s %(last_name)s"
+msgstr "Feedback für %(first_name)s %(last_name)s"
+
+#: rental/templates/rental/modals/feedback-modal.html:20
+msgid "Mark this rental request as"
+msgstr "Markiere diese Verleihanfrage als"
+
+#: rental/views/rental_detail_view.py:31
+msgid "Reset"
+msgstr "Zurücksetzen"
+
+#: rental/views/rental_detail_view.py:32
+msgid "Revoke"
+msgstr "Zurücknehmen"
+
+#: rental/views/rental_detail_view.py:33
+msgid "Approve"
+msgstr "Bestätigen"
+
+#: rental/views/rental_detail_view.py:34
+msgid "Decline"
+msgstr "Ablehnen"
+
+#: rental/views/rental_detail_view.py:35
+msgid "Finish"
+msgstr "Erledigen"
+
+#: verleihtool/templates/layout.html:20
+msgid "Welcome"
+msgstr "Willkommen"
+
+#: verleihtool/templates/layout.html:32
+msgid "Toggle navigation"
+msgstr "Navigation umschalten"
+
+#: verleihtool/templates/layout.html:45
+msgid "Home"
+msgstr "Start"
+
+#: verleihtool/templates/layout.html:65
+msgid "Administration"
+msgstr "Administration"
+
+#: verleihtool/templates/layout.html:71
+msgid "Logout"
+msgstr "Abmelden"
+
+#: verleihtool/templates/layout.html:106
+msgid "Change language"
+msgstr "Sprache ändern"
+
+#: verleihtool/templates/layout.html:126
+msgid "Privacy"
+msgstr "Datenschutz"
+
+#: verleihtool/templates/layout.html:127
+msgid "Imprint"
+msgstr "Impressum"
+
+#: verleihtool/templates/layout.html:128
+msgid "Github"
+msgstr "Github"

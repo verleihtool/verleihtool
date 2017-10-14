@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from depot import helpers
+from depot.helpers import get_depot_if_allowed
 from django.shortcuts import render
 from django.views import View
 from depot import wikidata
@@ -16,8 +16,8 @@ class DepotDetailView(View):
     """
 
     def get(self, request, depot_id):
-        depot = helpers.get_depot_if_allowed(depot_id, request.user)
-        item_list = helpers.get_item_list(depot, request.user)
+        depot = get_depot_if_allowed(depot_id, request.user)
+        item_list = depot.visible_items(request.user)
         labels = wikidata.get_labels(item_list, lang='de')
 
         return render(request, 'depot/detail.html', {

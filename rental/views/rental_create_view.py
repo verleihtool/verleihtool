@@ -7,8 +7,9 @@ from django.db import transaction
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
 from django.views import View
-from depot import availability, helpers
+from depot.helpers import extract_item_quantities
 from depot.models import Item
+from rental.availability import Availability
 from rental.models import Rental, ItemRental
 
 
@@ -70,7 +71,7 @@ class RentalCreateView(View):
     def create_items(self, rental, data):
         errors = {}
 
-        item_quantities = helpers.extract_item_quantities(data)
+        item_quantities = extract_item_quantities(data)
 
         if not item_quantities:
             raise ValidationError({
@@ -79,9 +80,9 @@ class RentalCreateView(View):
 
         item_list = Item.objects.filter(id__in=item_quantities.keys())
 
-        item_availability_intervals = availability.get_item_availability_intervals(
-            rental.start_date, rental.return_date, rental.depot_id, item_list
-        )
+        availability = Availability(rental.start_date, rental.return_date, rental.depot_id)
+
+        item_availability_intervals = availability.get_availability_intervals_list(item_list)
 
         for item, intervals in item_availability_intervals:
             try:

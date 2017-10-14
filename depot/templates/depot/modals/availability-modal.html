@@ -1,3 +1,5 @@
+{% load i18n %}
+
 <div class="modal fade" id="availability-modal" tabindex="-1"
         role="dialog" aria-labelledby="availability-title">
     <div class="modal-dialog" role="document">
@@ -7,7 +9,9 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
                 <h4 class="modal-title" id="availability-title">
-                    Availability <small>of <span id="availability-item"></span></small>
+                    {% blocktrans trimmed with item='<span id="availability-item"></span>' %}
+                        Availability <small>of {{ item }}</small>
+                    {% endblocktrans %}
                 </h4>
             </div>
             <div class="modal-body">
@@ -15,7 +19,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">
-                    Close
+                    {% trans 'Close' %}
                 </button>
             </div>
         </div>

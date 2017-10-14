@@ -1,54 +1,70 @@
 {% extends 'layout.html' %}
 
 {% load tags %}
+{% load i18n %}
 
 {% block title %}
-    Rentals
+    {% trans 'Rentals' %}
 {% endblock %}
 
 {% block content %}
     <ol class="breadcrumb">
         <li>
-            <a href="{% url 'depot:index' %}">Depots</a>
+            <a href="{% url 'depot:index' %}">{% trans 'Depots' %}</a>
         </li>
         <li>
             <a href="{% url 'depot:detail' depot.id %}">{{ depot.name }}</a>
         </li>
         <li class="active">
-            <span>Rentals</span>
+            <span>{% trans 'Rentals' %}</span>
         </li>
     </ol>
 
     <div class="page-header">
         <h1>
-            Rentals <small>for {{ depot.name }}</small>
+            {% blocktrans trimmed with depot_name=depot.name %}
+                Rentals <small>for {{ depot_name }}</small>
+            {% endblocktrans %}
         </h1>
     </div>
 
     <div class="panel panel-default">
-        <table class="table table-hover table-clickable">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Name</th>
-                    <th>Number of items</th>
-                    <th>Start date</th>
-                    <th>Return date</th>
-                    <th>State</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for rental in rentals %}
-                    <tr class="row-clickable" data-href="{% url 'rental:detail' rental.uuid %}">
-                        <td>{{ forloop.counter }}</td>
-                        <td>{{ rental.firstname }} {{ rental.lastname }}</td>
-                        <td>{{ rental.itemrental_set.all.count }}
-                        <td>{{ rental.start_date }}</td>
-                        <td>{{ rental.return_date }}</td>
-                        <td><span class="{{ state_labels|key:rental.state }}">{% rental_state rental.state %}</span></td>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>{% trans 'Name' %}</th>
+                        <th>{% trans 'Number of items' %}</th>
+                        <th>{% trans 'Start date' %}</th>
+                        <th>{% trans 'Return date' %}</th>
+                        <th>{% trans 'State' %}</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+
+                <tbody>
+                    {% for rental in rentals %}
+                        <tr class="clickable-area">
+                            <th scope="row">
+                                <a class="clickable-area-link"
+                                    href="{% url 'rental:detail' rental.uuid %}"
+                                    aria-hidden="true">
+                                </a>
+                                {{ forloop.counter }}
+                            </th>
+                            <td>{{ rental.firstname }} {{ rental.lastname }}</td>
+                            <td>{{ rental.itemrental_set.all.count }}
+                            <td>{{ rental.start_date }}</td>
+                            <td>{{ rental.return_date }}</td>
+                            <td>
+                                <span class="label label-{% rental_state_class rental.state %}">
+                                    {% rental_state rental.state %}
+                                </span>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 {% endblock %}

@@ -3,6 +3,7 @@ from datetime import datetime
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
+from django.utils.translation import ugettext_lazy as _
 from depot.models import Depot, Item
 
 
@@ -29,11 +30,11 @@ class Rental(models.Model):
     STATE_REVOKED = '4'
     STATE_RETURNED = '5'
     STATES = (
-        (STATE_PENDING, 'pending'),
-        (STATE_APPROVED, 'approved'),
-        (STATE_DECLINED, 'declined'),
-        (STATE_REVOKED, 'revoked'),
-        (STATE_RETURNED, 'returned'),
+        (STATE_PENDING, _('pending')),
+        (STATE_APPROVED, _('approved')),
+        (STATE_DECLINED, _('declined')),
+        (STATE_REVOKED, _('revoked')),
+        (STATE_RETURNED, _('returned')),
     )
 
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

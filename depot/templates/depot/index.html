@@ -1,14 +1,15 @@
 {% extends 'layout.html' %}
 
 {% load tags %}
+{% load i18n %}
 
 {% block title %}
-    Depots by organization
+    {% trans 'Depots by organization' %}
 {% endblock %}
 
 {% block content %}
     <div class="page-header">
-        <h1>Depots by organization</h1>
+        <h1>{% trans 'Depots by organization' %}</h1>
     </div>
 
     {% for organization in organization_depots %}
@@ -17,42 +18,49 @@
             {% if organization.managed_by_user %}
                 <a href="{% url 'admin:depot_organization_change' organization.model.id %}"
                         class="btn btn-default" target="_blank">
-                    Manage
+                    {% trans 'Manage' %}
                 </a>
             {% endif %}
         </h2>
 
         <p>
-            This organization is managed by {% concat_with_and organization.model.managers.all|full_names empty='no one apparently' %}.
+            {% concat_with_and organization.model.managers.all|full_names empty=_('no one apparently') as managers %}
+            {% blocktrans trimmed %}
+                This organization is managed by {{ managers }}.
+            {% endblocktrans %}
         </p>
 
-        <div class="row">
+        <div class="columns">
             {% for depot in organization.depots %}
-                <div class="col-md-4 col-sm-6">
-                    <div class="panel panel-primary">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">
-                                <a href="{% url 'depot:detail' depot.id %}">{{ depot.name }}</a>
+                <div class="panel panel-primary">
+                    <a href="{% url 'depot:detail' depot.id %}" class="panel-heading block-link">
+                        <h3 class="panel-title">
+                            {{ depot.name }}
 
-                                <span class="badge">{{ depot.public_items.count }} items</span>
+                            <span class="badge">
+                                {% blocktrans trimmed count counter=depot.public_items.count %}
+                                    {{ counter }} item
+                                {% plural %}
+                                    {{ counter }} items
+                                {% endblocktrans %}
+                            </span>
 
-                                <span class="glyphicon glyphicon-list-alt pull-right" aria-hidden="true"></span>
-                            </h3>
-                        </div>
-                        <div class="panel-body">
-                            {% if depot.description %}
-                                {{ depot.description }}
-                            {% else %}
-                                <i>No description provided.</i>
-                            {% endif %}
-                        </div>
+                            <span class="glyphicon glyphicon-list-alt pull-right" aria-hidden="true"></span>
+                        </h3>
+                    </a>
+                    <div class="panel-body">
+                        {% if depot.description %}
+                            {{ depot.description }}
+                        {% else %}
+                            <i>{% trans 'No description provided' %}</i>
+                        {% endif %}
                     </div>
                 </div>
             {% endfor %}
         </div>
     {% empty %}
         <div class="alert alert-danger" role="alert">
-            No depots available :(
+            {% trans 'No depots available' %} :(
         </div>
     {% endfor %}
 {% endblock %}

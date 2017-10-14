@@ -1,18 +1,20 @@
+{% load i18n %}
+
 <form method="post" action="{% url 'login:login' %}">
     {% csrf_token %}
 
     <div class="form-group">
-        <label for="username">Username</label>
+        <label for="username">{% trans 'Username' %}</label>
         <input type="text" name="username" id="username" class="form-control"
-                placeholder="Username" value="{{ form.username.value|default:'' }}"
+                placeholder="{% trans 'Username' %}" value="{{ form.username.value|default:'' }}"
                 maxlength="150" required>
     </div>
 
     <div class="form-group">
-        <label for="password">Password</label>
+        <label for="password">{% trans 'Password' %}</label>
         <input type="password" name="password" id="password" class="form-control"
-                placeholder="Password" required>
+                placeholder="{% trans 'Password' %}" required>
     </div>
 
-    <button type="submit" class="btn btn-primary">Login</button>
+    <button type="submit" class="btn btn-primary">{% trans 'Login' %}</button>
 </form>

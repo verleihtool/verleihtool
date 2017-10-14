@@ -1,5 +1,6 @@
-from django.db import models
 from django.contrib.auth.models import Group, User
+from django.db import models
+from django.utils.translation import ugettext_lazy as _
 
 
 class Organization(models.Model):
@@ -78,6 +79,16 @@ class Depot(models.Model):
 
         return user.is_superuser or self.organization.is_member(user)
 
+    def visible_items(self, user):
+        """
+        Return the list of items the user is allowed to see in this depot.
+        """
+
+        if self.show_private_items(user):
+            return self.active_items.all()
+        else:
+            return self.public_items.all()
+
     @property
     def managers(self):
         """
@@ -128,9 +139,9 @@ class Item(models.Model):
     VISIBILITY_PRIVATE = '2'
     VISIBILITY_DELETED = '3'
     VISIBILITY_LEVELS = (
-        (VISIBILITY_PUBLIC, 'public'),
-        (VISIBILITY_PRIVATE, 'private'),
-        (VISIBILITY_DELETED, 'deleted'),
+        (VISIBILITY_PUBLIC, _('public')),
+        (VISIBILITY_PRIVATE, _('private')),
+        (VISIBILITY_DELETED, _('deleted')),
     )
 
     name = models.CharField(max_length=32)

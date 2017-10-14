@@ -1,3 +1,5 @@
+{% load i18n %}
+
 <div class="modal fade" id="checkout-modal" tabindex="-1"
         role="dialog" aria-labelledby="checkout-title">
     <div class="modal-dialog" role="document">
@@ -10,20 +12,20 @@
                 <input type="hidden" name="return_date" value="{{ return_date_formatted }}">
 
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="{% trans 'Close' %}">
                         <span aria-hidden="true">&times;</span>
                     </button>
-                    <h4 class="modal-title" id="checkout-title">Checkout</h4>
+                    <h4 class="modal-title" id="checkout-title">{% trans 'Checkout' %}</h4>
                 </div>
                 <div class="modal-body">
                     {% include 'depot/modals/checkout-form.html' %}
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary pull-left">
-                        Submit
+                        {% trans 'Submit' %}
                     </button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">
-                        Close
+                        {% trans 'Close' %}
                     </button>
                 </div>
             </form>

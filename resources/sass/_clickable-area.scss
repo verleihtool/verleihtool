@@ -1,0 +1,13 @@
+// link should only span the element
+.clickable-area {
+    position: relative;
+}
+
+// first child of element must be the link
+.clickable-area a.clickable-area-link {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
