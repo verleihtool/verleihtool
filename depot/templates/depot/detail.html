@@ -100,7 +100,8 @@
 
         <div class="panel-footer">
             <button type="button" class="btn btn-primary"
-                    data-toggle="modal" data-target="#date-modal">
+                    data-toggle="modal" data-target="#date-modal"
+                    {% if not item_list %} disabled {% endif %}>
                 Request rental
             </button>
         </div>
