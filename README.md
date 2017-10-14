@@ -26,16 +26,21 @@ To install the dependencies, run `pip install -r requirements.txt` and
 `npm install` from the `/vagrant` directory in the virtual machine.
 On a Windows host, the parameter `--no-bin-links` is most likely required.
 Afterwards, apply all migrations using the command `python manage.py migrate`.
+
 To generate the JavaScript and CSS files, enter `npm run dev` or alternatively
 `npm run watch-poll` if the script should automatically detect changes to the
-source files. Finally, the server can be started using the provided script in
+source files. The translation files can be updated from source files with the
+command `python manage.py makemessages -l <lang>`. This will update all messages
+in the `django.po` files which can be found in the `locale` directory.
+
+Finally, the server can be started using the provided script in
 the home directory of the vagrant user called `server.sh`. The tool can
 then be reached at [http://127.0.0.1:1337/](http://127.0.0.1:1337/).
 
 To create a superuser, execute the command `python manage.py createsuperuser`
 in the `/vagrant` folder and follow the process.
 
-### Runing the tests
+### Running the tests
 
 The Verleihtool comes with a full test suite that can be run using the command
 `python manage.py test`. This will not touch the existing database but create a
@@ -57,6 +62,9 @@ Before each deployment, the resource files have to be
 generated either on the production server or on another device using the
 `npm run production` command. This will place the minified JavaScript and CSS
 files in the `static` directory.
+
+To create the optimized translation files, a call to `python manage.py compilemessages`
+is required whenever the translations are updated.
 
 ## Credits
 
