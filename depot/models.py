@@ -149,6 +149,7 @@ class Item(models.Model):
     visibility = models.CharField(max_length=1, choices=VISIBILITY_LEVELS)
     depot = models.ForeignKey(Depot, on_delete=models.CASCADE)
     location = models.CharField(max_length=256, blank=True)
+    wikidata_item = models.CharField(max_length=32, blank=True)
 
     class Meta:
         unique_together = (
