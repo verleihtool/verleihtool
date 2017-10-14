@@ -25,6 +25,11 @@
             {% blocktrans trimmed with depot_name=depot.name %}
                 Rentals <small>for {{ depot_name }}</small>
             {% endblocktrans %}
+
+            <a href="{% url 'admin:rental_rental_changelist' %}?depot__id__exact={{ depot.id }}"
+                    class="btn btn-default" target="_blank">
+                {% trans 'Manage' %}
+            </a>
         </h1>
     </div>
 
@@ -60,6 +65,12 @@
                                 <span class="label label-{% rental_state_class rental.state %}">
                                     {% rental_state rental.state %}
                                 </span>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td class="text-center" colspan="99">
+                                <i>{% trans 'No open requests at the moment' %}</i>
                             </td>
                         </tr>
                     {% endfor %}

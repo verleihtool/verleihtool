@@ -21,7 +21,10 @@ class DepotRentalsView(View):
         if not depot.managed_by(request.user):
             return HttpResponseForbidden('Not a manager of this depot')
 
-        rentals = Rental.objects.filter(depot_id=depot.id)
+        rentals = Rental.objects.filter(
+            depot_id=depot.id,
+            state__in=[Rental.STATE_PENDING, Rental.STATE_APPROVED]
+        )
 
         return render(request, 'depot/rentals.html', {
             'rentals': rentals,

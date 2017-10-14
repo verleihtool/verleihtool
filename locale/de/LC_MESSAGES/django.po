@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-14 20:19+0000\n"
+"POT-Creation-Date: 2017-10-14 21:09+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -73,7 +73,7 @@ msgstr ""
 #: depot/templates/depot/create-rental.html:79
 #: depot/templates/depot/detail.html:62
 #: depot/templates/depot/modals/checkout-form.html:83
-#: depot/templates/depot/rentals.html:37
+#: depot/templates/depot/rentals.html:42
 #: rental/templates/rental/detail.html:58
 #: rental/templates/rental/detail.html:87
 msgid "Name"
@@ -120,6 +120,7 @@ msgid "%(depot_name)s <small>by %(organization_name)s</small>"
 msgstr "%(depot_name)s <small>von %(organization_name)s</small>"
 
 #: depot/templates/depot/detail.html:31 depot/templates/depot/index.html:21
+#: depot/templates/depot/rentals.html:31
 #: rental/templates/rental/detail.html:37
 msgid "Manage"
 msgstr "Verwalten"
@@ -226,13 +227,13 @@ msgid "Submit"
 msgstr "Senden"
 
 #: depot/templates/depot/modals/date-form.html:5
-#: depot/templates/depot/rentals.html:39
+#: depot/templates/depot/rentals.html:44
 #: rental/templates/rental/detail.html:74
 msgid "Start date"
 msgstr "Anfangsdatum"
 
 #: depot/templates/depot/modals/date-form.html:16
-#: depot/templates/depot/rentals.html:40
+#: depot/templates/depot/rentals.html:45
 #: rental/templates/rental/detail.html:77
 msgid "Return date"
 msgstr "Rückgabedatum"
@@ -259,13 +260,17 @@ msgstr "Auswählen"
 msgid "Rentals <small>for %(depot_name)s</small>"
 msgstr "Verleihanfragen <small>für %(depot_name)s</small>"
 
-#: depot/templates/depot/rentals.html:38
+#: depot/templates/depot/rentals.html:43
 msgid "Number of items"
 msgstr "Anzahl Gegenstände"
 
-#: depot/templates/depot/rentals.html:41
+#: depot/templates/depot/rentals.html:46
 msgid "State"
 msgstr "Status"
+
+#: depot/templates/depot/rentals.html:73
+msgid "No open requests at the moment"
+msgstr "Aktuell keine offenen Anfragen"
 
 #: login/templates/login/home.html:8
 msgid "Welcome to the Verleihtool!"
