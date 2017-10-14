@@ -27,7 +27,7 @@
 
     <div class="panel panel-default">
         <div class="table-responsive">
-            <table class="table table-hover table-clickable">
+            <table class="table table-hover">
                 <thead>
                     <tr>
                         <th>#</th>
@@ -41,8 +41,14 @@
 
                 <tbody>
                     {% for rental in rentals %}
-                        <tr class="row-clickable" data-href="{% url 'rental:detail' rental.uuid %}">
-                            <th scope="row">{{ forloop.counter }}</th>
+                        <tr class="clickable-area">
+                            <th scope="row">
+                                <a class="clickable-area-link"
+                                    href="{% url 'rental:detail' rental.uuid %}"
+                                    aria-hidden="true">
+                                </a>
+                                {{ forloop.counter }}
+                            </th>
                             <td>{{ rental.firstname }} {{ rental.lastname }}</td>
                             <td>{{ rental.itemrental_set.all.count }}
                             <td>{{ rental.start_date }}</td>
