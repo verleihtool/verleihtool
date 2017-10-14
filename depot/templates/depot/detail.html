@@ -52,10 +52,10 @@
                     <tr>
                         <th>#</th>
                         <th>Name</th>
-                        <th>Quantity</th>
+                        <th class="text-center">Quantity</th>
                         <th>Location</th>
                         {% if show_visibility %}
-                            <th>Visibility</th>
+                            <th class="text-center">Visibility</th>
                         {% endif %}
                     </tr>
                 </thead>
@@ -63,17 +63,33 @@
                 <tbody>
                     {% for item in item_list %}
                         <tr>
-                            <th scope="row">{{ forloop.counter }}</th>
-                            <td>{{ item.name }}</td>
-                            <td>{{ item.quantity }}</td>
+                            <th scope="row">
+                                {{ forloop.counter }}
+                            </th>
+                            <td>
+                                {{ item.name }}
+                            </td>
+                            <td class="text-center">
+                                <span class="badge">{{ item.quantity }}</span>
+                            </td>
                             <td>{{ item.location }}</td>
                             {% if show_visibility %}
-                                <td>{% item_visibility item.visibility %}</td>
+                                <td class="text-center">
+                                    <span class="glyphicon glyphicon-{% item_visibility_glyphicon item.visibility %}"
+                                            aria-hidden="true"
+                                            data-toggle="tooltip"
+                                            data-placement="right"
+                                            title="{% item_visibility item.visibility %}">
+                                    </span>
+                                    <span class="sr-only">{% item_visibility item.visibility %}</span>
+                                </td>
                             {% endif %}
                         </tr>
                     {% empty %}
                         <tr>
-                            <td class="text-center" colspan="99"><i>No items available</i></td>
+                            <td class="text-center" colspan="99">
+                                <i>No items available</i>
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>

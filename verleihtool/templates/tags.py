@@ -37,12 +37,29 @@ def item_visibility(visibility):
 
 
 @register.simple_tag
+def item_visibility_glyphicon(visibility):
+    """
+    Provide a glyphicon for the given item visibility.
+
+    :author: Benedikt Seidl
+    """
+
+    glyphicons = {
+        Item.VISIBILITY_PUBLIC: 'eye-open',
+        Item.VISIBILITY_PRIVATE: 'eye-close',
+        Item.VISIBILITY_DELETED: 'trash',
+    }
+
+    return glyphicons[visibility]
+
+@register.simple_tag
 def rental_state(state):
     """
     Turn the given state into a readable string.
 
     :author: Florian Stamer
     """
+
     return dict(Rental.STATES)[state]
 
 
