@@ -16,6 +16,18 @@ p {
     margin: 20px 0 30px;
 }
 
+// don't let the user resize textarea inputs
+textarea {
+    resize: none;
+}
+
+// block anchors
+a.block-link {
+    display: block;
+    text-decoration: inherit;
+    color: inherit;
+}
+
 // override bootstraps max-height: 200px on small screens
 .navbar-fixed-top .navbar-collapse {
     max-height: none;
@@ -50,9 +62,4 @@ p {
 .footer a {
     margin: 20px 20px 0 20px;
     display: inline-block;
-}
-
-// don't let the user resize textarea inputs
-textarea {
-    resize: none;
 }
