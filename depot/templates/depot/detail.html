@@ -46,55 +46,61 @@
             {% endif %}
         </div>
 
-        <div class="table-responsive">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Name</th>
-                        <th class="text-center">Quantity</th>
-                        <th>Location</th>
-                        {% if show_visibility %}
-                            <th class="text-center">Visibility</th>
-                        {% endif %}
-                    </tr>
-                </thead>
+        <ul class="list-group">
+            <li class="list-group-item">
+                <div class="row">
+                    <strong class="col-sm-1 hidden-xs">#</strong>
 
-                <tbody>
-                    {% for item in item_list %}
-                        <tr>
-                            <th scope="row">
-                                {{ forloop.counter }}
-                            </th>
-                            <td>
-                                {{ item.name }}
-                            </td>
-                            <td class="text-center">
-                                <span class="badge">{{ item.quantity }}</span>
-                            </td>
-                            <td>{{ item.location }}</td>
+                    <strong class="col-sm-3 col-xs-6">Name</strong>
+
+                    <strong class="col-sm-2 col-xs-3 text-center">Quantity</strong>
+
+                    <strong class="col-sm-4 col-xs-12 hidden-xs">Location</strong>
+
+                    {% if show_visibility %}
+                        <strong class="col-sm-1 col-xs-3 text-center">Visibility</strong>
+                    {% endif %}
+                </div>
+            </li>
+
+            {% for item in item_list %}
+                <li class="list-group-item">
+                    <div class="row">
+                        <strong class="col-sm-1 hidden-xs">
+                            {{ forloop.counter }}
+                        </strong>
+
+                        <span class="col-sm-3 col-xs-6">
+                            {{ item.name }}
+                        </span>
+
+                        <span class="col-sm-2 col-xs-3 text-center">
+                            <span class="badge">{{ item.quantity }}</span>
+                        </span>
+
+                        <span class="col-sm-1 col-xs-3 col-sm-push-4 text-center">
                             {% if show_visibility %}
-                                <td class="text-center">
-                                    <span class="glyphicon glyphicon-{% item_visibility_glyphicon item.visibility %}"
-                                            aria-hidden="true"
-                                            data-toggle="tooltip"
-                                            data-placement="right"
-                                            title="{% item_visibility item.visibility %}">
-                                    </span>
-                                    <span class="sr-only">{% item_visibility item.visibility %}</span>
-                                </td>
+                                <span class="glyphicon glyphicon-{% item_visibility_glyphicon item.visibility %}"
+                                        aria-hidden="true"
+                                        data-toggle="tooltip"
+                                        data-placement="right"
+                                        title="{% item_visibility item.visibility %}">
+                                </span>
+                                <span class="sr-only">{% item_visibility item.visibility %}</span>
                             {% endif %}
-                        </tr>
-                    {% empty %}
-                        <tr>
-                            <td class="text-center" colspan="99">
-                                <i>No items available</i>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+                        </span>
+
+                        <span class="col-sm-4 col-xs-12 col-sm-pull-1">
+                            <i class="visible-xs-inline">Location:</i> {{ item.location }}
+                        </span>
+                    </div>
+                </li>
+            {% empty %}
+                <li class="list-group-item text-center">
+                    <i>No items available</i>
+                </li>
+            {% endfor %}
+        </ul>
 
         <div class="panel-footer">
             <button type="button" class="btn btn-primary"
