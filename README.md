@@ -10,7 +10,7 @@ assign managers for each depot and group them into several organizations.
 
 The development of the Verleihtool happens via [Vagrant](https://www.vagrantup.com/)
 and preferably with the [VirtualBox](https://www.virtualbox.org/) provider.
-After installing these components, doing `vagrant up` from the project's
+After installing these components, invoking `vagrant up` from the project's
 directory will create the virtual machine and run the provisioner on it.
 When the process is finished, one can login to the machine using `vagrant ssh`.
 In case the provision script gets updated afterwards, the command
@@ -19,12 +19,13 @@ In case the provision script gets updated afterwards, the command
 ### Starting the tool
 
 To install the dependencies, run `pip install -r requirements.txt` and
-`npm install` from the `/vagrant` directory in the virtual machine. Afterwards,
-apply all migrations using the command `python manage.py migrate`. To generate
-the JavaScript and CSS files, enter `npm run dev` or alternatively
+`npm install` from the `/vagrant` directory in the virtual machine.
+On a Windows host, the parameter `--no-bin-links` is most likely required.
+Afterwards, apply all migrations using the command `python manage.py migrate`.
+To generate the JavaScript and CSS files, enter `npm run dev` or alternatively
 `npm run watch-poll` if the script should automatically detect changes to the
 source files. Finally, the server can be started using the provided script in
-the home directory of the vagrant user called `startServer.sh`. The tool can
+the home directory of the vagrant user called `server.sh`. The tool can
 then be reached at [http://127.0.0.1:1337/](http://127.0.0.1:1337/).
 
 To create a superuser, execute the command `python manage.py createsuperuser`
@@ -37,12 +38,18 @@ The Verleihtool comes with a full test suite that can be run using the command
 new test database every time. To run the lint script, execute `flake8` from
 the `/vagrant` directory.
 
+Alternatively, when using vagrant a `test.sh` script is provided to automate
+the steps described above.
+
 ## Deployment
 
-The Verleihtool requires Python 3 to be installed on the server as well as a
-database software that is [supported by Django](https://docs.djangoproject.com/en/1.10/ref/databases/).
+The Verleihtool requires Python 3.6 to be installed on the server as well as a
+database backend that is [supported by Django](https://docs.djangoproject.com/en/1.10/ref/databases/).
 The web server must be configured to access static files from the `static`
-directory of this project. Before each deployment, the resource files have to be
+directory of this project. for more information, please consult the
+[Django manual for deployments](https://docs.djangoproject.com/en/1.10/howto/deployment/).
+
+Before each deployment, the resource files have to be
 generated either on the production server or on another device using the
 `npm run production` command. This will place the minified JavaScript and CSS
 files in the `static` directory.
