@@ -1,7 +1,9 @@
 {% extends 'layout.html' %}
 
+{% load i18n %}
+
 {% block content %}
-    <h1>Login</h1>
+    <h1>{% trans 'Login' %}</h1>
 
     {% for field, errors in form.errors.items %}
         <div class="alert alert-danger">

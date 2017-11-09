@@ -8,8 +8,7 @@ class DepotInline(admin.TabularInline):
     extra = 0
     can_delete = False
     show_change_link = True
-
-    filter_vertical = ['manager_users', 'manager_groups']
+    fields = ('name', 'description', 'active')
 
 
 class OrganizationAdmin(admin.ModelAdmin):

@@ -1,6 +1,7 @@
 import json
 from django import template
-from django.http import request
+from django.conf import settings
+from django.core.urlresolvers import translate_url
 from depot.models import Item
 from rental.models import Rental
 
@@ -21,6 +22,18 @@ def current_app(context, app_name, content):
         return content
 
 
+@register.simple_tag(takes_context=True)
+def base_url(context):
+    return context['request'].build_absolute_uri('')
+
+
+@register.simple_tag(takes_context=True)
+def change_lang(context, lang):
+    path = context['request'].path
+
+    return translate_url(path, lang)
+
+
 @register.simple_tag
 def item_visibility(visibility):
     """
@@ -33,17 +46,54 @@ def item_visibility(visibility):
 
 
 @register.simple_tag
+def item_visibility_glyphicon(visibility):
+    """
+    Provide a glyphicon for the given item visibility.
+
+    :author: Benedikt Seidl
+    """
+
+    glyphicons = {
+        Item.VISIBILITY_PUBLIC: 'eye-open',
+        Item.VISIBILITY_PRIVATE: 'eye-close',
+        Item.VISIBILITY_DELETED: 'trash',
+    }
+
+    return glyphicons[visibility]
+
+
+@register.simple_tag
 def rental_state(state):
     """
-    Turn the geiven state into a readable string.
+    Turn the given state into a readable string.
 
     :author: Florian Stamer
     """
+
     return dict(Rental.STATES)[state]
 
 
 @register.simple_tag
-def concat_with_and(list, final='and'):
+def rental_state_class(state):
+    """
+    Provide a bootstrap contextual class for each rental state.
+
+    :author: Benedikt Seidl
+    """
+
+    bootstrap_classes = {
+        Rental.STATE_PENDING: 'warning',
+        Rental.STATE_REVOKED: 'danger',
+        Rental.STATE_APPROVED: 'success',
+        Rental.STATE_DECLINED: 'danger',
+        Rental.STATE_RETURNED: 'info',
+    }
+
+    return bootstrap_classes[state]
+
+
+@register.simple_tag
+def concat_with_and(list, final='and', empty=''):
     """
     Concatenate the given list to a string separated with commas
     and final concatenator (default "and")
@@ -52,7 +102,7 @@ def concat_with_and(list, final='and'):
     """
 
     if not list:
-        return ''
+        return empty
 
     l = len(list)
     if l == 1:
@@ -63,6 +113,17 @@ def concat_with_and(list, final='and'):
         final,
         str(list[l - 1])
     )
+
+
+@register.simple_tag
+def wikidata_url(page):
+    """
+    Construct the url to Wikidata for the given page
+
+    :author: Benedikt Seidl
+    """
+
+    return settings.WIKIDATA_URL + '/wiki/' + page
 
 
 @register.filter

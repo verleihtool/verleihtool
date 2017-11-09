@@ -3,7 +3,8 @@ $('#start_date_picker').datetimepicker({
     format: 'YYYY-MM-DD HH:mm',
     stepping: 5,
     allowInputToggle: true,
-    showClose: true
+    showClose: true,
+    minDate: new Date()
 })
 
 $('#return_date_picker').datetimepicker({

@@ -84,7 +84,7 @@ class DepotIndexTestCase(ClientTestCase):
         response = self.as_superuser.get('/depots/')
         self.assertSuccess(response, 'depot/index.html')
         self.assertContains(response, 'My active depot')
-        self.assertContains(response, 'My archived depot')
+        self.assertNotContains(response, 'My archived depot')
 
     def test_as_guest_organizations_with_active_depots(self):
         organization = create_organization('My empty organization')
@@ -113,7 +113,7 @@ class DepotIndexTestCase(ClientTestCase):
 
         response = self.as_user.get('/depots/')
         self.assertSuccess(response, 'depot/index.html')
-        self.assertContains(response, 'My managed organization')
+        self.assertNotContains(response, 'My archived depot')
 
     def test_as_superuser_organization_with_archived_depot(self):
         organization = create_organization('My managed organization')
@@ -122,7 +122,7 @@ class DepotIndexTestCase(ClientTestCase):
 
         response = self.as_user.get('/depots/')
         self.assertSuccess(response, 'depot/index.html')
-        self.assertContains(response, 'My managed organization')
+        self.assertNotContains(response, 'My archived depot')
 
     def test_as_guest_no_manage_link(self):
         depot = create_depot('My active depot')
@@ -164,3 +164,10 @@ class DepotIndexTestCase(ClientTestCase):
         response = self.as_guest.get('/depots/')
         self.assertSuccess(response, 'depot/index.html')
         self.assertContains(response, 'This organization is managed by Ursula User.')
+
+    def test_no_managers(self):
+        organization = create_organization('My organization')
+        create_depot('My depot', organization=organization)
+        response = self.as_guest.get('/depots/')
+        self.assertSuccess(response, 'depot/index.html')
+        self.assertContains(response, 'This organization is managed by no one apparently.')

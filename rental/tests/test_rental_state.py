@@ -1,8 +1,7 @@
-from django.contrib.auth.models import User
 from depot.models import Depot, Organization
 from rental.models import Rental
 from verleihtool.test import ClientTestCase
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 class RentalStateTestCase(ClientTestCase):
@@ -10,8 +9,8 @@ class RentalStateTestCase(ClientTestCase):
     def create_rental(self, state):
         return Rental.objects.create(
             depot=self.depot,
-            start_date=datetime(2017, 3, 25),
-            return_date=datetime(2017, 3, 27),
+            start_date=datetime.now() + timedelta(days=1),
+            return_date=datetime.now() + timedelta(days=3),
             state=state
         )
 
@@ -42,8 +41,6 @@ class RentalStateTestCase(ClientTestCase):
 
     def test_update_rental_state_as_depot_manager(self):
         data = [
-            (Rental.STATE_PENDING, Rental.STATE_REVOKED),
-            (Rental.STATE_APPROVED, Rental.STATE_REVOKED),
             (Rental.STATE_REVOKED, Rental.STATE_PENDING),
             (Rental.STATE_APPROVED, Rental.STATE_PENDING),
             (Rental.STATE_DECLINED, Rental.STATE_PENDING),
@@ -57,18 +54,21 @@ class RentalStateTestCase(ClientTestCase):
 
         self.depot.manager_users.add(self.user)
 
-        for initial_state, expected_state in data:
-            rental = self.create_rental(initial_state)
+        for old_state, new_state in data:
+            rental = self.create_rental(old_state)
             response = self.as_user.post('/rentals/%s/state/' % rental.uuid, {
-                'state': expected_state
+                'old_state': old_state,
+                'state': new_state
             })
             self.assertRedirects(response, '/rentals/%s/' % rental.uuid)
             rental.refresh_from_db()
-            self.assertEqual(rental.state, expected_state)
+            self.assertEqual(rental.state, new_state)
 
     def test_invalid_rental_state_as_depot_manager(self):
         data = [
+            (Rental.STATE_PENDING, Rental.STATE_REVOKED),
             (Rental.STATE_REVOKED, Rental.STATE_REVOKED),
+            (Rental.STATE_APPROVED, Rental.STATE_REVOKED),
             (Rental.STATE_DECLINED, Rental.STATE_REVOKED),
             (Rental.STATE_RETURNED, Rental.STATE_REVOKED),
             (Rental.STATE_PENDING, Rental.STATE_PENDING),
@@ -87,28 +87,30 @@ class RentalStateTestCase(ClientTestCase):
 
         self.depot.manager_users.add(self.user)
 
-        for initial_state, action in data:
-            rental = self.create_rental(initial_state)
+        for old_state, new_state in data:
+            rental = self.create_rental(old_state)
             response = self.as_user.post('/rentals/%s/state/' % rental.uuid, {
-                'state': action
+                'old_state': old_state,
+                'state': new_state
             })
             self.assertEqual(response.status_code, 403)
 
     def test_update_rental_state_as_guest(self):
         data = [
-            (Rental.STATE_PENDING, Rental.STATE_REVOKED, Rental.STATE_REVOKED),
-            (Rental.STATE_APPROVED, Rental.STATE_REVOKED, Rental.STATE_REVOKED),
-            (Rental.STATE_REVOKED, Rental.STATE_PENDING, Rental.STATE_PENDING)
+            (Rental.STATE_PENDING, Rental.STATE_REVOKED),
+            (Rental.STATE_APPROVED, Rental.STATE_REVOKED),
+            (Rental.STATE_REVOKED, Rental.STATE_PENDING)
         ]
 
-        for initial_state, action, expected_state in data:
-            rental = self.create_rental(initial_state)
+        for old_state, new_state in data:
+            rental = self.create_rental(old_state)
             response = self.as_guest.post('/rentals/%s/state/' % rental.uuid, {
-                'state': action
+                'old_state': old_state,
+                'state': new_state
             })
             self.assertRedirects(response, '/rentals/%s/' % rental.uuid)
             rental.refresh_from_db()
-            self.assertEqual(rental.state, expected_state)
+            self.assertEqual(rental.state, new_state)
 
     def test_invalid_rental_state_as_guest(self):
         data = [
@@ -137,9 +139,10 @@ class RentalStateTestCase(ClientTestCase):
             (Rental.STATE_PENDING, '')
         ]
 
-        for initial_state, action in data:
-            rental = self.create_rental(initial_state)
+        for old_state, new_state in data:
+            rental = self.create_rental(old_state)
             response = self.as_guest.post('/rentals/%s/state/' % rental.uuid, {
-                'state': action
+                'old_state': old_state,
+                'state': new_state
             })
             self.assertEqual(response.status_code, 403)

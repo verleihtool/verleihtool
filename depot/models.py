@@ -1,5 +1,6 @@
-from django.db import models
 from django.contrib.auth.models import Group, User
+from django.db import models
+from django.utils.translation import ugettext_lazy as _
 
 
 class Organization(models.Model):
@@ -15,9 +16,9 @@ class Organization(models.Model):
     :author: Benedikt Seidl
     """
 
-    name = models.CharField(max_length=256)
-    groups = models.ManyToManyField(Group)
-    managers = models.ManyToManyField(User)
+    name = models.CharField(max_length=32)
+    groups = models.ManyToManyField(Group, blank=True)
+    managers = models.ManyToManyField(User, blank=True)
 
     def managed_by(self, user):
         """
@@ -42,7 +43,7 @@ class Organization(models.Model):
         return self.depot_set.filter(active=True)
 
     def __str__(self):
-        return 'Organization %s' % self.name
+        return self.name
 
 
 class Depot(models.Model):
@@ -53,7 +54,8 @@ class Depot(models.Model):
     :author: Benedikt Seidl
     """
 
-    name = models.CharField(max_length=256)
+    name = models.CharField(max_length=32)
+    description = models.CharField(max_length=256, blank=True)
     organization = models.ForeignKey(Organization)
     manager_users = models.ManyToManyField(User, blank=True)
     manager_groups = models.ManyToManyField(Group, blank=True)
@@ -69,6 +71,23 @@ class Depot(models.Model):
                 self.organization.managed_by(user) or
                 self.manager_users.filter(id=user.id).exists() or
                 self.manager_groups.filter(id__in=user.groups.all()).exists())
+
+    def show_private_items(self, user):
+        """
+        Private items can be seen by superusers and organization members.
+        """
+
+        return user.is_superuser or self.organization.is_member(user)
+
+    def visible_items(self, user):
+        """
+        Return the list of items the user is allowed to see in this depot.
+        """
+
+        if self.show_private_items(user):
+            return self.active_items.all()
+        else:
+            return self.public_items.all()
 
     @property
     def managers(self):
@@ -99,7 +118,7 @@ class Depot(models.Model):
         )
 
     def __str__(self):
-        return 'Depot %s' % self.name
+        return self.name
 
 
 class Item(models.Model):
@@ -120,16 +139,17 @@ class Item(models.Model):
     VISIBILITY_PRIVATE = '2'
     VISIBILITY_DELETED = '3'
     VISIBILITY_LEVELS = (
-        (VISIBILITY_PUBLIC, 'public'),
-        (VISIBILITY_PRIVATE, 'private'),
-        (VISIBILITY_DELETED, 'deleted'),
+        (VISIBILITY_PUBLIC, _('public')),
+        (VISIBILITY_PRIVATE, _('private')),
+        (VISIBILITY_DELETED, _('deleted')),
     )
 
-    name = models.CharField(max_length=256)
+    name = models.CharField(max_length=32)
     quantity = models.PositiveSmallIntegerField()
     visibility = models.CharField(max_length=1, choices=VISIBILITY_LEVELS)
     depot = models.ForeignKey(Depot, on_delete=models.CASCADE)
     location = models.CharField(max_length=256, blank=True)
+    wikidata_item = models.CharField(max_length=32, blank=True)
 
     class Meta:
         unique_together = (
@@ -137,5 +157,4 @@ class Item(models.Model):
         )
 
     def __str__(self):
-        return ('%s unit(s) of %s (visib.: %s) in %s'
-                % (self.quantity, self.name, self.visibility, self.location))
+        return self.name

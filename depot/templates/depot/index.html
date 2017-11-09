@@ -1,15 +1,16 @@
 {% extends 'layout.html' %}
 
 {% load tags %}
+{% load i18n %}
 
 {% block title %}
-    Depots by organization
+    {% trans 'Depots by organization' %}
 {% endblock %}
 
 {% block content %}
-    <h1>Depots by organization</h1>
-
-    <hr>
+    <div class="page-header">
+        <h1>{% trans 'Depots by organization' %}</h1>
+    </div>
 
     {% for organization in organization_depots %}
         <h2>
@@ -17,41 +18,49 @@
             {% if organization.managed_by_user %}
                 <a href="{% url 'admin:depot_organization_change' organization.model.id %}"
                         class="btn btn-default" target="_blank">
-                    Manage
+                    {% trans 'Manage' %}
                 </a>
             {% endif %}
         </h2>
 
-        <div class="alert alert-info">
-            This organization is managed by {% concat_with_and organization.model.managers.all|full_names %}.
-        </div>
+        <p>
+            {% concat_with_and organization.model.managers.all|full_names empty=_('no one apparently') as managers %}
+            {% blocktrans trimmed %}
+                This organization is managed by {{ managers }}.
+            {% endblocktrans %}
+        </p>
 
-        <table class="table">
-            <tr>
-                <th>Name</th>
-                <th>Items</th>
-                {% if organization.managed_by_user %}
-                    <th>Active</th>
-                {% endif %}
-            </tr>
-
+        <div class="columns">
             {% for depot in organization.depots %}
-                <tr>
-                    <td>
-                        <a href="{% url 'depot:detail' depot.id %}">{{ depot.name }}</a>
-                    </td>
-                    <td>
-                        {{ depot.public_items.count }}
-                    </td>
-                    {% if organization.managed_by_user %}
-                        <td>{{ depot.active }}</td>
-                    {% endif %}
-                </tr>
+                <div class="panel panel-primary">
+                    <a href="{% url 'depot:detail' depot.id %}" class="panel-heading block-link">
+                        <h3 class="panel-title">
+                            {{ depot.name }}
+
+                            <span class="badge">
+                                {% blocktrans trimmed count counter=depot.public_items.count %}
+                                    {{ counter }} item
+                                {% plural %}
+                                    {{ counter }} items
+                                {% endblocktrans %}
+                            </span>
+
+                            <span class="glyphicon glyphicon-list-alt pull-right" aria-hidden="true"></span>
+                        </h3>
+                    </a>
+                    <div class="panel-body">
+                        {% if depot.description %}
+                            {{ depot.description }}
+                        {% else %}
+                            <i>{% trans 'No description provided' %}</i>
+                        {% endif %}
+                    </div>
+                </div>
             {% endfor %}
-        </table>
+        </div>
     {% empty %}
         <div class="alert alert-danger" role="alert">
-            No depots available :(
+            {% trans 'No depots available' %} :(
         </div>
     {% endfor %}
 {% endblock %}

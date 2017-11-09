@@ -1,15 +1,15 @@
 [flake8]
 ignore =
-    # Imported but unused
-    F401
+    # None at the moment
 
 exclude =
     .git,
     __pycache__,
+    manage.py,
     migrations,
     node_modules,
-    static,
-    resources
+    resources,
+    static
 
 max-line-length = 100
 max-complexity = 10

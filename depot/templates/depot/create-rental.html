@@ -1,30 +1,30 @@
 {% extends 'layout.html' %}
 
 {% load tags %}
+{% load i18n %}
 
 {% block title %}
-    New Rental for {{ depot.name }}
+    {% blocktrans trimmed with depot_name=depot.name %}
+        New Rental for {{ depot_name }}
+    {% endblocktrans %}
 {% endblock %}
 
 {% block content %}
     <ol class="breadcrumb">
         <li>
-            <a href="{% url 'depot:index' %}">Depots</a>
+            <a href="{% url 'depot:index' %}">{% trans 'Depots' %}</a>
         </li>
         <li>
             <a href="{% url 'depot:detail' depot.id %}">{{ depot.name }}</a>
         </li>
         <li class="active">
-            <span>New Rental</span>
+            <span>{% trans 'New Rental' %}</span>
         </li>
     </ol>
 
     {% if errors %}
         <div class="alert alert-danger" role="alert">
-            Please fix the
-            <a href="#errors-collapse" class="alert-link" data-toggle="collapse">errors below</a>
-            and in the
-            <a href="#checkout-modal" class="alert-link" data-toggle="modal">checkout form</a>
+            {% trans 'Please fix the errors below and in the checkout form.' %}
 
             <a href="#errors-collapse" class="alert-link pull-right" data-toggle="collapse">
                 <span class="caret"></span>
@@ -46,66 +46,113 @@
         </div>
     {% endif %}
 
-    <h1>New Rental <small>for {{ depot.name }}</small></h1>
-
-    <div class="alert alert-info">
-        Create a new rental
-        <a href="#date-modal" class="alert-link" data-toggle="modal">
-            from {{ start_date }} to {{ return_date }}
-        </a>
+    <div class="page-header">
+        <h1>
+            {% blocktrans trimmed with depot_name=depot.name %}
+                New Rental <small>for {{ depot_name }}</small>
+            {% endblocktrans %}
+        </h1>
     </div>
 
-    <table class="table">
-        <tr>
-            <th>Name</th>
-            <th>Available</th>
-            <th>Location</th>
-            {% if show_visibility %}
-                <th>Visibility</th>
-            {% endif %}
-            <th>Selected</th>
-        </tr>
+    <p>
+        {% trans 'Create a new rental' %}
+        <a href="#date-modal" data-toggle="modal">
+            {% blocktrans trimmed %}
+                from {{ start_date }} to {{ return_date }}.
+            {% endblocktrans %}
+        </a>
+    </p>
 
-        {% for item, intervals, availability in availability_data %}
-            <tr class="rental-item" data-name="{{ item.name }}" data-intervals="{{ intervals|tojson }}">
-                <td class="rental-item-name">{{ item.name }}</td>
-                <td class="rental-item-availability">
-                    <a href="#availability-modal" data-toggle="modal">{{ availability }}</a>
-                </td>
-                <td class="rental-item-location">{{ item.location }}</td>
-                {% if show_visibility %}
-                    <td>{% item_visibility item.visibility %}</td>
-                {% endif %}
-                <td class="rental-item-selected">
-                    <div class="input-group number">
-                        <input type="text" class="form-control"
-                                value="{% firstof item_quantities|key:item.id '0' %}"
-                                data-name="item-{{ item.id }}-quantity"
-                                data-min="0" data-max="{{ availability }}">
-                        <div class="input-group-btn">
-                            <button type="button" class="btn btn-default number-up">
-                                <span class="glyphicon glyphicon-chevron-up"></span>
-                            </button>
-                            <button type="button" class="btn btn-default number-down">
-                                <span class="glyphicon glyphicon-chevron-down"></span>
-                            </button>
-                        </div>
-                    </div>
-                </td>
-            </tr>
-        {% endfor %}
-    </table>
+    <div class="panel panel-default">
+        <div class="panel-body">
+            {% blocktrans trimmed %}
+                Hint: You can click on the number of available items
+                to get a detailed view of its availability over time.
+            {% endblocktrans %}
+        </div>
 
-    <button type="button" class="btn btn-primary" id="checkout-button"
-            data-toggle="modal" data-target="#checkout-modal"
-            {% if not errors %} disabled {% endif %}>
-        Checkout
-    </button>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>{% trans 'Name' %}</th>
+                        <th class="text-center">{% trans 'Available' %}</th>
+                        <th>{% trans 'Location' %}</th>
+                        {% if show_visibility %}
+                            <th class="text-center">{% trans 'Visibility' %}</th>
+                        {% endif %}
+                        <th>{% trans 'Selected' %}</th>
+                    </tr>
+                </thead>
 
-    <button type="button" class="btn btn-default"
-            data-toggle="modal" data-target="#date-modal">
-        Change time frame
-    </button>
+                <tbody>
+                    {% for item, intervals, availability in availability_data %}
+                        <tr class="rental-item">
+                            <th scope="row">
+                                {{ forloop.counter }}
+                            </th>
+                            <td class="rental-item-name">
+                                {{ item.name }}
+                            </td>
+                            <td class="rental-item-availability text-center">
+                                <a class="badge"
+                                        data-toggle="modal"
+                                        data-target="#availability-modal"
+                                        data-name="{{ item.name }}"
+                                        data-intervals="{{ intervals|tojson }}">
+                                    {{ availability }}
+                                </a>
+                            </td>
+                            <td class="rental-item-location">
+                                {{ item.location }}
+                            </td>
+                            {% if show_visibility %}
+                                <td class="text-center">
+                                    <span class="glyphicon glyphicon-{% item_visibility_glyphicon item.visibility %}"
+                                            aria-hidden="true"
+                                            data-toggle="tooltip"
+                                            data-placement="right"
+                                            title="{% item_visibility item.visibility %}">
+                                    </span>
+                                    <span class="sr-only">{% item_visibility item.visibility %}</span>
+                                </td>
+                            {% endif %}
+                            <td class="rental-item-selected">
+                                <div class="input-group number-input">
+                                    <input type="text" class="form-control"
+                                            value="{% firstof item_quantities|key:item.id '0' %}"
+                                            data-name="item-{{ item.id }}-quantity"
+                                            data-min="0" data-max="{{ availability }}">
+                                    <div class="input-group-btn">
+                                        <button type="button" class="btn btn-default number-input-up">
+                                            <span class="glyphicon glyphicon-chevron-up"></span>
+                                        </button>
+                                        <button type="button" class="btn btn-default number-input-down">
+                                            <span class="glyphicon glyphicon-chevron-down"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="panel-footer">
+            <button type="button" class="btn btn-primary" id="checkout-button"
+                    data-toggle="modal" data-target="#checkout-modal"
+                    {% if not errors %} disabled {% endif %}>
+                {% trans 'Checkout' %}
+            </button>
+
+            <button type="button" class="btn btn-default"
+                    data-toggle="modal" data-target="#date-modal">
+                {% trans 'Change time frame' %}
+            </button>
+        </div>
+    </div>
 
     {% include 'depot/modals/checkout-modal.html' %}
     {% include 'depot/modals/date-modal.html' %}

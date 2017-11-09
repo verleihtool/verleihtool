@@ -45,6 +45,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -67,6 +68,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.i18n',
+                'verleihtool.templates.context_processors.template_settings',
             ],
             'libraries': {
                 'tags': 'verleihtool.templates.tags'
@@ -111,7 +114,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en'
 
 TIME_ZONE = 'UTC'
 
@@ -121,6 +124,14 @@ USE_L10N = True
 
 USE_TZ = False
 
+LANGUAGES = [
+    ('en', 'English'),
+    ('de', 'Deutsch'),
+]
+
+LOCALE_PATHS = [
+    os.path.join(BASE_DIR, 'locale'),
+]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
@@ -138,6 +149,13 @@ else:
 # Login
 
 LOGIN_REDIRECT_URL = '/'
+
+# Privacy and imprint
+PRIVACY_URL = '/'
+IMPRINT_URL = '/'
+GITHUB_URL = 'https://github.com/verleihtool/verleihtool/'
+
+WIKIDATA_URL = 'https://www.wikidata.org'
 
 # E-Mail preferences
 # Write Emails to std output instead of sending for development purposes

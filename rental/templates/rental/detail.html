@@ -1,22 +1,23 @@
 {% extends 'layout.html' %}
 
 {% load tags %}
+{% load i18n %}
 
 {% block title %}
-    Rental
+    {% trans 'Rental' %}
 {% endblock %}
 
 {% block content %}
     <ol class="breadcrumb">
         <li>
-            <a href="{% url 'depot:index' %}">Depots</a>
+            <a href="{% url 'depot:index' %}">{% trans 'Depots' %}</a>
         </li>
         <li>
             <a href="{% url 'depot:detail' rental.depot.id %}">{{ rental.depot.name }}</a>
         </li>
         {% if managed_by_user %}
             <li>
-                <a href="{% url 'depot:rentals' rental.depot.id %}">Rentals</a>
+                <a href="{% url 'depot:rentals' rental.depot.id %}">{% trans 'Rentals' %}</a>
             </li>
         {% endif %}
         <li class="active">
@@ -24,47 +25,98 @@
         </li>
     </ol>
 
-    <h1>
-        Rental <small>by {{ rental.firstname }} {{ rental.lastname }}</small>
-    </h1>
+    <div class="page-header">
+        <h1>
+            {% blocktrans trimmed with first_name=rental.firstname last_name=rental.lastname %}
+                Rental <small>by {{ first_name }} {{ last_name }}</small>
+            {% endblocktrans %}
 
-    <div class="alert alert-{{ alert_classes|key:rental.state }}">
-        <strong>State:</strong> {% rental_state rental.state %}
+            {% if managed_by_user %}
+                <a href="{% url 'admin:rental_rental_change' rental.uuid %}"
+                        class="btn btn-default" target="_blank">
+                    {% trans 'Manage' %}
+                </a>
+            {% endif %}
+        </h1>
     </div>
 
-    <div>Email: {{ rental.email }}</div>
-    {% if user.is_authenticated %}
-        <div>User: {{ rental.user }}</div>
-    {% endif %}
-    <div>Purpose: {{ rental.purpose }}</div>
-    <div>From: {{ rental.start_date }}</div>
-    <div>To: {{ rental.return_date }}</div>
+    <div class="panel panel-{% rental_state_class rental.state %}">
+        <div class="panel-heading">
+            <h2 class="panel-title">
+                {% trans 'Details' %}
+            </h2>
+        </div>
+        <div class="panel-body">
+            <dl class="dl-horizontal">
+                <dt>{% trans 'Status' %}</dt>
+                <dd>
+                    <span class="label label-{% rental_state_class rental.state %}">
+                        {% rental_state rental.state %}
+                    </span>
+                </dd>
 
-    <table class="table">
-        <tr>
-            <th>Name</th>
-            <th>Quantity</th>
-            <th>Returned</th>
-            <th>Location</th>
-        </tr>
+                <dt>{% trans 'Name' %}</dt>
+                <dd>{{ rental.firstname }} {{ rental.lastname }}</dd>
 
-        {% for item in rental.itemrental_set.all %}
-            <tr class="rental-item">
-                <td class="rental-item-name">{{ item.item.name }}</td>
-                <td class="rental-item-quantity">{{ item.quantity }}</td>
-                <td class="rental-item-returned">{{ item.returned }}</td>
-                <td class="rental-item-location">{{ item.item.location }}</td>
-            </tr>
-        {% endfor %}
-    </table>
+                <dt>{% trans 'Email' %}</dt>
+                <dd>
+                    <a href="mailto:{{ rental.email }}">{{ rental.email }}</a>
+                </dd>
 
-    <form method="POST" action="{% url 'rental:state' rental.uuid %}">
-        {% csrf_token %}
-        {% for button in buttons %}
-            <button type="submit" class="btn btn-{{ btn_classes|key:button }}"
-                    name="state" value="{{ button }}">
-                {{ btn_texts|key:button }}
-            </button>
-        {% endfor %}
-    </form>
+                {% if rental.user %}
+                    <dt>{% trans 'User' %}</dt>
+                    <dd>{{ rental.user }}</dd>
+                {% endif %}
+
+                <dt>{% trans 'Purpose' %}</dt>
+                <dd>{{ rental.purpose }}</dd>
+
+                <dt>{% trans 'Start date' %}</dt>
+                <dd>{{ rental.start_date }}</dd>
+
+                <dt>{% trans 'Return date' %}</dt>
+                <dd>{{ rental.return_date }}</dd>
+            </dl>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>{% trans 'Name' %}</th>
+                        <th>{% trans 'Quantity' %}</th>
+                        <th>{% trans 'Returned' %}</th>
+                        <th>{% trans 'Location' %}</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for item in rental.itemrental_set.all %}
+                        <tr class="rental-item">
+                            <td>{{ forloop.counter }}</td>
+                            <td class="rental-item-name">{{ item.item.name }}</td>
+                            <td class="rental-item-quantity">{{ item.quantity }}</td>
+                            <td class="rental-item-returned">{{ item.returned }}</td>
+                            <td class="rental-item-location">{{ item.item.location }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="panel-footer">
+            {% for state in states %}
+                <button type="button" class="btn btn-{% rental_state_class state %}"
+                        data-toggle="modal" data-target="#feedback-{{ state }}-modal">
+                    {{ btn_texts|key:state }}
+                </button>
+            {% endfor %}
+        </div>
+    </div>
+
+    {% for state in states %}
+        {% include 'rental/modals/feedback-modal.html' %}
+    {% endfor %}
+
 {% endblock %}

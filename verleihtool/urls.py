@@ -15,14 +15,16 @@ Including another URLconf
 """
 from django.conf import settings
 from django.conf.urls import url, include
+from django.conf.urls.i18n import i18n_patterns
 from django.conf.urls.static import static
 from django.contrib import admin
 
-urlpatterns = [
+urlpatterns = i18n_patterns(
     url(r'^', include('login.urls')),
     url(r'^depots/', include('depot.urls')),
     url(r'^rentals/', include('rental.urls')),
     url(r'^admin/', admin.site.urls),
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    prefix_default_language=False
+) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 # Remove the above line in production and serve the static files properly
 # https://docs.djangoproject.com/en/dev/howto/static-files/

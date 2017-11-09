@@ -1,6 +1,31 @@
+// full height for footer
+html {
+    position: relative;
+    min-height: 100%;
+}
+
 // add some distance from the header
 body {
-  padding-top: 100px;
+    padding-top: 100px;
+    /* Margin bottom by footer height */
+    margin-bottom: 60px;
+}
+
+// increase margin around paragraphs
+p {
+    margin: 20px 0 30px;
+}
+
+// don't let the user resize textarea inputs
+textarea {
+    resize: none;
+}
+
+// block anchors
+a.block-link {
+    display: block;
+    text-decoration: inherit;
+    color: inherit;
 }
 
 // override bootstraps max-height: 200px on small screens
@@ -19,7 +44,20 @@ body {
     display: none;
 }
 
-// don't let the user resize textarea inputs
-textarea {
-    resize: none;
+// sticky footer
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    /* Set the fixed height of the footer here */
+    height: 60px;
+    background-color: $gray-lighter;
+}
+
+.footer .link-list a {
+    margin-right: 40px;
+}
+
+.footer .language-picker {
+    margin: 12px;
 }

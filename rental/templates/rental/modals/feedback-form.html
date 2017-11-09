@@ -1,0 +1,23 @@
+{% load i18n %}
+
+<div class="form-group {% if errors.feedback %} has-error {% endif %}">
+    <label for="purpose">
+        {% blocktrans trimmed with first_name=rental.firstname last_name=rental.lastname %}
+            Feedback for {{ first_name }} {{ last_name }}
+        {% endblocktrans %}
+    </label>
+    <div class="input-group">
+        <textarea class="form-control" id="purpose" name="purpose"
+                required>{{ data.feedback }}</textarea>
+        <span class="input-group-addon">
+            <span class="glyphicon glyphicon-info-sign"></span>
+        </span>
+    </div>
+    {% if errors.feedback %}
+        <div class="help-block">
+            {% for error in errors.feedback %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>

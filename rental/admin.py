@@ -15,8 +15,6 @@ class RentalAdmin(admin.ModelAdmin):
     Rentals can be approved, declined, revoked and marked as pending or returned.
     They are only accessible for the managers of the connected depot.
 
-    TODO: This admin interface may be obsolete.
-
     :author: Benedikt Seidl
     :author: Leo Tappe
     """

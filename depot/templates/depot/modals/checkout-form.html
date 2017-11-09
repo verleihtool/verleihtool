@@ -1,6 +1,8 @@
+{% load i18n %}
+
 <div class="row">
     <div class="form-group col-md-6 {% if errors.firstname %} has-error {% endif %}">
-        <label for="firstname">First Name</label>
+        <label for="firstname">{% trans 'First Name' %}</label>
         <div class="input-group name">
             <input type="text" class="form-control" id="firstname"
                    name="firstname" value="{% firstof data.firstname user.first_name %}" required>
@@ -17,7 +19,7 @@
         {% endif %}
     </div>
     <div class="form-group col-md-6 {% if errors.firstname %} has-error {% endif %}">
-        <label for="lastname">Last Name</label>
+        <label for="lastname">{% trans 'Last Name' %}</label>
         <div class="input-group name">
             <input type="text" class="form-control" id="lastname"
                    name="lastname" value="{% firstof data.lastname user.last_name %}" required>
@@ -36,7 +38,7 @@
 </div>
 
 <div class="form-group {% if errors.email %} has-error {% endif %}">
-    <label for="email">Email address</label>
+    <label for="email">{% trans 'Email address' %}</label>
     <div class="input-group">
         <input type="email" class="form-control" id="email"
                 name="email" value="{% firstof data.email user.email %}" required>
@@ -52,7 +54,7 @@
 </div>
 
 <div class="form-group {% if errors.purpose %} has-error {% endif %}">
-    <label for="purpose">Purpose</label>
+    <label for="purpose">{% trans 'Purpose' %}</label>
     <div class="input-group">
         <textarea class="form-control" id="purpose" name="purpose"
                 required>{{ data.purpose }}</textarea>
@@ -70,15 +72,17 @@
 </div>
 
 <div class="form-group">
-    <label>Summary</label>
+    <label>{% trans 'Summary' %}</label>
     <p>
-        You are creating a new rental from {{ start_date }} to {{ return_date }}
+        {% blocktrans trimmed %}
+            You are creating a new rental from {{ start_date }} to {{ return_date }}.
+        {% endblocktrans %}
     </p>
     <table class="table rental-summary">
         <tr>
-            <th>Name</th>
-            <th>Location</th>
-            <th>Selected</th>
+            <th>{% trans 'Name' %}</th>
+            <th>{% trans 'Location' %}</th>
+            <th>{% trans 'Selected' %}</th>
         </tr>
     </table>
 </div>

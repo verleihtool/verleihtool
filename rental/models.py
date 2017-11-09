@@ -3,6 +3,7 @@ from datetime import datetime
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
+from django.utils.translation import ugettext_lazy as _
 from depot.models import Depot, Item
 
 
@@ -29,18 +30,18 @@ class Rental(models.Model):
     STATE_REVOKED = '4'
     STATE_RETURNED = '5'
     STATES = (
-        (STATE_PENDING, 'pending'),
-        (STATE_APPROVED, 'approved'),
-        (STATE_DECLINED, 'declined'),
-        (STATE_REVOKED, 'revoked'),
-        (STATE_RETURNED, 'returned'),
+        (STATE_PENDING, _('pending')),
+        (STATE_APPROVED, _('approved')),
+        (STATE_DECLINED, _('declined')),
+        (STATE_REVOKED, _('revoked')),
+        (STATE_RETURNED, _('returned')),
     )
 
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     depot = models.ForeignKey(Depot)
     items = models.ManyToManyField(Item, through='ItemRental')
-    firstname = models.CharField(max_length=256)
-    lastname = models.CharField(max_length=256)
+    firstname = models.CharField(max_length=32)
+    lastname = models.CharField(max_length=32)
     email = models.EmailField()
     purpose = models.CharField(max_length=256)
     user = models.ForeignKey(User, blank=True, null=True)
@@ -55,6 +56,11 @@ class Rental(models.Model):
         if self.start_date > self.return_date:
             raise ValidationError({
                 'start_date': 'The start date must be before the return date.'
+            })
+
+        if self.start_date < datetime.now() and self.state == self.STATE_PENDING:
+            raise ValidationError({
+                'start_date': 'The start date must be in the future for new rentals.'
             })
 
     def __str__(self):
