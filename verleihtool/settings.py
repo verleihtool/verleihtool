@@ -162,3 +162,4 @@ WIKIDATA_URL = 'https://www.wikidata.org'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_SUBJECT_PREFIX = '[Verleih] '
 DEFAULT_FROM_EMAIL = 'verleih@fs.tum.de'
+CC_EMAIL = ['cc@email.de']
