@@ -3,7 +3,7 @@ import urllib
 import html2text
 from django.core.exceptions import ValidationError
 from django.core import mail
-from django.core.mail import EmailMessage, send_mass_mail
+from django.core.mail import EmailMessage
 from django.conf import settings
 from django.db import transaction
 from django.http import HttpResponseForbidden
@@ -12,7 +12,7 @@ from django.template import Context
 from django.template.loader import render_to_string
 from django.views.decorators.http import require_POST
 from depot import availability, helpers
-from depot.models import Depot, Item
+from depot.models import Item
 from .models import Rental, ItemRental
 from .state_transitions import allowed_transitions
 

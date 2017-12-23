@@ -44,7 +44,7 @@ class Command(BaseCommand):
                 html2text.html2text(html_mail_to_requester),
                 'verleih@fs.tum.de',
                 [rental.email]
-             ),
+            ),
             (
                 '[Verleihtool] Your rental request from "%s" is due for %i days, %s %s!'
                 % (rental.depot.name, interval, rental.firstname, rental.lastname),
