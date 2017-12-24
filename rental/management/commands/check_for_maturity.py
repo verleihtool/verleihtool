@@ -24,15 +24,23 @@ class Command(BaseCommand):
         :return: an email string tuple (first component: email for requester,
         second component: email for dmg)
         """
-        subject_to_requester = '[Verleihtool] %s %s\'s rental request from "%s" has been due for %i days!' \
-                               % (rental.firstname, rental.lastname, rental.depot.name, interval)
+        subject_to_requester = \
+            '[Verleihtool] %s %s\'s rental request from "%s" has been due for %i days!' \
+            % (rental.firstname, rental.lastname, rental.depot.name, interval)
 
-        message_to_requester = render_to_string('rental/mails/first-reminder-to-requester.md', {'rental': rental})
+        message_to_requester = render_to_string(
+            'rental/mails/first-reminder-to-requester.md',
+            {'rental': rental}
+        )
 
-        subject_to_dmg = '[Verleihtool] The rental request from "%s" has been due for %i days, %s %s!' \
-                         % (rental.depot.name, interval, rental.firstname, rental.lastname)
+        subject_to_dmg = \
+            '[Verleihtool] The rental request from "%s" has been due for %i days, %s %s!' \
+            % (rental.depot.name, interval, rental.firstname, rental.lastname)
 
-        message_to_dmg = render_to_string('rental/mails/first-reminder-to-dmg.md', {'rental': rental})
+        message_to_dmg = render_to_string(
+            'rental/mails/first-reminder-to-dmg.md',
+            {'rental': rental}
+        )
 
         return (
             (
