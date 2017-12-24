@@ -8,7 +8,8 @@ import html2text
 
 
 class Command(BaseCommand):
-    help = 'Sends a reminder email to all customers whose rentals have been due for a specified interval.'
+    help = 'Sends a reminder email to all customers whose rentals ' \
+           'have been due for a specified interval.'
 
     @staticmethod
     def get_dmg_emailaddr_list(depot_managers):

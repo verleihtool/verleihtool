@@ -73,7 +73,8 @@ class ReminderTest(ClientTestCase):
         self.assertEqual(len(mail.outbox), 2)
         self.assertEqual(
             mail.outbox[0].subject,
-            '[Verleihtool] Rey Nobody\'s rental request from "Maz\'s Storage Room Downstairs" has been due for 7 days!'
+            '[Verleihtool] Rey Nobody\'s rental request from "Maz\'s Storage Room Downstairs" '
+            'has been due for 7 days!'
         )
         self.assertEqual(
             mail.outbox[1].subject,
