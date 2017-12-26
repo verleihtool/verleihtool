@@ -158,8 +158,8 @@ GITHUB_URL = 'https://github.com/verleihtool/verleihtool/'
 WIKIDATA_URL = 'https://www.wikidata.org'
 
 # E-Mail preferences
-
 # Write Emails to std output instead of sending for development purposes
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-DEFAULT_FROM_EMAIL = 'verleih@tool.com'
-CC_EMAIL = []
+EMAIL_SUBJECT_PREFIX = '[Verleih] '
+DEFAULT_FROM_EMAIL = 'verleih@fs.tum.de'
+CC_EMAIL = ['cc@email.de']

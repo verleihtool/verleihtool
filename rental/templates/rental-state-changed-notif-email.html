@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+
+    <head>
+        <meta charset="UTF-8">
+        <title>[Verleihtool] Rental state changed {{ firstname }} {{ lastname }}</title>
+    </head>
+
+    <body>
+        <p>Hello {{ firstname }} {{ lastname }},</p>
+        <p>the state of the rental you requested has been changed to "{{ state }}". <br />
+            Rental from {{ start_date }}<br />
+            to {{ return_date }}.<br /> </p>
+
+        <p>List of requested items: </p>
+        {% for itemrental in itemrental_list %}
+            <p>
+                Name: {{ itemrental.item.name }}<br />
+                Location: {{ itemrental.item.location }}<br />
+                Quantity: {{ itemrental.quantity }}<br />
+            </p>
+        {% endfor %}
+
+        <p>Go to <a href="{{ absoluteuri }}{{ uuid }}">{{ absoluteuri }}{{ uuid }}</a> to access the status of your request and to edit your order.</p>
+
+        <p>Best<br />
+            the Verleihtool
+        </p>
+    </body>
+
+</html>
