@@ -1,5 +1,3 @@
-# from django.core import mail
-# from django.test import TestCase
 from datetime import timedelta, datetime
 
 from depot.models import Organization, Depot, Item
