@@ -24,7 +24,7 @@ def current_app(context, app_name, content):
 
 @register.simple_tag(takes_context=True)
 def base_url(context):
-    return context['request'].build_absolute_uri('')
+    return context['request'].build_absolute_uri('/')[:-1]
 
 
 @register.simple_tag(takes_context=True)

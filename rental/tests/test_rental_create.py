@@ -49,6 +49,6 @@ class RentalCreateTestCase(ClientTestCase):
         )
         self.assertIn('Hello Guest User', mail.outbox[0].body)
         self.assertIn('* 1x My Item', mail.outbox[0].body)
-        self.assertIn('/rentals/%s/' % uuid, mail.outbox[0].body)
+        self.assertIn('<http://testserver/rentals/%s/>' % uuid, mail.outbox[0].body)
         self.assertEqual(mail.outbox[0].from_email, 'verleih@tool.com')
         self.assertEqual(mail.outbox[0].to, ['guest@user.com'])
