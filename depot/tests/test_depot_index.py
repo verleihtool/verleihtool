@@ -23,7 +23,7 @@ def create_depot(name, active=True, organization=None):
         )
 
     Item.objects.create(
-        depot=depot, quantity=1, visibility=Item.VISIBILITY_PRIVATE
+        depot=depot, quantity=1, visibility=Item.VISIBILITY_INTERNAL
     )
 
     return depot

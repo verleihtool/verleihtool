@@ -72,9 +72,9 @@ class Depot(models.Model):
                 self.manager_users.filter(id=user.id).exists() or
                 self.manager_groups.filter(id__in=user.groups.all()).exists())
 
-    def show_private_items(self, user):
+    def show_internal_items(self, user):
         """
-        Private items can be seen by superusers and organization members.
+        Internal items can be seen by superusers and organization members.
         """
 
         return user.is_superuser or self.organization.is_member(user)
@@ -84,7 +84,7 @@ class Depot(models.Model):
         Return the list of items the user is allowed to see in this depot.
         """
 
-        if self.show_private_items(user):
+        if self.show_internal_items(user):
             return self.active_items.all()
         else:
             return self.public_items.all()
@@ -114,7 +114,7 @@ class Depot(models.Model):
     def active_items(self):
         return self.item_set.filter(
             models.Q(visibility=Item.VISIBILITY_PUBLIC) |
-            models.Q(visibility=Item.VISIBILITY_PRIVATE)
+            models.Q(visibility=Item.VISIBILITY_INTERNAL)
         )
 
     def __str__(self):
@@ -128,7 +128,7 @@ class Item(models.Model):
     It always belongs to a single depot and has a unique name within the depot.
     The location field can be used to roughly describe where
     the item can be found in the depot.
-    Items can either be public or private which affects the visibility
+    Items can either be public or internal which affects the visibility
     of the item to users outside of the organization connected to the depot.
     The quantity describes how many version of the item exist in the depot.
 
@@ -136,11 +136,11 @@ class Item(models.Model):
     """
 
     VISIBILITY_PUBLIC = '1'
-    VISIBILITY_PRIVATE = '2'
+    VISIBILITY_INTERNAL = '2'
     VISIBILITY_DELETED = '3'
     VISIBILITY_LEVELS = (
         (VISIBILITY_PUBLIC, _('public')),
-        (VISIBILITY_PRIVATE, _('private')),
+        (VISIBILITY_INTERNAL, _('internal')),
         (VISIBILITY_DELETED, _('deleted')),
     )
 

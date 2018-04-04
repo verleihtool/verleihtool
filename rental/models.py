@@ -93,7 +93,7 @@ class ItemRental(models.Model):
             if user is None or not organization.is_member(user):
                 raise ValidationError({
                     'item': 'You have to be a member of the organization '
-                            'that manages this depot to rent a private item.'
+                            'that manages this depot to rent an internal item.'
                 })
 
         if self.quantity <= 0 or self.quantity > self.item.quantity:

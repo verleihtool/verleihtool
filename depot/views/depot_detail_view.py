@@ -10,7 +10,7 @@ class DepotDetailView(View):
     Provide a detailed overview of all items in a depot
 
     Archived depots can only be accessed by superusers and organization managers.
-    The private items of a depot can be seen by all members of this organization.
+    The internal items of a depot can be seen by all members of this organization.
 
     :author: Florian Stamer
     """
@@ -24,7 +24,7 @@ class DepotDetailView(View):
             'depot': depot,
             'item_list': item_list,
             'labels': labels,
-            'show_visibility': depot.show_private_items(request.user),
+            'show_visibility': depot.show_internal_items(request.user),
             'managed_by_user': depot.managed_by(request.user),
             'start_date': datetime.now() + timedelta(days=1),
             'return_date': datetime.now() + timedelta(days=4)

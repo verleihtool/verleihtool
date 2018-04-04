@@ -83,7 +83,7 @@ class ItemRentalTestCase(TestCase):
     def test_clean__not_public_member(self):
         itemRental = ItemRental(
             rental=Rental(depot=self.depotA, user=self.user_member),
-            item=Item(visibility=Item.VISIBILITY_PRIVATE, quantity=42, depot=self.depotA),
+            item=Item(visibility=Item.VISIBILITY_INTERNAL, quantity=42, depot=self.depotA),
             quantity=12
         )
         itemRental.clean()
@@ -91,7 +91,7 @@ class ItemRentalTestCase(TestCase):
     def test_clean__not_public_not_member(self):
         itemRental = ItemRental(
             rental=Rental(depot=self.depotA, user=self.user_not_member),
-            item=Item(visibility=Item.VISIBILITY_PRIVATE, quantity=42, depot=self.depotA),
+            item=Item(visibility=Item.VISIBILITY_INTERNAL, quantity=42, depot=self.depotA),
             quantity=12
         )
         with self.assertRaises(ValidationError):
