@@ -1,5 +1,4 @@
-import urllib
-import json
+import requests
 from django.conf import settings
 
 
@@ -14,20 +13,18 @@ def get_labels(item_list, lang):
 
 
 def fetch_labels(item_ids, lang):
-    base = settings.WIKIDATA_URL + '/w/api.php'
-    params = urllib.parse.urlencode({
+    params = {
         'action': 'wbgetentities',
         'ids': '|'.join(item_ids),
         'props': 'labels',
         'languages': lang,
         'format': 'json'
-    })
+    }
 
     try:
-        response = urllib.request.urlopen(base + '?' + params)
-        data = json.loads(response.read())
-    except (urllib.error.URLError, json.JSONDecodeError) as e:
-        print(e)
+        response = requests.get(settings.WIKIDATA_URL + '/w/api.php', params=params)
+        data = response.json()
+    except Exception:
         return {}
 
     if data['success'] != 1:
