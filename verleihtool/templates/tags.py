@@ -55,7 +55,7 @@ def item_visibility_glyphicon(visibility):
 
     glyphicons = {
         Item.VISIBILITY_PUBLIC: 'eye-open',
-        Item.VISIBILITY_PRIVATE: 'eye-close',
+        Item.VISIBILITY_INTERNAL: 'eye-close',
         Item.VISIBILITY_DELETED: 'trash',
     }
 
