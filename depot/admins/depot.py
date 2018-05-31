@@ -22,7 +22,7 @@ class DepotAdmin(admin.ModelAdmin):
     """
 
     inlines = [ItemsInline]
-    list_display = ['name', 'active']
+    list_display = ['name', 'organization', 'active']
     list_filter = [
         ('active', admin.BooleanFieldListFilter),
         ('organization', admin.RelatedOnlyFieldListFilter),
