@@ -145,11 +145,12 @@ class Item(models.Model):
     )
 
     name = models.CharField(max_length=32)
+    description = models.CharField(max_length=1024, blank=True)
     quantity = models.PositiveSmallIntegerField()
     visibility = models.CharField(max_length=1, choices=VISIBILITY_LEVELS)
     depot = models.ForeignKey(Depot, on_delete=models.CASCADE)
     location = models.CharField(max_length=256, blank=True)
-    wikidata_item = models.CharField(max_length=32, blank=True)
+    wikidata_item = models.CharField(max_length=32, blank=True, editable=False)
 
     class Meta:
         unique_together = (

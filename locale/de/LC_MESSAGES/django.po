@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-04-04 12:51+0000\n"
+"POT-Creation-Date: 2018-05-31 16:13+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -84,14 +84,14 @@ msgid "Available"
 msgstr "Verfügbar"
 
 #: depot/templates/depot/create-rental.html:81
-#: depot/templates/depot/detail.html:64
+#: depot/templates/depot/detail.html:65
 #: depot/templates/depot/modals/checkout-form.html:84
 #: rental/templates/rental/detail.html:90
 msgid "Location"
 msgstr "Ort"
 
 #: depot/templates/depot/create-rental.html:83
-#: depot/templates/depot/detail.html:66
+#: depot/templates/depot/detail.html:67
 msgid "Visibility"
 msgstr "Sichtbarkeit"
 
@@ -144,19 +144,23 @@ msgstr "Dieses Lager wird von %(managers)s verwaltet."
 msgid "No description provided"
 msgstr "Keine Beschreibung verfügbar"
 
-#: depot/templates/depot/detail.html:63 rental/templates/rental/detail.html:88
+#: depot/templates/depot/detail.html:63
+msgid "Description"
+msgstr "Beschreibung"
+
+#: depot/templates/depot/detail.html:64 rental/templates/rental/detail.html:88
 msgid "Quantity"
 msgstr "Anzahl"
 
-#: depot/templates/depot/detail.html:84 depot/templates/depot/detail.html:85
+#: depot/templates/depot/detail.html:85 depot/templates/depot/detail.html:86
 msgid "Label from Wikidata"
 msgstr "Bezeichnung von Wikidata"
 
-#: depot/templates/depot/detail.html:112
+#: depot/templates/depot/detail.html:116
 msgid "No items available"
 msgstr "Keine Gegenstände verfügbar"
 
-#: depot/templates/depot/detail.html:124
+#: depot/templates/depot/detail.html:128
 msgid "Request rental"
 msgstr "Verleihanfrage erstellen"
 
