@@ -1,16 +1,18 @@
-from depot.models import Item
+from depot.models import Depot, Item, Organization
 from django.contrib import admin
-from django.db.models import Q
+from modeltranslation.admin import TranslationAdmin, TranslationTabularInline
 
 
 # show items in depot
-class ItemsInline(admin.TabularInline):
+class ItemsInline(TranslationTabularInline):
     model = Item
     extra = 0
     can_delete = False
+    show_change_link = True
+    fields = ('name', 'quantity', 'visibility', 'location')
 
 
-class DepotAdmin(admin.ModelAdmin):
+class DepotAdmin(TranslationAdmin):
     """
     Admin interface for depots
 
@@ -60,12 +62,9 @@ class DepotAdmin(admin.ModelAdmin):
         if request.user.is_superuser:
             return qs
 
-        return qs.filter(Q(organization__managers__id=request.user.id) |
-                         Q(manager_users__id=request.user.id) |
-                         Q(manager_groups__id__in=request.user.groups.all())).distinct()
+        return qs.filter(Depot.filter_by_user(request.user)).distinct()
 
     def has_add_permission(self, request):
-        # Only via the organization's inline admin interface
         return request.user.is_superuser or request.user.organization_set.exists()
 
     def has_change_permission(self, request, obj=None):
@@ -98,6 +97,8 @@ class DepotAdmin(admin.ModelAdmin):
 
         # Limit organization selection to the ones the current user is managing
         if not request.user.is_superuser and 'organization' in form.base_fields:
-            form.base_fields['organization'].queryset = request.user.organization_set
+            form.base_fields['organization'].queryset = Organization.objects.filter(
+                Organization.filter_by_user(request.user)
+            ).distinct()
 
         return form

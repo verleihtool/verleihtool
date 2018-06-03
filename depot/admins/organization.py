@@ -1,4 +1,4 @@
-from depot.models import Depot
+from depot.models import Depot, Organization
 from django.contrib import admin
 
 
@@ -30,7 +30,7 @@ class OrganizationAdmin(admin.ModelAdmin):
         if request.user.is_superuser:
             return qs
 
-        return qs.filter(managers__id=request.user.id)
+        return qs.filter(Organization.filter_by_user(request.user))
 
     def has_add_permission(self, request):
         if request.user.is_superuser:
