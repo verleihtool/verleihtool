@@ -1,6 +1,5 @@
 import json
 from django import template
-from django.conf import settings
 from django.core.urlresolvers import translate_url
 from depot.models import Item
 from rental.models import Rental
@@ -113,17 +112,6 @@ def concat_with_and(list, final='and', empty=''):
         final,
         str(list[l - 1])
     )
-
-
-@register.simple_tag
-def wikidata_url(page):
-    """
-    Construct the url to Wikidata for the given page
-
-    :author: Benedikt Seidl
-    """
-
-    return settings.WIKIDATA_URL + '/wiki/' + page
 
 
 @register.filter

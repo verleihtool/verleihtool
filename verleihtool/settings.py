@@ -156,8 +156,6 @@ PRIVACY_URL = '/'
 IMPRINT_URL = '/'
 GITHUB_URL = 'https://github.com/verleihtool/verleihtool/'
 
-WIKIDATA_URL = 'https://www.wikidata.org'
-
 # E-Mail preferences
 
 # Write Emails to std output instead of sending for development purposes
