@@ -2,4 +2,3 @@ django ~= 1.10.6
 django-modeltranslation ~= 0.12.2
 flake8 ~= 3.3.0
 markdown ~= 2.6.9
-requests ~= 2.18.4

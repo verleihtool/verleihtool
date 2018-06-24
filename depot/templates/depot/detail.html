@@ -76,18 +76,7 @@
                                 {{ forloop.counter }}
                             </th>
                             <td>
-                                {% if labels|key:item.wikidata_item %}
-                                    {{ labels|key:item.wikidata_item }}
-
-                                    <a href="{% wikidata_url item.wikidata_item %}">
-                                        <span class="glyphicon glyphicon-barcode" aria-hidden="true"
-                                            data-toggle="tooltip" data-placement="right"
-                                            title="{% trans 'Label from Wikidata' %}"></span>
-                                        <span class="sr-only">{% trans 'Label from Wikidata' %}</span>
-                                    </a>
-                                {% else %}
-                                    {{ item.name }}
-                                {% endif %}
+                                {{ item.name }}
                             </td>
                             <td>
                                 {{ item.description }}

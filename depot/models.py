@@ -168,7 +168,6 @@ class Item(models.Model):
     visibility = models.CharField(max_length=1, choices=VISIBILITY_LEVELS)
     location = models.CharField(max_length=256, blank=True)
     depot = models.ForeignKey(Depot, on_delete=models.CASCADE)
-    wikidata_item = models.CharField(max_length=32, blank=True, editable=False)
 
     @staticmethod
     def filter_by_user(user):
