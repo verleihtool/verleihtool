@@ -42,6 +42,14 @@ class Organization(models.Model):
 
         return self.depot_set.filter(active=True)
 
+    @staticmethod
+    def filter_by_user(user):
+        """
+        Filter for organizations managed by the given user
+        """
+
+        return models.Q(managers__id=user.id)
+
     def __str__(self):
         return self.name
 
@@ -117,6 +125,16 @@ class Depot(models.Model):
             models.Q(visibility=Item.VISIBILITY_INTERNAL)
         )
 
+    @staticmethod
+    def filter_by_user(user):
+        """
+        Filter for depots managed by the given user
+        """
+
+        return (models.Q(organization__managers__id=user.id) |
+                models.Q(manager_users__id=user.id) |
+                models.Q(manager_groups__id__in=user.groups.all()))
+
     def __str__(self):
         return self.name
 
@@ -148,9 +166,19 @@ class Item(models.Model):
     description = models.CharField(max_length=1024, blank=True)
     quantity = models.PositiveSmallIntegerField()
     visibility = models.CharField(max_length=1, choices=VISIBILITY_LEVELS)
-    depot = models.ForeignKey(Depot, on_delete=models.CASCADE)
     location = models.CharField(max_length=256, blank=True)
+    depot = models.ForeignKey(Depot, on_delete=models.CASCADE)
     wikidata_item = models.CharField(max_length=32, blank=True, editable=False)
+
+    @staticmethod
+    def filter_by_user(user):
+        """
+        Filter for items managed by the given user
+        """
+
+        return (models.Q(depot__organization__managers__id=user.id) |
+                models.Q(depot__manager_users__id=user.id) |
+                models.Q(depot__manager_groups__id__in=user.groups.all()))
 
     class Meta:
         unique_together = (
