@@ -26,10 +26,11 @@ class DepotCreateRentalView(View):
             depot_id
         )
 
-        item_availability_intervals = availability.get_availability_intervals_list(item_list)
-
         availability_data = []
-        for item, intervals in item_availability_intervals:
+
+        for item in item_list:
+            intervals = availability.get_availability_intervals(item)
+
             availability_data.append((
                 item,
                 self.get_chart_data(intervals),

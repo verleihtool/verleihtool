@@ -24,15 +24,6 @@ class Availability:
             state=Rental.STATE_APPROVED
         )
 
-    def get_availability_intervals_list(self, item_list):
-        """
-        Calculate availability for each item in the given list.
-
-        :author: Leo Tappe
-        """
-
-        return [(item, self.get_availability_intervals(item)) for item in item_list]
-
     def get_availability_intervals(self, item):
         """
         Split the given time frame into a sequence of intervals
