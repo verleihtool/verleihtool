@@ -21,6 +21,12 @@ class Interval:
                 self.end == other.end and
                 self.value == other.value)
 
+    def __repr__(self):
+        return '<Interval begin:"%s" end:"%s" value:%d>' % (self.begin, self.end, self.value)
+
+    def __str__(self):
+        return '[%s, %s] -> %d' % (self.begin, self.end, self.value)
+
 
 class Availability:
     """
@@ -33,7 +39,8 @@ class Availability:
     :author: Leo Tappe
     """
 
-    def __init__(self, start_date, return_date, depot_id):
+    def __init__(self, start_date, return_date, depot_id,
+                 conflicting_states=[Rental.STATE_APPROVED]):
         self.start_date = start_date
         self.return_date = return_date
         self.depot_id = depot_id
@@ -42,7 +49,7 @@ class Availability:
             start_date__lt=self.return_date,
             return_date__gt=self.start_date,
             depot_id=self.depot_id,
-            state=Rental.STATE_APPROVED
+            state__in=conflicting_states
         )
 
     def get_availability_intervals(self, item):

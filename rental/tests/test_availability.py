@@ -23,12 +23,12 @@ class AvailabilityTestCase(ClientTestCase):
         self.start = datetime.now() + timedelta(days=3)
         self.end = datetime.now() + timedelta(days=7)
 
-    def create_conflicting_rental(self, start, end, quantity):
+    def create_conflicting_rental(self, start, end, quantity, state=Rental.STATE_APPROVED):
         rental = Rental.objects.create(
             depot=self.depot,
             start_date=start,
             return_date=end,
-            state=Rental.STATE_APPROVED
+            state=state
         )
         ItemRental.objects.create(
             rental=rental,
@@ -69,7 +69,7 @@ class AvailabilityTestCase(ClientTestCase):
         expected = [Interval(self.start, self.end, 10)]
         self.assertEqual(intervals, expected)
 
-    def test_not_relevant(self):
+    def test_not_relevant_item(self):
         start = self.start + timedelta(days=1)
         end = self.end + timedelta(days=-1)
         rental = self.create_non_conflicting_rental(start, end)
@@ -79,6 +79,35 @@ class AvailabilityTestCase(ClientTestCase):
 
         intervals = availability.get_availability_intervals(self.item)
         expected = [Interval(self.start, self.end, 10)]
+        self.assertEqual(intervals, expected)
+
+    def test_not_relevant_state(self):
+        start = self.start + timedelta(days=1)
+        end = self.end + timedelta(days=-1)
+        self.create_conflicting_rental(start, end, 3, Rental.STATE_PENDING)
+
+        availability = Availability(self.start, self.end, self.depot.id)
+        self.assertEqual([], list(availability.rentals))
+
+        intervals = availability.get_availability_intervals(self.item)
+        expected = [Interval(self.start, self.end, 10)]
+        self.assertEqual(intervals, expected)
+
+    def test_relevant_state(self):
+        start = self.start + timedelta(days=1)
+        end = self.end + timedelta(days=-1)
+        rental = self.create_conflicting_rental(start, end, 3, Rental.STATE_PENDING)
+
+        availability = Availability(self.start, self.end, self.depot.id,
+                                    conflicting_states=[Rental.STATE_PENDING])
+        self.assertEqual([rental], list(availability.rentals))
+
+        intervals = availability.get_availability_intervals(self.item)
+        expected = [
+            Interval(self.start, start, 10),
+            Interval(start, end, 7),
+            Interval(end, self.end, 10)
+        ]
         self.assertEqual(intervals, expected)
 
     def test_completely_enclosing(self):
