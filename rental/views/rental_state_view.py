@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.http import HttpResponseForbidden
 from django.shortcuts import redirect, get_object_or_404
 from django.views import View
@@ -18,7 +19,7 @@ class RentalStateView(View):
     def check_availability(self, rental):
         availability = Availability(rental.start_date, rental.return_date, rental.depot_id)
 
-        for item_rental in rental.itemrental_set:
+        for item_rental in rental.itemrental_set.all():
             intervals = availability.get_availability_intervals(item_rental.item)
             available = min(intervals).value
 

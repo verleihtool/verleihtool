@@ -1,6 +1,6 @@
 from verleihtool.test import ClientTestCase
 from depot.models import Depot, Item, Organization
-from rental.models import Rental, ItemRental
+from rental.models import ItemRental, Rental
 from rental.availability import Availability, Interval
 from datetime import datetime, timedelta
 
