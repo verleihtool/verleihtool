@@ -1,6 +1,27 @@
 from rental.models import Rental
 
 
+class Interval:
+    """
+    An interval with a beginning, an end and an associated value.
+
+    :author: Benedikt Seidl
+    """
+
+    def __init__(self, begin, end, value):
+        self.begin = begin
+        self.end = end
+        self.value = value
+
+    def __lt__(self, other):
+        return self.value < other.value
+
+    def __eq__(self, other):
+        return (self.begin == other.begin and
+                self.end == other.end and
+                self.value == other.value)
+
+
 class Availability:
     """
     Helper class to determine the availability of a list of items
@@ -59,23 +80,13 @@ class Availability:
 
         # create intervals, initialize with full availability
         for i in range(len(interval_borders) - 1):
-            intervals.append([interval_borders[i], interval_borders[i + 1], item.quantity])
+            intervals.append(Interval(interval_borders[i], interval_borders[i + 1], item.quantity))
 
         # for each rental, modify availability during occupied intervals accordingly
         for rental in relevant_rentals:
             item_rental = rental.itemrental_set.get(item=item)
             for interval in intervals:
-                if rental.start_date < interval[1] and rental.return_date > interval[0]:
-                    interval[2] -= item_rental.quantity
+                if rental.start_date < interval.end and rental.return_date > interval.begin:
+                    interval.value -= item_rental.quantity
 
         return intervals
-
-    def get_minimum_availability(self, intervals):
-        """
-        Get the minimum availability across all intervals
-
-        :author: Leo Tappe
-        """
-
-        min_interval = min(intervals, key=lambda x: x[2])
-        return min_interval[2]

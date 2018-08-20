@@ -20,7 +20,7 @@ class RentalStateView(View):
 
         for item_rental in rental.itemrental_set:
             intervals = availability.get_availability_intervals(item_rental.item)
-            available = availability.get_minimum_availability(intervals)
+            available = min(intervals).value
 
             if item_rental.quantity > available:
                 raise ValidationError({

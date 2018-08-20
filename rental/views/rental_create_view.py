@@ -86,7 +86,7 @@ class RentalCreateView(View):
             intervals = availability.get_availability_intervals(item)
 
             try:
-                available = availability.get_minimum_availability(intervals)
+                available = min(intervals).value
                 self.create_item_rental(rental, item, item_quantities[item.id], available)
             except ValidationError as e:
                 for key, value in e:

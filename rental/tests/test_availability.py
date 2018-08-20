@@ -1,7 +1,7 @@
 from verleihtool.test import ClientTestCase
 from depot.models import Depot, Item, Organization
 from rental.models import Rental, ItemRental
-from rental.availability import Availability
+from rental.availability import Availability, Interval
 from datetime import datetime, timedelta
 
 
@@ -66,7 +66,7 @@ class AvailabilityTestCase(ClientTestCase):
         self.assertEqual([], list(availability.rentals))
 
         intervals = availability.get_availability_intervals(self.item)
-        expected = [[self.start, self.end, 10]]
+        expected = [Interval(self.start, self.end, 10)]
         self.assertEqual(intervals, expected)
 
     def test_not_relevant(self):
@@ -78,7 +78,7 @@ class AvailabilityTestCase(ClientTestCase):
         self.assertEqual([rental], list(availability.rentals))
 
         intervals = availability.get_availability_intervals(self.item)
-        expected = [[self.start, self.end, 10]]
+        expected = [Interval(self.start, self.end, 10)]
         self.assertEqual(intervals, expected)
 
     def test_completely_enclosing(self):
@@ -90,7 +90,7 @@ class AvailabilityTestCase(ClientTestCase):
         self.assertEqual([rental], list(availability.rentals))
 
         intervals = availability.get_availability_intervals(self.item)
-        expected = [[self.start, self.end, 7]]
+        expected = [Interval(self.start, self.end, 7)]
         self.assertEqual(intervals, expected)
 
     def test_completely_enclosed(self):
@@ -103,9 +103,9 @@ class AvailabilityTestCase(ClientTestCase):
 
         intervals = availability.get_availability_intervals(self.item)
         expected = [
-            [self.start, start, 10],
-            [start, end, 7],
-            [end, self.end, 10]
+            Interval(self.start, start, 10),
+            Interval(start, end, 7),
+            Interval(end, self.end, 10)
         ]
         self.assertEqual(intervals, expected)
 
@@ -119,8 +119,8 @@ class AvailabilityTestCase(ClientTestCase):
 
         intervals = availability.get_availability_intervals(self.item)
         expected = [
-            [self.start, end, 7],
-            [end, self.end, 10]
+            Interval(self.start, end, 7),
+            Interval(end, self.end, 10)
         ]
         self.assertEqual(intervals, expected)
 
@@ -138,9 +138,9 @@ class AvailabilityTestCase(ClientTestCase):
 
         intervals = availability.get_availability_intervals(self.item)
         expected = [
-            [self.start, left_end, 7],
-            [left_end, right_start, 10],
-            [right_start, self.end, 7]
+            Interval(self.start, left_end, 7),
+            Interval(left_end, right_start, 10),
+            Interval(right_start, self.end, 7)
         ]
         self.assertEqual(intervals, expected)
 
@@ -158,9 +158,9 @@ class AvailabilityTestCase(ClientTestCase):
 
         intervals = availability.get_availability_intervals(self.item)
         expected = [
-            [self.start, right_start, 7],
-            [right_start, left_end, 4],
-            [left_end, self.end, 7]
+            Interval(self.start, right_start, 7),
+            Interval(right_start, left_end, 4),
+            Interval(left_end, self.end, 7)
         ]
         self.assertEqual(intervals, expected)
 
@@ -178,9 +178,9 @@ class AvailabilityTestCase(ClientTestCase):
 
         intervals = availability.get_availability_intervals(self.item)
         expected = [
-            [self.start, enclosed_start, 7],
-            [enclosed_start, enclosed_end, 4],
-            [enclosed_end, self.end, 7]
+            Interval(self.start, enclosed_start, 7),
+            Interval(enclosed_start, enclosed_end, 4),
+            Interval(enclosed_end, self.end, 7)
         ]
         self.assertEqual(intervals, expected)
 
@@ -193,7 +193,7 @@ class AvailabilityTestCase(ClientTestCase):
         self.assertEqual([], list(availability.rentals))
 
         intervals = availability.get_availability_intervals(self.item)
-        expected = [[self.start, self.end, 10]]
+        expected = [Interval(self.start, self.end, 10)]
         self.assertEqual(intervals, expected)
 
     def test_exactly_matching_rental_time_frame(self):
@@ -203,5 +203,5 @@ class AvailabilityTestCase(ClientTestCase):
         self.assertEqual([rental], list(availability.rentals))
 
         intervals = availability.get_availability_intervals(self.item)
-        expected = [[self.start, self.end, 7]]
+        expected = [Interval(self.start, self.end, 7)]
         self.assertEqual(intervals, expected)
