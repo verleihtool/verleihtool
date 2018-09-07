@@ -26,14 +26,15 @@ class DepotCreateRentalView(View):
             depot_id
         )
 
-        item_availability_intervals = availability.get_availability_intervals_list(item_list)
-
         availability_data = []
-        for item, intervals in item_availability_intervals:
+
+        for item in item_list:
+            intervals = availability.get_availability_intervals(item)
+
             availability_data.append((
                 item,
                 self.get_chart_data(intervals),
-                availability.get_minimum_availability(intervals)
+                min(intervals).value
             ))
 
         errors = request.session.pop('errors', None)
@@ -78,14 +79,14 @@ class DepotCreateRentalView(View):
 
         data = []
 
-        for begin, end, availability in intervals:
+        for interval in intervals:
             data.append({
-                "x": begin.isoformat(),
-                "y": availability
+                "x": interval.begin.isoformat(),
+                "y": interval.value
             })
             data.append({
-                "x": end.isoformat(),
-                "y": availability
+                "x": interval.end.isoformat(),
+                "y": interval.value
             })
 
         return data

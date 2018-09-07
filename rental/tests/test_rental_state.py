@@ -1,5 +1,6 @@
-from depot.models import Depot, Organization
-from rental.models import Rental
+from depot.models import Depot, Item, Organization
+from django.core.exceptions import ValidationError
+from rental.models import ItemRental, Rental
 from verleihtool.test import ClientTestCase
 from datetime import datetime, timedelta
 
@@ -146,3 +147,38 @@ class RentalStateTestCase(ClientTestCase):
                 'state': new_state
             })
             self.assertEqual(response.status_code, 403)
+
+    def test_wrong_old_state(self):
+        rental = self.create_rental(Rental.STATE_PENDING)
+        response = self.as_guest.post('/rentals/%s/state/' % rental.uuid, {
+            'old_state': Rental.STATE_APPROVED,
+            'state': Rental.STATE_REVOKED
+        })
+        self.assertEqual(response.status_code, 403)
+
+    def test_conflicting_rental(self):
+        self.depot.manager_users.add(self.user)
+        item = Item.objects.create(
+            depot=self.depot,
+            quantity=1
+        )
+
+        conflicting_rental = self.create_rental(Rental.STATE_APPROVED)
+        ItemRental.objects.create(
+            rental=conflicting_rental,
+            item=item,
+            quantity=1
+        )
+
+        rental = self.create_rental(Rental.STATE_PENDING)
+        ItemRental.objects.create(
+            rental=rental,
+            item=item,
+            quantity=1
+        )
+
+        with self.assertRaises(ValidationError):
+            self.as_user.post('/rentals/%s/state/' % rental.uuid, {
+                'old_state': Rental.STATE_PENDING,
+                'state': Rental.STATE_APPROVED
+            })
