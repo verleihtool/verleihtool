@@ -201,4 +201,5 @@ $RECYCLE.BIN/
 
 # Downloaded npm packages
 node_modules/
-
+Pipfile
+*.lock
