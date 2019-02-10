@@ -1,7 +1,7 @@
 # Verleihtool
 
 [![Build Status](https://travis-ci.org/verleihtool/verleihtool.svg?branch=master)](https://travis-ci.org/verleihtool/verleihtool)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/verleihtool/verleihtool/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/verleihtool/verleihtool/?branch=master)
+[![Code Coverage](https://img.shields.io/codecov/c/github/verleihtool/verleihtool.svg)](https://codecov.io/gh/verleihtool/verleihtool)
 [![GitHub release](https://img.shields.io/github/tag/verleihtool/verleihtool.svg)](https://github.com/verleihtool/verleihtool/releases)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 
