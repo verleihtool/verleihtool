@@ -75,10 +75,10 @@ class Depot(models.Model):
         any manager user and any user in a manager group.
         """
 
-        return (user.is_superuser or
-                self.organization.managed_by(user) or
-                self.manager_users.filter(id=user.id).exists() or
-                self.manager_groups.filter(id__in=user.groups.all()).exists())
+        return (user.is_superuser
+                or self.organization.managed_by(user)
+                or self.manager_users.filter(id=user.id).exists()
+                or self.manager_groups.filter(id__in=user.groups.all()).exists())
 
     def show_internal_items(self, user):
         """
@@ -106,8 +106,8 @@ class Depot(models.Model):
         """
 
         return User.objects.filter(
-            models.Q(id__in=self.manager_users.all()) |
-            models.Q(groups__in=self.manager_groups.all())
+            models.Q(id__in=self.manager_users.all())
+            | models.Q(groups__in=self.manager_groups.all())
         ).distinct()
 
     @property
@@ -121,8 +121,8 @@ class Depot(models.Model):
     @property
     def active_items(self):
         return self.item_set.filter(
-            models.Q(visibility=Item.VISIBILITY_PUBLIC) |
-            models.Q(visibility=Item.VISIBILITY_INTERNAL)
+            models.Q(visibility=Item.VISIBILITY_PUBLIC)
+            | models.Q(visibility=Item.VISIBILITY_INTERNAL)
         )
 
     @staticmethod
@@ -131,9 +131,9 @@ class Depot(models.Model):
         Filter for depots managed by the given user
         """
 
-        return (models.Q(organization__managers__id=user.id) |
-                models.Q(manager_users__id=user.id) |
-                models.Q(manager_groups__id__in=user.groups.all()))
+        return (models.Q(organization__managers__id=user.id)
+                | models.Q(manager_users__id=user.id)
+                | models.Q(manager_groups__id__in=user.groups.all()))
 
     def __str__(self):
         return self.name
@@ -175,9 +175,9 @@ class Item(models.Model):
         Filter for items managed by the given user
         """
 
-        return (models.Q(depot__organization__managers__id=user.id) |
-                models.Q(depot__manager_users__id=user.id) |
-                models.Q(depot__manager_groups__id__in=user.groups.all()))
+        return (models.Q(depot__organization__managers__id=user.id)
+                | models.Q(depot__manager_users__id=user.id)
+                | models.Q(depot__manager_groups__id__in=user.groups.all()))
 
     class Meta:
         unique_together = (

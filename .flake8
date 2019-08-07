@@ -1,6 +1,6 @@
 [flake8]
 ignore =
-    # None at the moment
+    W503
 
 exclude =
     .git,

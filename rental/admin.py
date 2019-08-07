@@ -75,9 +75,9 @@ class RentalAdmin(admin.ModelAdmin):
         if request.user.is_superuser:
             return qs
 
-        return qs.filter(Q(depot__organization__managers__id=request.user.id) |
-                         Q(depot__manager_users__id=request.user.id) |
-                         Q(depot__manager_groups__id__in=request.user.groups.all())).distinct()
+        return qs.filter(Q(depot__organization__managers__id=request.user.id)
+                         | Q(depot__manager_users__id=request.user.id)
+                         | Q(depot__manager_groups__id__in=request.user.groups.all())).distinct()
 
     def has_add_permission(self, request):
         # Only via the rental request form
