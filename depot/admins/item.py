@@ -56,9 +56,9 @@ class ItemAdmin(TranslationAdmin):
         return qs.filter(Item.filter_by_user(request.user)).distinct()
 
     def has_add_permission(self, request):
-        return (request.user.is_superuser or
-                request.user.organization_set.exists() or
-                request.user.depot_set.exists())
+        return (request.user.is_superuser
+                or request.user.organization_set.exists()
+                or request.user.depot_set.exists())
 
     def has_change_permission(self, request, obj=None):
         if not obj:

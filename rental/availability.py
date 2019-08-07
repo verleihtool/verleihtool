@@ -17,9 +17,9 @@ class Interval:
         return self.value < other.value
 
     def __eq__(self, other):
-        return (self.begin == other.begin and
-                self.end == other.end and
-                self.value == other.value)
+        return (self.begin == other.begin
+                and self.end == other.end
+                and self.value == other.value)
 
     def __repr__(self):
         return '<Interval begin:"%s" end:"%s" value:%d>' % (self.begin, self.end, self.value)
@@ -69,9 +69,9 @@ class Availability:
 
         # collect all the datetimes where a relevant rental starts / gets returned
         for rental in self.rentals:
-            if (rental.start_date < self.return_date and
-                    rental.return_date > self.start_date and
-                    item in rental.items.all()):
+            if (rental.start_date < self.return_date
+                    and rental.return_date > self.start_date
+                    and item in rental.items.all()):
                 if rental.start_date > self.start_date:
                     interval_borders.append(rental.start_date)
                 if rental.return_date < self.return_date:

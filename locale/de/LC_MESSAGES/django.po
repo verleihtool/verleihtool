@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-05-31 16:13+0000\n"
+"POT-Creation-Date: 2019-08-07 22:03+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,15 +17,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: depot/models.py:142
+#: depot/models.py:160
 msgid "public"
 msgstr "öffentlich"
 
-#: depot/models.py:143
+#: depot/models.py:161
 msgid "internal"
 msgstr "intern"
 
-#: depot/models.py:144
+#: depot/models.py:162
 msgid "deleted"
 msgstr "gelöscht"
 
@@ -73,8 +73,7 @@ msgstr ""
 #: depot/templates/depot/create-rental.html:79
 #: depot/templates/depot/detail.html:62
 #: depot/templates/depot/modals/checkout-form.html:83
-#: depot/templates/depot/rentals.html:42
-#: rental/templates/rental/detail.html:58
+#: depot/templates/depot/rentals.html:42 rental/templates/rental/detail.html:58
 #: rental/templates/rental/detail.html:87
 msgid "Name"
 msgstr "Name"
@@ -120,14 +119,12 @@ msgid "%(depot_name)s <small>by %(organization_name)s</small>"
 msgstr "%(depot_name)s <small>von %(organization_name)s</small>"
 
 #: depot/templates/depot/detail.html:31 depot/templates/depot/index.html:21
-#: depot/templates/depot/rentals.html:31
-#: rental/templates/rental/detail.html:37
+#: depot/templates/depot/rentals.html:31 rental/templates/rental/detail.html:37
 msgid "Manage"
 msgstr "Verwalten"
 
 #: depot/templates/depot/detail.html:35 depot/templates/depot/rentals.html:7
-#: depot/templates/depot/rentals.html:19
-#: rental/templates/rental/detail.html:20
+#: depot/templates/depot/rentals.html:19 rental/templates/rental/detail.html:20
 msgid "Rentals"
 msgstr "Verleihanfragen"
 
@@ -152,15 +149,11 @@ msgstr "Beschreibung"
 msgid "Quantity"
 msgstr "Anzahl"
 
-#: depot/templates/depot/detail.html:85 depot/templates/depot/detail.html:86
-msgid "Label from Wikidata"
-msgstr "Bezeichnung von Wikidata"
-
-#: depot/templates/depot/detail.html:116
+#: depot/templates/depot/detail.html:105
 msgid "No items available"
 msgstr "Keine Gegenstände verfügbar"
 
-#: depot/templates/depot/detail.html:128
+#: depot/templates/depot/detail.html:117
 msgid "Request rental"
 msgstr "Verleihanfrage erstellen"
 
@@ -231,14 +224,12 @@ msgid "Submit"
 msgstr "Senden"
 
 #: depot/templates/depot/modals/date-form.html:5
-#: depot/templates/depot/rentals.html:44
-#: rental/templates/rental/detail.html:74
+#: depot/templates/depot/rentals.html:44 rental/templates/rental/detail.html:74
 msgid "Start date"
 msgstr "Anfangsdatum"
 
 #: depot/templates/depot/modals/date-form.html:16
-#: depot/templates/depot/rentals.html:45
-#: rental/templates/rental/detail.html:77
+#: depot/templates/depot/rentals.html:45 rental/templates/rental/detail.html:77
 msgid "Return date"
 msgstr "Rückgabedatum"
 
@@ -418,3 +409,6 @@ msgstr "Impressum"
 #: verleihtool/templates/layout.html:128
 msgid "Github"
 msgstr "Github"
+
+#~ msgid "Label from Wikidata"
+#~ msgstr "Bezeichnung von Wikidata"

@@ -62,12 +62,12 @@ class DepotCreateRentalView(View):
 
         try:
             start_date = datetime.strptime(data.get('start_date'), '%Y-%m-%d %H:%M')
-        except:
+        except (ValueError, TypeError):
             start_date = datetime.now() + timedelta(days=1)
 
         try:
             return_date = datetime.strptime(data.get('return_date'), '%Y-%m-%d %H:%M')
-        except:
+        except (ValueError, TypeError):
             return_date = start_date + timedelta(days=3)
 
         return (start_date, max(start_date, return_date))

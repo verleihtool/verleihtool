@@ -1,6 +1,6 @@
 import json
 from django import template
-from django.core.urlresolvers import translate_url
+from django.urls import translate_url
 from depot.models import Item
 from rental.models import Rental
 
@@ -103,14 +103,13 @@ def concat_with_and(list, final='and', empty=''):
     if not list:
         return empty
 
-    l = len(list)
-    if l == 1:
+    if len(list) == 1:
         return list[0]
 
     return '%s %s %s' % (
-        ', '.join(str(item) for item in list[:l - 1]),
+        ', '.join(str(item) for item in list[:-1]),
         final,
-        str(list[l - 1])
+        str(list[-1])
     )
 
 

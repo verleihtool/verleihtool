@@ -14,16 +14,16 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf import settings
-from django.conf.urls import url, include
 from django.conf.urls.i18n import i18n_patterns
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.urls import include, path
 
 urlpatterns = i18n_patterns(
-    url(r'^', include('login.urls')),
-    url(r'^depots/', include('depot.urls')),
-    url(r'^rentals/', include('rental.urls')),
-    url(r'^admin/', admin.site.urls),
+    path('', include('login.urls')),
+    path('depots/', include('depot.urls')),
+    path('rentals/', include('rental.urls')),
+    path('admin/', admin.site.urls),
     prefix_default_language=False
 ) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 # Remove the above line in production and serve the static files properly
