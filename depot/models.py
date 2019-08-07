@@ -64,7 +64,7 @@ class Depot(models.Model):
 
     name = models.CharField(max_length=32)
     description = models.CharField(max_length=256, blank=True)
-    organization = models.ForeignKey(Organization)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
     manager_users = models.ManyToManyField(User, blank=True)
     manager_groups = models.ManyToManyField(Group, blank=True)
     active = models.BooleanField(default=True)

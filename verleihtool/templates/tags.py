@@ -1,6 +1,6 @@
 import json
 from django import template
-from django.core.urlresolvers import translate_url
+from django.urls import translate_url
 from depot.models import Item
 from rental.models import Rental
 
