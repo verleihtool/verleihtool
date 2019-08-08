@@ -1,4 +1,5 @@
-from rental.models import Rental
+from django.db.models import Prefetch
+from rental.models import ItemRental, Rental
 
 
 class Interval:
@@ -44,13 +45,7 @@ class Availability:
         self.start_date = start_date
         self.return_date = return_date
         self.depot_id = depot_id
-
-        self.rentals = Rental.objects.filter(
-            start_date__lt=self.return_date,
-            return_date__gt=self.start_date,
-            depot_id=self.depot_id,
-            state__in=conflicting_states
-        )
+        self.conflicting_states = conflicting_states
 
     def get_availability_intervals(self, item):
         """
@@ -63,37 +58,45 @@ class Availability:
         :return: a list of lists of the form [from, to, num_available]
         """
 
-        relevant_rentals = []
         interval_borders = []
         intervals = []
 
+        rentals = Rental.objects.filter(
+            start_date__lt=self.return_date,
+            return_date__gt=self.start_date,
+            depot_id=self.depot_id,
+            state__in=self.conflicting_states,
+            items=item
+        ).prefetch_related(
+            Prefetch(
+                'itemrental_set',
+                queryset=ItemRental.objects.filter(item=item),
+                to_attr='relevant_rental'
+            )
+        )
+
         # collect all the datetimes where a relevant rental starts / gets returned
-        for rental in self.rentals:
-            if (rental.start_date < self.return_date
-                    and rental.return_date > self.start_date
-                    and item in rental.items.all()):
-                if rental.start_date > self.start_date:
-                    interval_borders.append(rental.start_date)
-                if rental.return_date < self.return_date:
-                    interval_borders.append(rental.return_date)
-                relevant_rentals.append(rental)
+        for rental in rentals:
+            if rental.start_date > self.start_date:
+                interval_borders.append(rental.start_date)
+            if rental.return_date < self.return_date:
+                interval_borders.append(rental.return_date)
 
-        # sort these points (ascending)
-        interval_borders.sort()
-
-        # append / prepend start and end date if necessary
-        interval_borders.insert(0, self.start_date)
+        # insert start and end date
+        interval_borders.append(self.start_date)
         interval_borders.append(self.return_date)
 
+        # sort these points
+        interval_borders.sort()
+
         # create intervals, initialize with full availability
-        for i in range(len(interval_borders) - 1):
-            intervals.append(Interval(interval_borders[i], interval_borders[i + 1], item.quantity))
+        for begin, end in zip(interval_borders, interval_borders[1:]):
+            intervals.append(Interval(begin, end, item.quantity))
 
         # for each rental, modify availability during occupied intervals accordingly
-        for rental in relevant_rentals:
-            item_rental = rental.itemrental_set.get(item=item)
+        for rental in rentals:
             for interval in intervals:
                 if rental.start_date < interval.end and rental.return_date > interval.begin:
-                    interval.value -= item_rental.quantity
+                    interval.value -= rental.relevant_rental[0].quantity
 
         return intervals
