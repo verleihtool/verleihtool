@@ -1,3 +1,4 @@
 django ~= 2.2
 django-modeltranslation ~= 0.13
 markdown ~= 3.1
+psycopg2-binary<2.9
